@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>模型测评实验室 — LLM 大模型深度对比</title>
-  <meta name="description" content="专注于大语言模型的深度测评与对比分析，覆盖 GPT、Claude、Gemini、通义、豆包等主流模型。">
+  <title>模型测评实验室 — LLM 深度测评与技术分析</title>
+  <meta name="description" content="专注于大语言模型的深度测评、故障复盘与行业分析，覆盖 GPT、Claude、Gemini、通义、豆包等主流模型。">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -21,12 +21,69 @@
 
 <div class="container">
   <section class="hero">
-    <h1>LLM 深度测评</h1>
-    <p>用数据说话，客观对比每一款大语言模型的真实能力</p>
+    <h1>LLM 深度观察</h1>
+    <p>用数据说话，客观测评每一款大语言模型；用理性分析，拆解每一次行业事件</p>
   </section>
 
-  <section class="post-list">
+  <h2 class="section-title">特别专题</h2>
 
+  <a href="posts/deep-dive-postmortem.html" class="featured-card">
+    <span class="featured-label">核心复盘</span>
+    <h2>9·3 大模型服务集体故障：全链路深度复盘</h2>
+    <div class="meta">2026-09-06 · 阅读约 15 分钟</div>
+    <div class="excerpt">从基础设施层到模型服务层，从单一厂商故障到行业级连锁反应，我们尝试还原这次史无前例的大模型服务集体中断事件的全貌，并探讨其背后的深层原因。</div>
+    <div class="tags">
+      <span class="tag red">故障复盘</span>
+      <span class="tag blue">基础设施</span>
+      <span class="tag yellow">连锁反应</span>
+    </div>
+  </a>
+
+  <div class="post-grid">
+    <a href="posts/root-cause-analysis.html" class="post-card">
+      <h3>技术根因推测：为什么多家模型同时故障？</h3>
+      <div class="meta">2026-09-05 · 8 分钟</div>
+      <div class="excerpt">从云计算底层依赖、GPU 集群调度到网络架构，分析可能的技术原因。</div>
+      <div class="tags">
+        <span class="tag red">技术分析</span>
+        <span class="tag blue">根因</span>
+      </div>
+    </a>
+
+    <a href="posts/business-impact.html" class="post-card">
+      <h3>影响评估：一次故障让多少业务停摆？</h3>
+      <div class="meta">2026-09-04 · 6 分钟</div>
+      <div class="excerpt">从 AI 创业公司到企业应用，从编程助手到客服机器人，量化这次故障的经济与业务影响。</div>
+      <div class="tags">
+        <span class="tag yellow">影响分析</span>
+        <span class="tag green">经济损失</span>
+      </div>
+    </a>
+
+    <a href="posts/architecture-lessons.html" class="post-card">
+      <h3>架构启示：LLM 应用如何设计多模型容灾？</h3>
+      <div class="meta">2026-09-07 · 10 分钟</div>
+      <div class="excerpt">对于依赖大模型 API 的业务，如何构建高可用的多模型切换架构，避免单点故障？</div>
+      <div class="tags">
+        <span class="tag green">最佳实践</span>
+        <span class="tag blue">架构设计</span>
+      </div>
+    </a>
+
+    <a href="posts/industry-insights.html" class="post-card">
+      <h3>行业观察：大模型基础设施的脆弱性与未来</h3>
+      <div class="meta">2026-09-08 · 9 分钟</div>
+      <div class="excerpt">当全球 AI 服务依赖少数几家云厂商和 GPU 供应商，行业的系统性风险该如何化解？</div>
+      <div class="tags">
+        <span class="tag blue">行业趋势</span>
+        <span class="tag yellow">风险</span>
+      </div>
+    </a>
+  </div>
+
+  <h2 class="section-title">模型测评</h2>
+
+  <section class="post-list">
     <a href="posts/gpt-4o-vs-claude-opus.html" class="post-card">
       <h2>GPT-4o vs Claude 3.5 Opus：2024 旗舰模型巅峰对决</h2>
       <div class="meta">2024-09-15 · 阅读约 12 分钟</div>
@@ -70,13 +127,12 @@
         <span class="tag">多模态</span>
       </div>
     </a>
-
   </section>
 </div>
 
 <footer class="site-footer">
   <div class="container">
-    © 2024 模型测评实验室 · 基于 GitHub Pages 构建
+    © 2024-2026 模型测评实验室 · 基于 GitHub Pages 构建
   </div>
 </footer>
 
