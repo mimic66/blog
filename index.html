@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>大模型服务集体故障深度复盘</title>
+  <meta name="description" content="2026年9月全球大模型服务集体故障事件深度复盘：时间线还原、技术分析、影响评估与行业启示。">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" class="site-title">
+      <span class="dot"></span>
+      故障复盘实验室
+    </a>
+    <nav>
+      <a href="index.html" class="active">首页</a>
+      <a href="about.html">关于</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+
+  <section class="hero">
+    <span class="hero-badge">2026.09.03 · 重大事件</span>
+    <h1>大模型服务集体故障<br>深度复盘专题</h1>
+    <p>多家头部大模型服务商在同一天出现服务异常，<br>我们从技术、架构、行业影响等多个维度进行深度剖析</p>
+    <div class="hero-meta">
+      <span>📅 事件日期：2026 年 9 月 3 日（周四）</span>
+      <span>⏱️ 持续时间：约 2-6 小时不等</span>
+    </div>
+  </section>
+
+  <!-- 故障时间线 -->
+  <h2 class="section-title">事件时间线</h2>
+  <ul class="timeline">
+    <li class="red">
+      <span class="dot"></span>
+      <span class="time">14:32</span>
+      <span class="event"><strong>OpenAI API 异常</strong>：ChatGPT 和 API 服务开始出现大量 5xx 错误，美国东部用户率先报告</span>
+    </li>
+    <li class="red">
+      <span class="dot"></span>
+      <span class="time">14:47</span>
+      <span class="event"><strong>Anthropic 服务降级</strong>：Claude API 响应延迟飙升，部分请求超时</span>
+    </li>
+    <li class="yellow">
+      <span class="dot"></span>
+      <span class="time">15:03</span>
+      <span class="event"><strong>国内多家模型告警</strong>：通义千问、豆包等国产大模型 API 出现间歇性错误</span>
+    </li>
+    <li class="red">
+      <span class="dot"></span>
+      <span class="time">15:18</span>
+      <span class="event"><strong>故障范围扩大</strong>：Google Gemini API、Mistral API 相继报告异常，全球多地受影响</span>
+    </li>
+    <li class="yellow">
+      <span class="dot"></span>
+      <span class="time">16:05</span>
+      <span class="event"><strong>OpenAI 确认事故</strong>：官方状态页标记为"重大中断"，正在调查原因</span>
+    </li>
+    <li class="green">
+      <span class="dot"></span>
+      <span class="time">17:42</span>
+      <span class="event"><strong>部分服务恢复</strong>：OpenAI、Anthropic 开始逐步恢复，部分区域服务正常</span>
+    </li>
+    <li class="green">
+      <span class="dot"></span>
+      <span class="time">19:30</span>
+      <span class="event"><strong>主要服务恢复</strong>：大部分服务商宣布服务恢复正常，进入监控阶段</span>
+    </li>
+    <li class="blue">
+      <span class="dot"></span>
+      <span class="time">21:00</span>
+      <span class="event"><strong>事后调查启动</strong>：多家厂商开始发布初步事故报告，原因指向基础设施层</span>
+    </li>
+  </ul>
+
+  <!-- 精选文章 -->
+  <h2 class="section-title">深度分析</h2>
+
+  <a href="posts/deep-dive-postmortem.html" class="featured-card">
+    <span class="featured-label">核心复盘</span>
+    <h2>9·3 大模型服务集体故障：全链路深度复盘</h2>
+    <div class="meta">2026-09-06 · 阅读约 15 分钟</div>
+    <div class="excerpt">从基础设施层到模型服务层，从单一厂商故障到行业级连锁反应，我们尝试还原这次史无前例的大模型服务集体中断事件的全貌，并探讨其背后的深层原因。</div>
+    <div class="tags">
+      <span class="tag red">故障复盘</span>
+      <span class="tag blue">基础设施</span>
+      <span class="tag yellow">连锁反应</span>
+    </div>
+  </a>
+
+  <div class="post-grid">
+
+    <a href="posts/root-cause-analysis.html" class="post-card">
+      <h3>技术根因推测：为什么多家模型同时故障？</h3>
+      <div class="meta">2026-09-05 · 8 分钟</div>
+      <div class="excerpt">从云计算底层依赖、GPU 集群调度、到网络架构，分析可能的技术原因。</div>
+      <div class="tags">
+        <span class="tag red">技术分析</span>
+        <span class="tag blue">根因</span>
+      </div>
+    </a>
+
+    <a href="posts/business-impact.html" class="post-card">
+      <h3>影响评估：一次故障让多少业务停摆？</h3>
+      <div class="meta">2026-09-04 · 6 分钟</div>
+      <div class="excerpt">从 AI 创业公司到企业应用，从编程助手到客服机器人，量化这次故障的经济与业务影响。</div>
+      <div class="tags">
+        <span class="tag yellow">影响分析</span>
+        <span class="tag green">经济损失</span>
+      </div>
+    </a>
+
+    <a href="posts/architecture-lessons.html" class="post-card">
+      <h3>架构启示：LLM 应用如何设计多模型容灾？</h3>
+      <div class="meta">2026-09-07 · 10 分钟</div>
+      <div class="excerpt">对于依赖大模型 API 的业务，如何构建高可用的多模型切换架构，避免单点故障？</div>
+      <div class="tags">
+        <span class="tag green">最佳实践</span>
+        <span class="tag blue">架构设计</span>
+      </div>
+    </a>
+
+    <a href="posts/industry-insights.html" class="post-card">
+      <h3>行业观察：大模型基础设施的脆弱性与未来</h3>
+      <div class="meta">2026-09-08 · 9 分钟</div>
+      <div class="excerpt">当全球 AI 服务依赖少数几家云厂商和 GPU 供应商，行业的系统性风险该如何化解？</div>
+      <div class="tags">
+        <span class="tag blue">行业趋势</span>
+        <span class="tag yellow">风险</span>
+      </div>
+    </a>
+
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    © 2026 故障复盘实验室 · 本文为技术分析与推测，非官方报告 · 基于 GitHub Pages 构建
+  </div>
+</footer>
+
+</body>
+</html>

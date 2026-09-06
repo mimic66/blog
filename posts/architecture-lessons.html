@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>架构启示：LLM 应用如何设计多模型容灾？ - 故障复盘实验室</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="../index.html" class="site-title">
+      <span class="dot"></span>
+      故障复盘实验室
+    </a>
+    <nav>
+      <a href="../index.html">首页</a>
+      <a href="../about.html">关于</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <article class="post-content">
+    <a href="../index.html" class="back-link">← 返回首页</a>
+
+    <h1>架构启示：LLM 应用如何设计多模型容灾？</h1>
+    <div class="post-meta">
+      2026-09-07 · 阅读约 10 分钟 · 标签：
+      <span class="tag green">最佳实践</span>
+      <span class="tag blue">架构设计</span>
+    </div>
+
+    <p>这次集体故障给所有依赖大模型的应用敲响了警钟：单一模型服务商是不可靠的。本文从架构角度，探讨如何设计具备高可用性的多模型系统。</p>
+
+    <h2>一、核心原则：模型抽象层</h2>
+
+    <p>一切的基础是：<strong>不要让业务代码直接依赖某一家的 SDK</strong>。</p>
+
+    <p>在业务逻辑和模型 API 之间增加一个抽象层，将模型调用统一成内部标准接口。这样切换底层模型时，业务代码不需要任何改动。</p>
+
+    <h3>抽象层应该统一什么？</h3>
+    <ul>
+      <li><strong>请求格式</strong>：统一的消息格式（role / content 结构）</li>
+      <li><strong>响应格式</strong>：统一的返回结构（text、usage、finish_reason 等）</li>
+      <li><strong>流式输出</strong>：统一的 SSE / 流式接口</li>
+      <li><strong>Tool Calling</strong>：统一的函数调用格式</li>
+      <li><strong>Embedding</strong>：统一的向量输出接口</li>
+    </ul>
+
+    <div class="callout blue">
+      <strong>推荐方案</strong>
+      如果不想自己造轮子，可以使用开源的 LLM 网关，如 LiteLLM、Portkey、OneAPI 等，它们已经封装了几十家模型的 API。
+    </div>
+
+    <h2>二、故障转移策略</h2>
+
+    <p>光有抽象层还不够，还需要自动的故障转移机制。</p>
+
+    <h3>策略 1：简单重试 + 切换</h3>
+    <p>最基础的方案：主模型调用失败后，自动重试 1-2 次，如果还是失败，切换到备用模型。</p>
+    <ul>
+      <li>优点：实现简单，改动小</li>
+      <li>缺点：故障检测慢（每次都要等超时），用户体验差</li>
+      <li>适合：对可用性要求不高的内部工具</li>
+    </ul>
+
+    <h3>策略 2：健康检查 + 主动切换</h3>
+    <p>在后台持续探测各模型服务的健康状态（定时发送心跳请求），维护一个"可用模型列表"。实时流量只走健康的模型。</p>
+    <ul>
+      <li>优点：故障发现快，用户几乎无感知</li>
+      <li>缺点：需要额外的健康检查机制，增加复杂度</li>
+      <li>适合：面向用户的生产应用</li>
+    </ul>
+
+    <h3>策略 3：流量分发 + 多活</h3>
+    <p>把流量同时分发给多个模型服务商，任何一个出问题，流量自动切到其他健康的实例上。</p>
+    <ul>
+      <li>优点：可用性最高，单个服务商故障几乎不影响整体</li>
+      <li>缺点：成本高（需要维护多套接入），需要处理模型差异</li>
+      <li>适合：对可用性要求极高的核心业务</li>
+    </ul>
+
+    <h2>三、降级方案设计</h2>
+
+    <p>当所有大模型都不可用时（就像这次集体故障），你的应用应该怎么表现？直接报错吗？</p>
+    <p>更好的做法是设计多层降级方案：</p>
+
+    <h3>降级层级</h3>
+
+    <table>
+      <tr>
+        <th>级别</th>
+        <th>方案</th>
+        <th>用户体验</th>
+        <th>适用场景</th>
+      </tr>
+      <tr>
+        <td>L1 正常</td>
+        <td>主力模型 + 备用模型自动切换</td>
+        <td>几乎无感知</td>
+        <td>单一服务商故障</td>
+      </tr>
+      <tr>
+        <td>L2 降级</td>
+        <td>切换到更小/更慢的模型</td>
+        <td>质量略降，但功能可用</td>
+        <td>主流模型都故障</td>
+      </tr>
+      <tr>
+        <td>L3 兜底</td>
+        <td>使用本地小模型 / 缓存 / 模板</td>
+        <td>功能受限，但基础可用</td>
+        <td>所有云端 API 不可用</td>
+      </tr>
+      <tr>
+        <td>L4 熔断</td>
+        <td>关闭 AI 功能，提示用户稍后重试</td>
+        <td>功能不可用，但不崩溃</td>
+        <td>完全不可用，防止雪崩</td>
+      </tr>
+    </table>
+
+    <h3>本地兜底模型</h3>
+    <p>在服务器上跑一个轻量级开源模型（比如 Qwen-7B、Llama-3-8B 级别），作为极端情况下的兜底。虽然效果不如大模型，但至少能处理简单请求。</p>
+    <ul>
+      <li>7B 模型在一张消费级 GPU 上就能跑</li>
+      <li>甚至在 CPU 上也能跑（速度慢一些）</li>
+      <li>对于简单的分类、摘要、问答场景，小模型也够用</li>
+    </ul>
+
+    <h2>四、缓存策略</h2>
+
+    <p>减少对模型 API 实时依赖的最有效手段之一就是缓存。</p>
+
+    <h3>可以缓存的场景</h3>
+    <ul>
+      <li><strong>语义缓存</strong>：相似的问题直接返回缓存答案（用 Embedding 相似度匹配）</li>
+      <li><strong>确定性任务</strong>：代码生成、翻译等任务，相同输入可以直接复用结果</li>
+      <li><strong>高频查询</strong>：知识库问答、常见问题解答等，命中率很高</li>
+    </ul>
+
+    <p>一个好的缓存系统可以减少 30%-70% 的模型调用，既省钱又提高了系统的抗故障能力。</p>
+
+    <h2>五、超时、重试与熔断</h2>
+
+    <h3>合理的超时设置</h3>
+    <p>不要设置过长的超时时间。大模型 API 正常响应通常在几秒内，如果超过 30 秒还没返回，大概率是出问题了。</p>
+    <ul>
+      <li>简单问答：10-15 秒超时</li>
+      <li>复杂推理 / 长文本：30-60 秒超时</li>
+      <li>流式输出：首 token 超时 5-10 秒</li>
+    </ul>
+
+    <h3>重试策略</h3>
+    <ul>
+      <li>指数退避重试：失败后等待时间逐渐加长（1s → 2s → 4s）</li>
+      <li>限制最大重试次数：通常 2-3 次就够了</li>
+      <li>只对幂等请求重试：创建类操作要谨慎，避免重复执行</li>
+    </ul>
+
+    <h3>熔断器模式</h3>
+    <p>当某个模型的错误率超过阈值（比如 50%）时，自动"熔断"——暂时不向它发请求，等它恢复了再慢慢切回去。</p>
+    <p>这可以避免在故障期间继续发送大量请求，既减少了用户等待的时间，也给了故障服务恢复的喘息空间。</p>
+
+    <h2>六、监控与可观测性</h2>
+
+    <p>你没法管理你没法度量的东西。LLM 应用的监控至少要覆盖：</p>
+
+    <ul>
+      <li><strong>可用性</strong>：各模型的成功率、错误率</li>
+      <li><strong>延迟</strong>：p50、p95、p99 延迟，首 token 延迟</li>
+      <li><strong>成本</strong>：token 消耗、费用统计</li>
+      <li><strong>质量</strong>：输出质量评分、用户反馈</li>
+    </ul>
+
+    <p>建议接入专门的 LLM 可观测性平台，或者自己搭建基础的监控仪表盘。这次故障中，很多团队是用户报告了才知道服务挂了，这就是监控缺失的表现。</p>
+
+    <h2>七、参考架构图</h2>
+
+    <div class="callout green">
+      <strong>推荐的生产级 LLM 应用架构</strong>
+      <br><br>
+      用户请求 → 负载均衡 → LLM 网关（抽象层 + 故障转移 + 缓存） → 多模型服务商（主 + 备 + 本地兜底）
+      <br><br>
+      配套：健康检查、监控告警、熔断降级、用量统计
+    </div>
+
+    <h2>八、成本与收益的平衡</h2>
+
+    <p>当然，容灾是有成本的。接入多家模型、维护抽象层、部署本地模型，这些都需要额外的工作量和费用。</p>
+
+    <p>你需要根据自己的业务场景来权衡：</p>
+    <ul>
+      <li><strong>内部工具 / 玩具项目</strong>：单模型就行，挂了就等恢复</li>
+      <li><strong>一般产品功能</strong>：至少接 2 家模型，有简单的故障转移</li>
+      <li><strong>核心业务功能</strong>：多模型 + 健康检查 + 降级方案</li>
+      <li><strong>企业级 / 关键业务</strong>：完整的高可用架构 + 私有化兜底</li>
+    </ul>
+
+    <p>这次故障之后，很多团队可能会重新评估自己的容灾等级。希望这篇文章能给你一些参考。</p>
+
+    <div class="references">
+      <h3>参考来源</h3>
+      <ol>
+        <li>LiteLLM — 多模型调用统一接口 — <a href="https://github.com/BerriAI/litellm" target="_blank">github.com/BerriAI/litellm</a></li>
+        <li>Portkey AI Gateway — 企业级 LLM 网关 — <a href="https://portkey.ai" target="_blank">portkey.ai</a></li>
+        <li>OneAPI — 多模型管理与分发 — <a href="https://github.com/songquanpeng/one-api" target="_blank">github.com/songquanpeng/one-api</a></li>
+        <li>Martin Fowler — Circuit Breaker 熔断器模式 — <a href="https://martinfowler.com/bliki/CircuitBreaker.html" target="_blank">martinfowler.com/bliki/CircuitBreaker</a></li>
+        <li>Google SRE Book — 过载保护与重试策略 — <a href="https://sre.google/sre-book/handling-overload" target="_blank">sre.google/sre-book/handling-overload</a></li>
+        <li>vLLM — 高吞吐量 LLM 推理引擎 — <a href="https://github.com/vllm-project/vllm" target="_blank">github.com/vllm-project/vllm</a></li>
+        <li>GPTCache — LLM 语义缓存 — <a href="https://github.com/zilliztech/GPTCache" target="_blank">github.com/zilliztech/GPTCache</a></li>
+        <li>Helicone — LLM 可观测性平台 — <a href="https://www.helicone.ai" target="_blank">helicone.ai</a></li>
+      </ol>
+    </div>
+
+  </article>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    © 2026 故障复盘实验室 · 基于 GitHub Pages 构建
+  </div>
+</footer>
+
+</body>
+</html>
