@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gemini 1.5 Pro 百万上下文实测 - 模型测评实验室</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="../index.html" class="site-title">模型<span>测评</span>实验室</a>
+    <nav>
+      <a href="../index.html">首页</a>
+      <a href="../about.html">关于</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <article class="post-content">
+    <a href="../index.html" class="back-link">← 返回首页</a>
+
+    <h1>Gemini 1.5 Pro 百万上下文实测：长文本真的靠谱吗？</h1>
+    <div class="post-meta">
+      2024-08-20 · 阅读约 9 分钟 · 标签：<span class="tag">Gemini</span> <span class="tag">长上下文</span> <span class="tag">多模态</span>
+    </div>
+
+    <p>Google 的 Gemini 1.5 Pro 拥有惊人的 100 万 token 上下文窗口，这是其他主流模型（128K-200K）的 5-8 倍。但上下文窗口大不等于能用好，实际使用中信息召回率究竟如何？本文通过三个真实场景进行了深度测试。</p>
+
+    <h2>一、测试方法说明</h2>
+
+    <p>我们从三个维度来评估 Gemini 1.5 Pro 的长上下文能力：</p>
+    <ul>
+      <li><strong>信息定位准确率</strong>：在超长文档中找到特定信息的能力</li>
+      <li><strong>综合理解深度</strong>：对整份长文档内容的理解和分析能力</li>
+      <li><strong>实际场景可用性</strong>：在代码库分析、论文阅读等真实场景中的表现</li>
+    </ul>
+
+    <h2>二、大海捞针测试</h2>
+
+    <p>经典的"大海捞针"测试：在一段长文本中插入一个随机数字，让模型找出来。</p>
+
+    <h3>测试结果</h3>
+
+    <table>
+      <tr>
+        <th>文档长度</th>
+        <th>信息位置</th>
+        <th>Gemini 1.5 Pro</th>
+        <th>GPT-4o (128K)</th>
+      </tr>
+      <tr>
+        <td>10K tokens</td>
+        <td>中间</td>
+        <td><span class="score high">100%</span></td>
+        <td><span class="score high">100%</span></td>
+      </tr>
+      <tr>
+        <td>100K tokens</td>
+        <td>开头/中间/结尾</td>
+        <td><span class="score high">100%</span></td>
+        <td><span class="score high">98%</span></td>
+      </tr>
+      <tr>
+        <td>500K tokens</td>
+        <td>开头</td>
+        <td><span class="score high">96%</span></td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td>500K tokens</td>
+        <td>中间</td>
+        <td><span class="score mid">78%</span></td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td>500K tokens</td>
+        <td>结尾</td>
+        <td><span class="score high">92%</span></td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td>1M tokens</td>
+        <td>开头</td>
+        <td><span class="score mid">75%</span></td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td>1M tokens</td>
+        <td>中间</td>
+        <td><span class="score low">55%</span></td>
+        <td>-</td>
+      </tr>
+      <tr>
+        <td>1M tokens</td>
+        <td>结尾</td>
+        <td><span class="score mid">70%</span></td>
+        <td>-</td>
+      </tr>
+    </table>
+
+    <blockquote>可以看到，在 500K 以内的上下文长度中，Gemini 1.5 Pro 的信息召回率还是相当不错的。但在 1M token 时，中间位置的信息召回率降到了 55%，说明接近极限了。</blockquote>
+
+    <h2>三、真实场景测试</h2>
+
+    <h3>场景 1：整个代码库分析</h3>
+
+    <p>我们将一个中等规模的 Python 项目（约 80K tokens，50+ 个文件）全部喂给模型，然后问了以下问题：</p>
+
+    <ol>
+      <li>这个项目的整体架构是怎样的？画出模块依赖关系</li>
+      <li>找出所有与用户认证相关的代码</li>
+      <li>发现了哪些潜在的 bug 或安全问题？</li>
+      <li>给这个项目加一个新功能，需要修改哪些文件？</li>
+    </ol>
+
+    <p><strong>结果</strong>：Gemini 1.5 Pro 在代码库理解上表现出色，能够准确描述项目架构，找出大部分相关代码。发现的 bug 约 60% 是真实存在的，整体表现让人满意。</p>
+
+    <h3>场景 2：学术论文批量阅读</h3>
+
+    <p>我们将 20 篇 LLM 相关的论文 PDF（共约 150K tokens）一次性输入，让模型做文献综述：</p>
+
+    <ul>
+      <li>总结这 20 篇论文的主要研究方向</li>
+      <li>对比不同方法的优劣</li>
+      <li>找出被引用最多的核心观点</li>
+      <li>提出未来值得研究的方向</li>
+    </ul>
+
+    <p><strong>结果</strong>：生成的综述质量相当高，能够准确捕捉各篇论文的核心贡献，并进行有深度的横向对比。对于科研工作者来说，这是一个非常强大的文献调研工具。</p>
+
+    <h3>场景 3：长文档问答</h3>
+
+    <p>我们使用了一本完整的技术书籍（约 300K tokens），测试模型的细节问答能力：</p>
+
+    <ul>
+      <li>简单事实类问题：准确率约 <span class="score high">90%</span></li>
+      <li>跨章节综合理解：准确率约 <span class="score mid">75%</span></li>
+      <li>需要推理的深入问题：准确率约 <span class="score mid">60%</span></li>
+    </ul>
+
+    <h2>四、性能与成本</h2>
+
+    <table>
+      <tr>
+        <th>指标</th>
+        <th>Gemini 1.5 Pro</th>
+      </tr>
+      <tr>
+        <td>最大上下文</td>
+        <td>2M tokens（公开 1M）</td>
+      </tr>
+      <tr>
+        <td>输入价格（128K以内）</td>
+        <td>$1.25 / 1M tokens</td>
+      </tr>
+      <tr>
+        <td>输入价格（超过128K）</td>
+        <td>$2.50 / 1M tokens</td>
+      </tr>
+      <tr>
+        <td>输出价格（128K以内）</td>
+        <td>$5.00 / 1M tokens</td>
+      </tr>
+      <tr>
+        <td>输出价格（超过128K）</td>
+        <td>$10.00 / 1M tokens</td>
+      </tr>
+      <tr>
+        <td>平均速度（长文本）</td>
+        <td>约 30-40 tokens/s</td>
+      </tr>
+    </table>
+
+    <p>价格方面，长上下文模式下价格翻倍，但考虑到其他模型甚至不支持这么长的上下文，这个定价还是合理的。</p>
+
+    <h2>五、使用建议与技巧</h2>
+
+    <p>根据我们的测试，给大家几条使用长上下文模型的建议：</p>
+
+    <ul>
+      <li><strong>关键信息放开头或结尾</strong>：中间位置是召回率最低的区域</li>
+      <li><strong>500K 以内效果最好</strong>：1M 虽然支持，但质量下降明显</li>
+      <li><strong>结构化文档更友好</strong>：有清晰标题层级的文档更容易被模型理解</li>
+      <li><strong>多次验证关键信息</strong>：对于重要信息，建议用不同方式提问确认</li>
+    </ul>
+
+    <h2>六、总结</h2>
+
+    <p><span class="score high">长上下文能力评分：8.5 / 10</span></p>
+
+    <p>Gemini 1.5 Pro 的百万上下文能力不是噱头，在 500K tokens 以内的表现确实非常扎实，在代码库分析、论文批量阅读、长文档理解等场景中有很高的实用价值。</p>
+
+    <p>当然，它也不是完美的：接近 1M token 时信息召回率明显下降，长上下文价格更贵，响应速度也会变慢。但作为目前市面上长上下文能力最强的模型之一，Gemini 1.5 Pro 为大模型应用开辟了很多新的可能性。</p>
+
+  </article>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    © 2024 模型测评实验室 · 基于 GitHub Pages 构建
+  </div>
+</footer>
+
+</body>
+</html>

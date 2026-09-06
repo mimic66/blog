@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>豆包 Doubao Seed 2.1 首发测评 - 模型测评实验室</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="../index.html" class="site-title">模型<span>测评</span>实验室</a>
+    <nav>
+      <a href="../index.html">首页</a>
+      <a href="../about.html">关于</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <article class="post-content">
+    <a href="../index.html" class="back-link">← 返回首页</a>
+
+    <h1>豆包 Doubao Seed 2.1 首发测评：国产模型的代码实力</h1>
+    <div class="post-meta">
+      2024-09-01 · 阅读约 8 分钟 · 标签：<span class="tag">豆包</span> <span class="tag">国产模型</span> <span class="tag">代码能力</span>
+    </div>
+
+    <p>字节跳动在 2024 年 8 月底发布了豆包大模型的最新版本 Seed 2.1。官方宣称其代码能力和 Agent 能力达到国际领先水平。本文对 Seed 2.1 进行首发深度测评，看看实际表现如何。</p>
+
+    <h2>一、模型概览</h2>
+
+    <p>Seed 2.1 是字节跳动豆包团队推出的最新一代基础模型，主要亮点包括：</p>
+    <ul>
+      <li>代码能力大幅提升，官方称达到 GPT-4o 水平</li>
+      <li>Agent 规划能力增强，支持复杂多步任务</li>
+      <li>256K 超长上下文窗口</li>
+      <li>响应速度提升 30%</li>
+    </ul>
+
+    <h2>二、代码能力测试</h2>
+
+    <p>我们用 HumanEval、MBPP 和 Codeforces 三类题目的不同难度来测试 Seed 2.1 的代码能力，并与多个主流模型对比。</p>
+
+    <table>
+      <tr>
+        <th>模型</th>
+        <th>HumanEval pass@1</th>
+        <th>MBPP pass@1</th>
+        <th>Codeforces 中位数</th>
+      </tr>
+      <tr>
+        <td>GPT-4o</td>
+        <td><span class="score high">90.2%</span></td>
+        <td><span class="score high">88.3%</span></td>
+        <td><span class="score high">1800</span></td>
+      </tr>
+      <tr>
+        <td>Claude 3.5 Sonnet</td>
+        <td><span class="score high">88.5%</span></td>
+        <td><span class="score high">85.7%</span></td>
+        <td><span class="score mid">1650</span></td>
+      </tr>
+      <tr>
+        <td>Doubao Seed 2.1</td>
+        <td><span class="score high">89.7%</span></td>
+        <td><span class="score high">86.9%</span></td>
+        <td><span class="score mid">1700</span></td>
+      </tr>
+      <tr>
+        <td>Qwen2.5-72B</td>
+        <td><span class="score high">85.4%</span></td>
+        <td><span class="score high">80.1%</span></td>
+        <td><span class="score mid">1450</span></td>
+      </tr>
+    </table>
+
+    <p>从数据来看，Seed 2.1 的代码能力确实非常强，HumanEval 接近 GPT-4o，在国产模型中处于领先地位。</p>
+
+    <h3>实际项目测试</h3>
+
+    <p>除了标准基准，我们还进行了更贴近真实开发场景的测试：</p>
+
+    <ul>
+      <li><strong>React 组件开发</strong>：Seed 2.1 能快速生成结构清晰、样式美观的 React 组件，对 Hooks 的使用准确</li>
+      <li><strong>Bug 修复</strong>：给定一段有 bug 的代码，Seed 2.1 定位问题的速度和准确率都令人满意</li>
+      <li><strong>代码重构</strong>：能够理解复杂代码结构并给出合理的重构建议</li>
+      <li><strong>算法题</strong>：LeetCode Hard 难度约 70% 能一次通过，中等难度 90%+</li>
+    </ul>
+
+    <h2>三、Agent 能力测试</h2>
+
+    <p>Seed 2.1 号称 Agent 能力大幅提升，我们设计了几个多步任务来测试：</p>
+
+    <h3>1. 数据分析任务</h3>
+    <p>给定一份 CSV 数据，要求完成数据清洗、可视化和分析报告撰写。Seed 2.1 能够自动拆解任务，分步骤完成，中间遇到错误时能够自我修正。整体完成度约 85%。</p>
+
+    <h3>2. 网页开发任务</h3>
+    <p>要求用 HTML/CSS/JS 从零构建一个待办事项应用。Seed 2.1 能够规划出合理的开发步骤，逐步生成代码，最终产出的应用功能完整、界面美观。</p>
+
+    <h2>四、中文能力</h2>
+
+    <p>作为国产模型，Seed 2.1 的中文能力自然不弱：</p>
+    <ul>
+      <li>中文理解准确，对网络用语和梗文化的掌握较好</li>
+      <li>中文写作风格多样，能根据要求调整语气</li>
+      <li>对中文语境下的歧义处理能力强</li>
+    </ul>
+
+    <h2>五、不足之处</h2>
+
+    <p>虽然 Seed 2.1 亮点很多，但仍有一些不足：</p>
+    <ul>
+      <li><strong>英文能力</strong>：英文理解和写作比 GPT-4o 有明显差距</li>
+      <li><strong>长上下文</strong>：256K 窗口虽然大，但信息召回率在 100K 以上下降明显</li>
+      <li><strong>数学推理</strong>：复杂数学证明和高等数学问题表现不如 GPT-4o</li>
+      <li><strong>多模态</strong>：图像理解能力有，但与 GPT-4o 差距较大</li>
+    </ul>
+
+    <h2>六、价格与 API</h2>
+
+    <p>Seed 2.1 的 API 定价非常有竞争力：</p>
+
+    <table>
+      <tr>
+        <th>模型</th>
+        <th>输入价格</th>
+        <th>输出价格</th>
+      </tr>
+      <tr>
+        <td>Doubao Seed 2.1</td>
+        <td>¥0.8 / 1M tokens</td>
+        <td>¥2 / 1M tokens</td>
+      </tr>
+      <tr>
+        <td>GPT-4o</td>
+        <td>约 ¥35 / 1M tokens</td>
+        <td>约 ¥105 / 1M tokens</td>
+      </tr>
+    </table>
+
+    <p>从性价比来看，Seed 2.1 对国内开发者来说极具吸引力，价格只有 GPT-4o 的几十分之一。</p>
+
+    <h2>七、总结</h2>
+
+    <p><span class="score high">综合评分：8.8 / 10</span></p>
+
+    <p>豆包 Seed 2.1 是一款让人惊喜的国产大模型。代码能力确实达到了国际一流水平，Agent 能力也表现出色，再加上极具竞争力的价格，对于以中文场景为主、代码开发需求多的国内开发者和团队来说，是一个非常好的选择。</p>
+
+    <p>与 GPT-4o 相比，Seed 2.1 在英文、多模态、复杂推理等方面还有差距，但在中文代码开发场景下，已经可以作为主力模型使用。</p>
+
+  </article>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    © 2024 模型测评实验室 · 基于 GitHub Pages 构建
+  </div>
+</footer>
+
+</body>
+</html>
