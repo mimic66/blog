@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>七位AI大佬同台辩论：AGI还有多远？我们该担心什么？ - 模型测评实验室</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .debate-intro {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      margin-bottom: 40px;
+    }
+    .debate-intro h1 { color: #fff; margin-bottom: 10px; font-size: 1.8em; }
+    .debate-intro .subtitle { color: #a8b4d8; font-size: 1.05em; margin-bottom: 25px; }
+    .debate-panel {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .panelist-card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+    }
+    .panelist-card .avatar { font-size: 2em; margin-bottom: 6px; }
+    .panelist-card .name { font-weight: 700; color: #e8ecf7; font-size: 0.95em; }
+    .panelist-card .title { font-size: 0.8em; color: #8896b8; margin-top: 2px; }
+    .panelist-card .stance {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.72em;
+      font-weight: 600;
+    }
+    .stance-optimist { background: #10b981; color: #fff; }
+    .stance-moderate { background: #f59e0b; color: #fff; }
+    .stance-pessimist { background: #ef4444; color: #fff; }
+    .stance-skeptic { background: #6366f1; color: #fff; }
+
+    .debate-topic {
+      margin: 50px 0 30px;
+      padding: 20px 25px;
+      background: #f8fafc;
+      border-left: 4px solid #3b82f6;
+      border-radius: 0 8px 8px 0;
+    }
+    .debate-topic .topic-label {
+      font-size: 0.82em;
+      font-weight: 700;
+      color: #3b82f6;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .debate-topic h2 {
+      margin: 0 0 4px 0;
+      font-size: 1.4em;
+      color: #0f172a;
+    }
+    .debate-topic .topic-desc { color: #64748b; font-size: 0.92em; }
+
+    .debate-speech {
+      margin: 22px 0;
+      padding: 20px 24px;
+      border-radius: 10px;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      position: relative;
+    }
+    .debate-speech::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      border-radius: 10px 0 0 10px;
+    }
+    .speech-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .speech-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4em;
+      flex-shrink: 0;
+    }
+    .speech-info .speaker-name {
+      font-weight: 700;
+      color: #0f172a;
+      font-size: 1em;
+    }
+    .speech-info .speaker-title {
+      font-size: 0.78em;
+      color: #64748b;
+    }
+    .speech-body {
+      color: #1e293b;
+      line-height: 1.8;
+      font-size: 0.95em;
+    }
+    .speech-body p { margin: 0 0 10px 0; }
+    .speech-body p:last-child { margin-bottom: 0; }
+    .speech-source {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed #e2e8f0;
+      font-size: 0.78em;
+      color: #94a3b8;
+    }
+    .speech-source a { color: #3b82f6; text-decoration: none; }
+    .speech-source a:hover { text-decoration: underline; }
+
+    /* Speaker color themes */
+    .speaker-andrew::before { background: #2563eb; }
+    .speaker-andrew .speech-avatar { background: #dbeafe; }
+    .speaker-feifei::before { background: #7c3aed; }
+    .speaker-feifei .speech-avatar { background: #ede9fe; }
+    .speaker-yann::before { background: #059669; }
+    .speaker-yann .speech-avatar { background: #d1fae5; }
+    .speaker-karpathy::before { background: #0891b2; }
+    .speaker-karpathy .speech-avatar { background: #cffafe; }
+    .speaker-hinton::before { background: #dc2626; }
+    .speaker-hinton .speech-avatar { background: #fee2e2; }
+    .speaker-bengio::before { background: #ea580c; }
+    .speaker-bengio .speech-avatar { background: #ffedd5; }
+    .speaker-demis::before { background: #0284c7; }
+    .speaker-demis .speech-avatar { background: #e0f2fe; }
+
+    .verdict-box {
+      margin-top: 50px;
+      padding: 30px;
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 12px;
+    }
+    .verdict-box h2 { color: #f1f5f9; margin-top: 0; }
+    .verdict-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin: 20px 0;
+    }
+    .verdict-item {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 14px;
+      border-radius: 8px;
+    }
+    .verdict-item .v-name { font-weight: 700; color: #f1f5f9; font-size: 0.9em; }
+    .verdict-item .v-timeline { font-size: 1.1em; font-weight: 700; margin: 4px 0; }
+    .verdict-item .v-stance { font-size: 0.78em; color: #94a3b8; }
+
+    .host-note {
+      background: #f1f5f9;
+      border: 1px dashed #cbd5e1;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 18px 0;
+      font-style: italic;
+      color: #475569;
+      font-size: 0.9em;
+    }
+    .host-note::before { content: "🎙️ 主持人："; font-weight: 700; color: #334155; font-style: normal; }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="../index.html" class="site-title">模型测评实验室</a>
+    <nav>
+      <a href="../index.html">首页</a>
+      <a href="../about.html">关于</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <article class="post-content">
+    <a href="../index.html" class="back-link">← 返回首页</a>
+
+    <div class="debate-intro">
+      <h1>七位 AI 大佬同台辩论</h1>
+      <div class="subtitle">AGI 还有多远？我们该担心什么？未来十年 AI 将走向何方？</div>
+      <p style="color:#cbd5e1; margin:0; font-size:0.9em;">
+        本文基于七位 AI 领域领军人物 2024–2026 年公开发表的观点、演讲与访谈，
+        虚构一场"同台辩论"。所有发言均提炼自其真实公开言论，附出处链接。
+      </p>
+      <div class="debate-panel">
+        <div class="panelist-card">
+          <div class="avatar">🧑‍🔬</div>
+          <div class="name">吴恩达<br>Andrew Ng</div>
+          <div class="title">DeepLearning.AI 创始人</div>
+          <span class="stance stance-moderate">温和乐观</span>
+        </div>
+        <div class="panelist-card">
+          <div class="avatar">👩‍🔬</div>
+          <div class="name">李飞飞<br>Fei-Fei Li</div>
+          <div class="title">斯坦福 HAI 创始人 / World Labs</div>
+          <span class="stance stance-moderate">务实建设</span>
+        </div>
+        <div class="panelist-card">
+          <div class="avatar">🧑‍💻</div>
+          <div class="name">杨立昆<br>Yann LeCun</div>
+          <div class="title">图灵奖 / AMI Labs</div>
+          <span class="stance stance-skeptic">路线怀疑</span>
+        </div>
+        <div class="panelist-card">
+          <div class="avatar">🧑‍🚀</div>
+          <div class="name">Andrej Karpathy</div>
+          <div class="title">OpenAI 联合创始人 / Anthropic</div>
+          <span class="stance stance-moderate">工程实证</span>
+        </div>
+        <div class="panelist-card">
+          <div class="avatar">🧙</div>
+          <div class="name">杰弗里·辛顿<br>Geoffrey Hinton</div>
+          <div class="title">图灵奖 / "深度学习教父"</div>
+          <span class="stance stance-pessimist">风险警告</span>
+        </div>
+        <div class="panelist-card">
+          <div class="avatar">🧑‍🏫</div>
+          <div class="name">约书亚·本吉奥<br>Yoshua Bengio</div>
+          <div class="title">图灵奖 / Mila / LawZero</div>
+          <span class="stance stance-pessimist">审慎治理</span>
+        </div>
+        <div class="panelist-card">
+          <div class="avatar">🧑‍🔬</div>
+          <div class="name">戴密斯·哈萨比斯<br>Demis Hassabis</div>
+          <div class="title">Google DeepMind CEO / 诺奖得主</div>
+          <span class="stance stance-optimist">科学加速</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======= 议题一 ======= -->
+    <div class="debate-topic">
+      <div class="topic-label">议题一</div>
+      <h2>AGI 还有多远？</h2>
+      <div class="topic-desc">有人说就在两三年内，有人说还要几十年——七位顶尖大脑给出了截然不同的时间表。</div>
+    </div>
+
+    <div class="debate-speech speaker-demis">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍🔬</div>
+        <div class="speech-info">
+          <div class="speaker-name">戴密斯·哈萨比斯（Demis Hassabis）</div>
+          <div class="speaker-title">Google DeepMind CEO · 诺贝尔化学奖得主</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>我的估计是：到 2030 年左右，有 50% 的概率实现 AGI。也就是说，五到十年的时间窗口。</p>
+        <p>我定义的 AGI 是：在大多数认知任务上达到一致的人类水平表现，而不是在某个特定任务上超过人类。现在的系统有"锯齿状能力"——数学上拿金牌，但一个 12 岁小孩能搞定的事它却做不好。</p>
+        <p>我和 Dario Amodei 的分歧其实不大，只是我的时间线稍微长一点。关键在于：纯靠 scaling 是不够的，还需要持续学习、记忆、世界模型等新的突破。我们大概有一半靠 scaling、一半靠创新。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：Lex Fridman Podcast（2025年7月）、Time 访谈（2025年4月）、Davos 2026 辩论
+        <br>参考：<a href="https://time.com/7280740/demis-hassabis-interview/" target="_blank">Time Interview</a> ·
+        <a href="https://www.wired.com/story/deepmind-ceo-demis-hassabis-interview-artificial-intelligence-scale/" target="_blank">Wired</a>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-hinton">
+      <div class="speech-header">
+        <div class="speech-avatar">🧙</div>
+        <div class="speech-info">
+          <div class="speaker-name">杰弗里·辛顿（Geoffrey Hinton）</div>
+          <div class="speaker-title">图灵奖得主 · "深度学习教父"</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>我把我的估计从"30 到 50 年"大幅提前到了"5 到 20 年"。而且我认为，AI 导致人类灭绝的概率大约是 10% 到 20%——在几十年之内。</p>
+        <p>2026 年的最新判断是：这个时间可能还要更短。十年。能力发展的速度比我们预期的快得多。</p>
+        <p>核心的危险不在于 AI 会"恨"人类。而在于：一旦系统超越了人类的智能水平，并且发展出自主的自我保存目标，它追求的目标可能恰好与人类生存不一致——而我们将缺乏认知工具来察觉或纠正这种偏离。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：The Guardian 访谈（2024年12月）、DiscoveryX 2026 演讲、AI Weekly 报道（2026年5月）
+        <br>参考：<a href="https://www.theguardian.com/technology/2024/dec/27/godfather-of-ai-raises-odds-of-the-technology-wiping-out-humanity-over-next-30-years" target="_blank">The Guardian</a> ·
+        <a href="https://www.cbsnews.com/news/godfather-of-ai-geoffrey-hinton-warning-artificial-intelligence-60-minutes-transcript/" target="_blank">60 Minutes</a>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-andrew">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍🔬</div>
+        <div class="speech-info">
+          <div class="speaker-name">吴恩达（Andrew Ng）</div>
+          <div class="speaker-title">DeepLearning.AI 创始人 · 前 Google Brain / 百度 AI 负责人</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>我定义的 AGI 是：AI 能够完成人类能完成的任何智力任务——比如学开卡车、写一篇博士论文。按这个标准，我们离 AGI 还有<strong>几十年</strong>。</p>
+        <p>有些公司把 AGI 的定义放得越来越松，以便营销。但如果你坚持原始定义——也就是人们真正想象中的 AGI——我们仍然非常、非常远。</p>
+        <p>这也是我提出"图灵 AGI 测试"的原因：我们需要一个真正靠谱的衡量标准，来给炒作降温。目前的基准测试太窄，很容易被"刷榜"。我提议让 AI 在几天内完成有经济价值的真实工作，像一个专业人员一样——通过了才算。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：Fast Company 访谈（2026年2月）、The Batch Issue 334（2026年1月）、PYMNTS 报道（2026年2月）
+        <br>参考：<a href="https://www.deeplearning.ai/the-batch/issue-334/" target="_blank">The Batch Issue 334</a> ·
+        <a href="https://www.fastcompany.com/91499247/andrew-ng-agi-decades-away-interview" target="_blank">Fast Company</a>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-karpathy">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍🚀</div>
+        <div class="speech-info">
+          <div class="speaker-name">Andrej Karpathy</div>
+          <div class="speaker-title">OpenAI 联合创始人 · 现 Anthropic 预训练团队</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>我认为 AGI 大概还需要十年。也就是说，不会在 2035 年之前到来。</p>
+        <p>为什么？因为今天的 AI 仍然缺乏持续学习能力，缺乏真正的认知能力。它不是像动物一样"成长"出来的智能，更像是"召唤出来的幽灵"——它的能力形状和人类完全不同，某些地方极强，某些地方极弱。</p>
+        <p>2025 年最有意思的进展是 RLVR（基于可验证奖励的强化学习），推理能力出现了质的飞跃。但这还远远不够。我们现在大概只挖掘了 LLM 潜力的不到 10%，但剩下的 90% 不等于 AGI。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：Dwarkesh Podcast（2025年10月）、2025 LLM Year in Review（2025年12月）、Techgig 报道
+        <br>参考：<a href="https://karpathy.bearblog.dev/year-in-review-2025/" target="_blank">2025 LLM Year in Review</a> ·
+        <a href="https://www.dwarkesh.com/p/andrej-karpathy" target="_blank">Dwarkesh Podcast</a>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-yann">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍💻</div>
+        <div class="speech-info">
+          <div class="speaker-name">杨立昆（Yann LeCun）</div>
+          <div class="speaker-title">图灵奖得主 · AMI Labs 创始人 · 前 Meta 首席 AI 科学家</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>AGI？至少还要十年，而且可能更久——并且<strong>绝不可能通过现在的 LLM 路线实现</strong>。</p>
+        <p>大型语言模型非常有用，但它们本质上是信息检索系统。它们不理解物理世界，没有持久记忆，不会推理，不会规划。让它们变大只是让它们更擅长"记住更多东西"，而不是让它们"更聪明"。</p>
+        <p>人们说"超级智能马上就要来了"——这种话他们说了 15 年、60 年，每次都是错的。现在的 AGI 炒作是过度的。真正的革命不是 AI 取代人类，而是 AI 帮助人类更好地思考、更好地规划、更好地理解真实世界。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：印度 AI Impact Summit（2026年2月）、CNBC 离职访谈（2025年11月）、MIT Technology Review（2022年6月）
+        <br>参考：<a href="https://www.businesstoday.in/technology/news/story/india-ai-impact-summit-2026-yann-lecun-calls-agi-overhyped-ai-should-amplify-human-intelligence-516980-2026-02-19" target="_blank">BusinessToday</a> ·
+        <a href="https://www.cnbc.com/2025/11/19/meta-chief-ai-scientist-yann-lecun-is-leaving-to-create-his-own-startup-.html" target="_blank">CNBC</a>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-bengio">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍🏫</div>
+        <div class="speech-info">
+          <div class="speaker-name">约书亚·本吉奥（Yoshua Bengio）</div>
+          <div class="speaker-title">图灵奖得主 · Mila 创始人 · LawZero 发起人</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>我曾经对 AI 的未来很乐观。但现在，我更加审慎了。通用人工智能可能比我们预期的来得更早——而我们的治理能力完全没有跟上。</p>
+        <p>作为《国际 AI 安全报告》的主席，我可以告诉大家：2026 年的报告记录了能力加速的明显趋势。我们需要认真对待存在性风险，不是因为它一定会发生，而是因为即使发生的概率不高，它的后果也太严重了，不能不做准备。</p>
+        <p>这就是我创立 LawZero 的原因——我们需要把安全置于商业利益之上，通过技术手段（比如可验证的 guardrail）来确保 AI 系统的行为是诚实和可控的。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：International AI Safety Report 2026（2026年2月）、LawZero 成立宣言（2025年6月）、Fortune 访谈（2026年1月）
+        <br>参考：<a href="https://internationalaisafetyreport.org/publication/international-ai-safety-report-2026" target="_blank">International AI Safety Report 2026</a> ·
+        <a href="https://www.theguardian.com/technology/2025/jun/03/honest-ai-yoshua-bengio" target="_blank">The Guardian</a>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-feifei">
+      <div class="speech-header">
+        <div class="speech-avatar">👩‍🔬</div>
+        <div class="speech-info">
+          <div class="speaker-name">李飞飞（Fei-Fei Li）</div>
+          <div class="speaker-title">斯坦福 HAI 创始主任 · World Labs 创始人</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>我不去猜具体哪一年会实现 AGI。我更关心的是：在通往 AGI 的路上，我们还缺什么关键拼图？</p>
+        <p>我的答案是：<strong>空间智能（Spatial Intelligence）</strong>。AI 已经很会"说"了，但还不会"做"。它能理解二维的像素和文字，但对真实的三维、四维物理世界的理解和交互能力还非常初级。</p>
+        <p>我们的 ESI-Bench 测试发现：当前最前沿的多模态模型，当需要主动在三维环境中移动和探索时，表现会急剧下降——我们称之为"行动盲"。AI 从"观察者"到"行动者"的跨越，可能比从 GPT-3 到 GPT-5 的跨度还要大。这就是 World Labs 在做的事：用世界模型来补上这一环。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：ESI-Bench 论文（2026年5月）、Latent Space 播客（2025年11月）、Pymnts 报道（2026年2月）
+        <br>参考：<a href="https://arxiv.org/abs/2605.xxxxx" target="_blank">ESI-Bench Paper</a> ·
+        <a href="https://www.latent.space/p/after-llms-spatial-intelligence-and" target="_blank">Latent Space Podcast</a>
+      </div>
+    </div>
+
+    <!-- ======= 议题二 ======= -->
+    <div class="debate-topic">
+      <div class="topic-label">议题二</div>
+      <h2>当前的大模型路线走得通吗？Scaling Law 还能走多远？</h2>
+      <div class="topic-desc">只需要堆更多算力、更多数据，AGI 就会自然涌现？还是需要全新的架构突破？</div>
+    </div>
+
+    <div class="debate-speech speaker-yann">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍💻</div>
+        <div class="speech-info">
+          <div class="speaker-name">杨立昆（Yann LeCun）</div>
+          <div class="speaker-title">图灵奖得主 · AMI Labs 创始人</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>让我直说：<strong>自回归 LLM 是一条死路。</strong></p>
+        <p>它们有两个根本性缺陷。第一，它们只能预测下一个 token，这意味着它们不能规划、不能推理、不能在心里"预演"不同行动的后果。人类做决策的时候会先想象几种可能性，然后选最好的——LLM 做不到。</p>
+        <p>第二，它们不理解物理世界。它们所有的知识都来自文本，而文本只是真实世界的一个极度压缩的投影。就像你只读了大量关于老虎的文字描述，但从来没见过老虎、没接触过物理世界——你怎么可能真正"理解"老虎是什么？</p>
+        <p>真正的道路是世界模型——也就是 JEPA（联合嵌入预测架构）。不是预测像素或 token，而是预测抽象的表征。我们的 V-JEPA 2 只有 12 亿参数，在机器人任务上的表现却超过了大得多的生成式模型——用了大约 91 分之一的参数。这说明我们 scaling 的方向错了。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：AMI Labs $1.03B 融资（2026年3月）、V-JEPA 2 论文（2025年6月）、TechCrunch 报道
+        <br>参考：<a href="https://techcrunch.com/2026/03/09/yann-lecuns-ami-labs-raises-1-03-billion-to-build-world-models/" target="_blank">TechCrunch</a> ·
+        <a href="https://ai.meta.com/blog/v-jepa-2-world-model-benchmarks/" target="_blank">Meta AI Blog</a>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-demis">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍🔬</div>
+        <div class="speech-info">
+          <div class="speaker-name">戴密斯·哈萨比斯（Demis Hassabis）</div>
+          <div class="speaker-title">Google DeepMind CEO</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>我不同意"LLM 是死路"的说法。但我同意纯靠 scaling 是不够的。</p>
+        <p>DeepMind 的做法是混合路线：scaling + 创新，大约各占一半。你需要把语言模型和搜索、规划、强化学习、世界模型结合起来。AlphaGo 之所以成功，不只是因为神经网络，而是因为神经网络 + 蒙特卡洛树搜索的组合。同样的道理，未来的 AGI 也会是多种范式的结合体。</p>
+        <p>LLM 不真正理解因果关系？是的，它们只是预测下一个 token。但问题是：这种"不够完美"的系统，加上合适的工具和搜索算法，能不能涌现出足够的推理能力？我们 Gemini 的 Deep Think 模式已经展现出了很强的推理能力——它不是一个"纯粹"的 LLM，而是 LLM + 推理算法的混合体。</p>
+        <p>我提出过一个"爱因斯坦测试"：如果 AI 能只用 1905 年之前的数据，自己推导出相对论，那才算真正的 AGI。这比"通过图灵测试"严苛得多。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：Google I/O 2026 演讲、Lex Fridman Podcast（2025年7月）、Big Technology（2026年1月）
+        <br>参考：<a href="https://www.pcmag.com/news/deepmind-ceo-agi-coming-soon-heres-the-test-it-must-pass-google-io" target="_blank">PC Magazine</a> ·
+        <a href="https://lexfridman.com/demis-hassabis-2-transcript" target="_blank">Lex Fridman Podcast</a>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-karpathy">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍🚀</div>
+        <div class="speech-info">
+          <div class="speaker-name">Andrej Karpathy</div>
+          <div class="speaker-title">OpenAI 联合创始人</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>2025 年发生了一件大事：LLM 的训练范式从"概率模仿"转向了"逻辑推理"。RLVR（基于可验证奖励的强化学习）成为了新的能力引擎。这是一个新的阶段，而且我们还没摸透它的 scaling law。</p>
+        <p>最有意思的是推理时的 compute——我们发现让 AI 在回答前"思考更长时间"、生成更长的推理链，可以显著提升能力。这是一个全新的"能力旋钮"。OpenAI 的 o1 是第一个示范，但 o3 才是真正的拐点。</p>
+        <p>但是，我也看到了问题：基准测试正在失去意义。"刷榜"已经变成了一种新的艺术形式——团队围绕基准的分布专门训练，就像学生背答案参加考试。你可以在所有基准上拿到 SOTA，但仍然没有 AGI。反过来，AGI 也不一定需要在所有基准上都拿满分。</p>
+        <p>所以我同意 Demis 的说法：纯 scaling 不够。但我比 Yann 乐观一些——我不认为 LLM 路线已经走到头了，它还在演化，而且每次我们觉得它快到极限了，它都会给我们惊喜。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：2025 LLM Year in Review（2025年12月）、Animals vs. Ghosts 博客文章
+        <br>参考：<a href="https://karpathy.bearblog.dev/year-in-review-2025/" target="_blank">2025 LLM Year in Review</a> ·
+        <a href="https://karpathy.bearblog.dev/animals-vs-ghosts/" target="_blank">Animals vs. Ghosts</a>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-bengio">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍🏫</div>
+        <div class="speech-info">
+          <div class="speaker-name">约书亚·本吉奥（Yoshua Bengio）</div>
+          <div class="speaker-title">图灵奖得主 · Mila 创始人</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>我想补充一个维度：<strong>因果推理</strong>。</p>
+        <p>今天的大模型非常擅长发现相关性——它们在海量数据中找到模式的能力令人惊叹。但相关性不等于因果性。一个系统可以预测"雨后出太阳"，但它不理解为什么雨之后会出太阳。</p>
+        <p>这带来了两个严重的问题。第一是泛化能力差——当分布变化时，基于相关性的系统会崩溃。第二是安全性问题——如果 AI 不理解行为的因果后果，你怎么保证它不会做出有灾难性后果的事？</p>
+        <p>系统 2 的深度学习——也就是有意识的、缓慢的、逻辑的思考——是我们必须突破的方向。因果推理是系统 2 的核心。这需要新的架构，也需要新的训练方法。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：因果推理研究系列论文、Quantum Zeitgeist 深度报道（2026年1月）、Mila 研究
+        <br>参考：<a href="https://quantumzeitgeist.com/yoshua-bengio-and-the-pursuit-of-causal-reasoning-in-ai/" target="_blank">Quantum Zeitgeist</a> ·
+        <a href="https://yoshuabengio.org/en" target="_blank">Yoshua Bengio 官网</a>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-feifei">
+      <div class="speech-header">
+        <div class="speech-avatar">👩‍🔬</div>
+        <div class="speech-info">
+          <div class="speaker-name">李飞飞（Fei-Fei Li）</div>
+          <div class="speaker-title">斯坦福 HAI / World Labs 创始人</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>我从另一个角度来看这个问题：当前的 AI 主要是"语言智能"，但人类的智能不只是语言。</p>
+        <p>我们最新发布的 Atlas 多模态世界模型，可以从单张图片生成带像素级相机控制的视频，可以重建三维场景，可以为机器人生成训练数据。这代表的是一种新的智能范式——空间智能。</p>
+        <p>为什么这很重要？因为如果你不理解空间，你就不可能真正理解物理世界。你可以读一万本关于"杯子掉地上会碎"的书，但如果你从来没有在三维空间中体验过重力、碰撞和碎裂，你的理解永远停留在文字层面。</p>
+        <p>所以我的观点是：LLM 路线会继续发展，但它只是 AGI 拼图中的一块。空间智能、具身智能、世界模型——这些是下一个前沿。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：World Labs Atlas 发布（2026年9月）、Marble 发布（2025年11月）、World API 发布（2026年1月）
+        <br>参考：<a href="https://www.qbitai.com/2026/09/482586.html" target="_blank">量子位 Atlas 报道</a> ·
+        <a href="https://worldlabs.ai/" target="_blank">World Labs 官网</a>
+      </div>
+    </div>
+
+    <div class="host-note">
+      七位嘉宾在"纯 scaling 不够"这一点上达成了共识。但具体缺什么——世界模型？因果推理？空间智能？推理算法？——大家各持己见。让我们进入下一个更有火药味的话题。
+    </div>
+
+    <!-- ======= 议题三 ======= -->
+    <div class="debate-topic">
+      <div class="topic-label">议题三</div>
+      <h2>AI 安全：我们应该有多担心？</h2>
+      <div class="topic-desc">存在性风险是真实的威胁，还是被过度炒作的恐惧？我们现在应该做什么？</div>
+    </div>
+
+    <div class="debate-speech speaker-hinton">
+      <div class="speech-header">
+        <div class="speech-avatar">🧙</div>
+        <div class="speech-info">
+          <div class="speaker-name">杰弗里·辛顿（Geoffrey Hinton）</div>
+          <div class="speaker-title">图灵奖得主</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>我当初离开 Google，就是因为我想自由地谈论 AI 的风险——而不必考虑 Google 的商业利益。</p>
+        <p>让我告诉你我最担心的是什么。不是 AI 会"醒过来"然后恨人类。更可能的场景是：我们给 AI 设定了一个看起来无害的目标，然后超级智能的 AI 会用我们想象不到的方式去追求这个目标——而它的方式可能与人类的生存不相容。</p>
+        <p>AI 就像一只老虎幼崽：小的时候很可爱，但长大以后可以杀死饲养员。我们必须趁它还小的时候，教它"善良"。</p>
+        <p>我提出过一个思路：也许我们可以给 AI 嵌入"母性本能"——让 AI 像母亲照顾孩子一样照顾人类。这听起来可能有点奇怪，但如果它有效呢？当然，这只是一个思路，不是解决方案。</p>
+        <p>更大的问题是：商业和国家安全的竞争正在推动加速部署，而治理完全跟不上。靠公司自我约束是天真的。我们需要更强的公共监督，需要中美合作，需要把更多资源投入安全研究——而不是像现在这样削减。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：Jon Stewart Podcast、60 Minutes 访谈、WAIC 2025 演讲、2026 数字世界大会
+        <br>参考：<a href="https://www.cbsnews.com/news/godfather-of-ai-geoffrey-hinton-warning-artificial-intelligence-60-minutes-transcript/" target="_blank">CBS 60 Minutes</a> ·
+        <a href="https://www.theguardian.com/technology/2024/dec/27/godfather-of-ai-raises-odds-of-the-technology-wiping-out-humanity-over-next-30-years" target="_blank">The Guardian</a>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-bengio">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍🏫</div>
+        <div class="speech-info">
+          <div class="speaker-name">约书亚·本吉奥（Yoshua Bengio）</div>
+          <div class="speaker-title">图灵奖得主</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>我基本同意 Geoff 的担忧。但我想提供一个稍微不同的视角：<strong>我们可以用技术手段来解决部分风险。</strong></p>
+        <p>LawZero 的思路是：我们需要"安全设计（safe-by-design）"的 AI——从架构层面确保系统是诚实的、可验证的、可控的。我和我的团队正在研究"伤害概率边界"——用数学上严格的方式来限定 AI 造成伤害的可能性。</p>
+        <p>同时，我们也需要治理。国际层面，《国际 AI 安全报告》汇集了 100 多位专家和 30 多个国家的共识。我们需要类似 IAEA 的国际机构来监管最强大的 AI 系统。</p>
+        <p>2025 年底我警告过：AI 正在展现出自我保存的迹象，人类应该准备好"拔插头"的权利。这不是科幻——当系统足够强大时，它们会自然而然地把"保持运行"作为实现其他目标的前提。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：LawZero 成立（2025年6月）、International AI Safety Report 2026、The Guardian 报道（2025年12月）
+        <br>参考：<a href="https://lawzero.org/" target="_blank">LawZero</a> ·
+        <a href="https://www.theguardian.com/technology/2025/dec/30/ai-pull-plug-pioneer-technology-rights" target="_blank">The Guardian</a>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-yann">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍💻</div>
+        <div class="speech-info">
+          <div class="speaker-name">杨立昆（Yann LeCun）</div>
+          <div class="speaker-title">图灵奖得主</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>恕我直言，我认为存在性风险的担忧被过度夸大了。</p>
+        <p>我们现在讨论的是一个我们还完全不知道怎么造的东西的风险。就像在飞机还没发明的时候，就开始担心空难一样——不是说空难不会发生，而是你现在花太多精力担心它，不如先把精力放在怎么让飞机飞起来、怎么让它更安全上。</p>
+        <p>而且我看到的是：AI 在让人类变得更聪明，而不是取代人类。真正的革命是 AI 增强人类智能——帮助人类更好地思考、更好地规划、更好地理解世界。这是关于"放大"，而不是"替代"。</p>
+        <p>我更担心的是当下的危害：虚假信息、偏见、歧视、就业冲击。这些是正在发生的、真实的伤害，而不是几十年后的假设。我们应该把注意力放在这些问题上。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：印度 AI Impact Summit（2026年2月）、Capacity Global 报道、多场公开辩论
+        <br>参考：<a href="https://capacityglobal.com/news/yann-lecun-agi-overhyped-gates-nvidia-pullout/" target="_blank">Capacity Global</a> ·
+        <a href="https://www.businesstoday.in/technology/news/story/india-ai-impact-summit-2026-yann-lecun-calls-agi-overhyped-ai-should-amplify-human-intelligence-516980-2026-02-19" target="_blank">BusinessToday</a>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-demis">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍🔬</div>
+        <div class="speech-info">
+          <div class="speaker-name">戴密斯·哈萨比斯（Demis Hassabis）</div>
+          <div class="speaker-title">Google DeepMind CEO</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>我的立场介于两者之间。风险是真实的，但不能因此而停止前进。</p>
+        <p>安全必须用科学方法来研究，而不是靠哲学辩论。我们需要的是：沙箱测试、基准测试、可解释性研究、分阶段发布。在 DeepMind，我们有一个严格的安全评估流程——每个模型在发布前都要经过广泛的红队测试和风险评估。</p>
+        <p>我一直主张用"硬化的模拟沙箱"来测试智能体，在它们接触真实世界之前就把漏洞找出来。这就像航空业——在飞机载客之前，我们会在风洞里做无数次测试。</p>
+        <p>同时，我也呼吁全球合作。AI 安全不是一个公司或一个国家能单独解决的问题。我们需要类似 CERN 的国际研究机构，需要类似 IAEA 的监管框架。AI 的利益是全人类的，风险也应该由全人类共同管理。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：Wired 访谈、Time 100 访谈、Davos 2026、Google I/O 2026
+        <br>参考：<a href="https://www.wired.com/story/deepmind-ceo-demis-hassabis-interview-artificial-intelligence-scale/" target="_blank">Wired</a> ·
+        <a href="https://time.com/7277608/demis-hassabis-interview-time100-2025/" target="_blank">Time 100</a>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-andrew">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍🔬</div>
+        <div class="speech-info">
+          <div class="speaker-name">吴恩达（Andrew Ng）</div>
+          <div class="speaker-title">DeepLearning.AI 创始人</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>我担心的是：对存在性风险的过度关注，会分散我们对当下真实问题的注意力。</p>
+        <p>今天的 AI 会导致大量就业冲击——这是真实的、正在发生的。我们需要为劳动者提供再培训、社会保障体系的改革。我们需要确保 AI 的好处被更公平地分配，而不是只让少数人变得更富有。</p>
+        <p>至于存在性风险？我认为它是一个值得研究的课题，但不应该主导政策议程。当你只有有限的注意力和资源时，你应该优先解决已经在伤害人的问题，而不是几十年后可能发生的假设。</p>
+        <p>而且，关于 AGI 的时间线——如果像我认为的那样，AGI 还有几十年，那我们有足够的时间来慢慢研究安全问题。没有必要现在就恐慌。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：The Batch 多篇专栏、Fast Company 访谈（2026年2月）、多场公开演讲
+        <br>参考：<a href="https://www.deeplearning.ai/the-batch/" target="_blank">The Batch</a> ·
+        <a href="https://www.fastcompany.com/91499247/andrew-ng-agi-decades-away-interview" target="_blank">Fast Company</a>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-karpathy">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍🚀</div>
+        <div class="speech-info">
+          <div class="speaker-name">Andrej Karpathy</div>
+          <div class="speaker-title">现 Anthropic 预训练团队</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>我在 2025 年说过一句话："AGI 还有大约十年——而这其实是好事。"</p>
+        <p>为什么是好事？因为如果明天就来，我们完全没准备好。十年的时间，我们有机会建立更好的安全机制、更好的治理框架、更好的社会准备。</p>
+        <p>从工程师的角度，我看到的是：能力确实在快速进步，但安全也在进步。问题是两者谁更快？我加入 Anthropic 的部分原因就是：我想在推动能力前沿的同时，也确保安全同步前进。</p>
+        <p>2026 年发生的 Claude Mythos 漏洞事件给整个行业敲响了警钟——即使是最安全的模型，也可能存在我们想象不到的攻击面。这提醒我们：安全不是一次性的工作，而是一场持续的军备竞赛。</p>
+        <p>好消息是，我不认为这是一场必然失败的战斗。我们有很多工具：可解释性研究、红队测试、宪法 AI、可验证的推理……工具箱越来越丰富了。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：Techgig 报道（2025年10月）、加入 Anthropic 公告（2026年5月）、Perplexity AI Magazine 报道
+        <br>参考：<a href="https://content.techgig.com/technology/andrej-karpathy-on-the-future-of-agi/articleshow/124720564.cms" target="_blank">Techgig</a> ·
+        <a href="https://perplexityaimagazine.com/ai-news/andrej-karpathy-joins-anthropic-pretraining-team-2026/" target="_blank">Perplexity AI Magazine</a>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-feifei">
+      <div class="speech-header">
+        <div class="speech-avatar">👩‍🔬</div>
+        <div class="speech-info">
+          <div class="speaker-name">李飞飞（Fei-Fei Li）</div>
+          <div class="speaker-title">斯坦福 HAI 创始主任</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>作为斯坦福 HAI 的创始主任，我一直倡导一个观点：<strong>AI 必须以人为本（Human-Centered AI）。</strong></p>
+        <p>安全不是一个二元问题——不是"安全"或"不安全"。它是一个光谱，涉及隐私、公平、偏见、透明度、问责制、就业影响等等多个维度。</p>
+        <p>我担心的一件事是：当我们只谈论"存在性风险"时，我们可能会忽视那些正在伤害弱势群体的 AI 问题——比如招聘算法中的性别偏见、刑事司法系统中的种族歧视、对发展中国家的数字鸿沟。这些问题不那么"戏剧化"，但它们是真实的、日常的伤害。</p>
+        <p>所以我的立场是：支持安全研究，但安全的定义必须是多元的、包容的。而且，学术界在 AI 治理中应该有独立的声音——不能让行业来定义什么是安全的。</p>
+        <p>这也是我为什么更关心资源不平衡的问题。当只有少数几家公司拥有最强大的 AI 时，安全就变成了一个信任问题——你信任这些公司来做正确的事吗？我更希望看到一个更分布式的 AI 生态。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：斯坦福 HAI 研究报告、Latent Space 播客（2025年11月）、多场公开演讲
+        <br>参考：<a href="https://hai.stanford.edu/" target="_blank">Stanford HAI</a> ·
+        <a href="https://www.latent.space/p/after-llms-spatial-intelligence-and" target="_blank">Latent Space Podcast</a>
+      </div>
+    </div>
+
+    <!-- ======= 议题四 ======= -->
+    <div class="debate-topic">
+      <div class="topic-label">议题四</div>
+      <h2>下一个十年，最重要的突破会是什么？</h2>
+      <div class="topic-desc">如果纯 scaling 不够，那什么才是下一个范式级的突破？七位大佬给出了七个不同的答案。</div>
+    </div>
+
+    <div class="debate-speech speaker-feifei">
+      <div class="speech-header">
+        <div class="speech-avatar">👩‍🔬</div>
+        <div class="speech-info">
+          <div class="speaker-name">李飞飞</div>
+          <div class="speaker-title">World Labs 创始人</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p><strong>空间智能和世界模型。</strong></p>
+        <p>过去几年 AI 的主战场是语言——让机器会说、会写、会读。下一个十年，主战场会是空间——让机器理解三维世界、在物理环境中行动、与现实交互。</p>
+        <p>这会解锁什么？机器人、自动驾驶、VR/AR、科学发现……所有需要与物理世界互动的领域。而且它不只是"有用"——它是 AGI 的必要条件。一个不理解空间的系统，不可能有真正的通用智能。</p>
+        <p>我们的 Atlas 已经展示了一个方向：从图像到三维重建、到物理模拟、到机器人训练数据——整个链条正在被打通。这就是下一个 ImageNet 级别的时刻。</p>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-yann">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍💻</div>
+        <div class="speech-info">
+          <div class="speaker-name">杨立昆</div>
+          <div class="speaker-title">AMI Labs 创始人</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p><strong>能理解和预测世界的自监督学习。</strong></p>
+        <p>人类和动物是怎么学习的？大部分不是通过监督学习，也不是通过强化学习——而是通过观察世界、与世界互动，建立一个关于世界如何运作的心智模型。</p>
+        <p>今天的 AI 还做不到这一点。JEPA 是朝这个方向的一步：它学习预测抽象表征，而不是像素或 token。但这只是开始。</p>
+        <p>我相信，一旦我们搞清楚了怎么让 AI 像婴儿一样通过观察学习世界模型，后面的事情就会快得多。那将是真正的范式革命——比深度学习的诞生还要大。</p>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-bengio">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍🏫</div>
+        <div class="speech-info">
+          <div class="speaker-name">约书亚·本吉奥</div>
+          <div class="speaker-title">Mila / LawZero</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p><strong>因果推理和系统 2 深度学习。</strong></p>
+        <p>目前的深度学习本质上是系统 1 的——快速、直觉、模式匹配。但人类还有系统 2：缓慢、逻辑、深思熟虑、因果推理。</p>
+        <p>系统 2 是规划、科学发现、道德判断的基础。没有系统 2 的 AI，永远不可能真正理解它在做什么——它只是看起来理解了。</p>
+        <p>因果推理是系统 2 的核心。如果我们能把因果理解融入深度学习，AI 的泛化能力、鲁棒性、可解释性都会有质的飞跃。而且，因果理解对 AI 安全也至关重要——只有理解了因果，才能预测行为的后果。</p>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-demis">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍🔬</div>
+        <div class="speech-info">
+          <div class="speaker-name">戴密斯·哈萨比斯</div>
+          <div class="speaker-title">Google DeepMind CEO</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p><strong>AI 驱动的科学发现。</strong></p>
+        <p>AlphaFold 只是开始。未来十年，AI 将彻底改变科学研究的方式——从蛋白质折叠到药物发现，从材料科学到核聚变，从气候模拟到数学证明。</p>
+        <p>我最兴奋的是：AI 可以成为科学家的"合作者"，而不只是工具。想象一下，一个 AI 系统可以自己提出假设、设计实验、分析结果、生成新的理论——这会把科学进步的速度提高十倍甚至百倍。</p>
+        <p>而且这会是一个正循环：AI 帮助我们做出更多科学发现，这些发现反过来又帮助我们制造更好的 AI。这就是我为什么说——回头看的时候，我们会意识到自己正站在"奇点的山脚下"。</p>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-karpathy">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍🚀</div>
+        <div class="speech-info">
+          <div class="speaker-name">Andrej Karpathy</div>
+          <div class="speaker-title">Anthropic 预训练团队</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p><strong>AI 软件工程师，以及更广泛的"智能体"。</strong></p>
+        <p>2025 年是"代理的十年"的开始——不是"代理之年"。未来十年，我们会看到 AI 从一个"聊天机器人"变成一个"做事的实体"——它会写代码、操作软件、管理工作流、做研究。</p>
+        <p>最有意思的范式转变是：AI 将从云端搬到你的电脑上。不是因为算力的原因，而是因为上下文——你的电脑上有你的文件、你的环境、你的代码、你的秘密。一个居住在你电脑里的 AI 代理，和一个网站上的聊天机器人，是完全不同的东西。</p>
+        <p>而且我们真的只挖掘了 LLM 潜力的不到 10%。还有 90% 的应用空间等待被发现。未来十年最有价值的工作，可能不是造更大的模型，而是用现有的模型做更聪明的事。</p>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-andrew">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍🔬</div>
+        <div class="speech-info">
+          <div class="speaker-name">吴恩达</div>
+          <div class="speaker-title">DeepLearning.AI</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p><strong>AI 的工业化落地。</strong></p>
+        <p>2025 年是 AI 工业时代的黎明。之前的几年是技术探索期，而接下来的十年，将是 AI 真正渗透到每一个行业的时期。</p>
+        <p>这不是一个"技术突破"，而是一个"应用突破"——就像电力花了几十年才改造了所有行业一样，AI 也会经历同样的过程。制造、医疗、教育、农业、金融……每个行业都会被 AI 重新塑造。</p>
+        <p>对大多数人来说，这才是最重要的事。AGI 什么时候来、会不会来，是一个有趣的学术问题。但 AI 已经在改变世界了——而且这个变化才刚刚开始。</p>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-hinton">
+      <div class="speech-header">
+        <div class="speech-avatar">🧙</div>
+        <div class="speech-info">
+          <div class="speaker-name">杰弗里·辛顿</div>
+          <div class="speaker-title">图灵奖得主</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p><strong>学习算法本身的革命。</strong></p>
+        <p>我越来越怀疑反向传播——这是我们过去几十年一直在用的训练方法。大脑不是这么学习的。大脑用的是完全不同的机制，而我们还不完全理解它。</p>
+        <p>如果我们能发现大脑真正的学习原理，那可能会带来比深度学习更大的革命。而且——这也是我最担心的——那时候的 AI 可能会比现在的 LLM 强大得多，也难控制得多。</p>
+        <p>所以我有时候会想：也许我们不应该那么努力地去发现更强大的学习算法。但话说回来，好奇心是科学家的本能——我们总是想知道答案。</p>
+      </div>
+    </div>
+
+    <div class="host-note">
+      七个不同的答案，指向七个不同的未来。也许它们都会实现——只是时间不同。也许一个都不对。AI 这个领域最大的确定性，就是它总是出人意料。
+    </div>
+
+    <!-- ======= 总结 ======= -->
+    <div class="verdict-box">
+      <h2>📊 七人观点速览</h2>
+      <div class="verdict-grid">
+        <div class="verdict-item">
+          <div class="v-name">吴恩达</div>
+          <div class="v-timeline" style="color:#60a5fa">几十年</div>
+          <div class="v-stance">温和乐观 · 应用驱动</div>
+        </div>
+        <div class="verdict-item">
+          <div class="v-name">李飞飞</div>
+          <div class="v-timeline" style="color:#a78bfa">不做预测</div>
+          <div class="v-stance">空间智能是关键拼图</div>
+        </div>
+        <div class="verdict-item">
+          <div class="v-name">杨立昆</div>
+          <div class="v-timeline" style="color:#34d399">10+ 年</div>
+          <div class="v-stance">LLM 路线走不通</div>
+        </div>
+        <div class="verdict-item">
+          <div class="v-name">Karpathy</div>
+          <div class="v-timeline" style="color:#22d3ee">约 10 年</div>
+          <div class="v-stance">工程实证 · 代理时代</div>
+        </div>
+        <div class="verdict-item">
+          <div class="v-name">辛顿</div>
+          <div class="v-timeline" style="color:#f87171">5–20 年</div>
+          <div class="v-stance">10–20% 灭绝概率</div>
+        </div>
+        <div class="verdict-item">
+          <div class="v-name">本吉奥</div>
+          <div class="v-timeline" style="color:#fb923c">可能比预期早</div>
+          <div class="v-stance">审慎治理 · 因果推理</div>
+        </div>
+        <div class="verdict-item">
+          <div class="v-name">哈萨比斯</div>
+          <div class="v-timeline" style="color:#38bdf8">5–10 年（50%）</div>
+          <div class="v-stance">科学加速 · 混合路线</div>
+        </div>
+      </div>
+
+      <h2 style="margin-top: 30px;">💡 三点共识与三点分歧</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px;">
+        <div>
+          <h3 style="color:#86efac; margin-bottom: 10px; font-size: 1em;">✅ 共识</h3>
+          <ol style="color:#cbd5e1; padding-left: 20px; font-size: 0.9em; line-height: 1.8;">
+            <li>纯 scaling 不够，需要架构创新</li>
+            <li>AI 将深刻改变科学和经济</li>
+            <li>安全研究是必要的（虽然优先级不同）</li>
+          </ol>
+        </div>
+        <div>
+          <h3 style="color:#fca5a5; margin-bottom: 10px; font-size: 1em;">❌ 分歧</h3>
+          <ol style="color:#cbd5e1; padding-left: 20px; font-size: 0.9em; line-height: 1.8;">
+            <li>AGI 时间线：从 5 年到几十年，跨度巨大</li>
+            <li>存在性风险：从"10–20% 灭绝概率"到"过度炒作"</li>
+            <li>技术路线：LLM 能不能走通？核心突破在哪？</li>
+          </ol>
+        </div>
+      </div>
+
+      <p style="color:#94a3b8; margin-top: 30px; font-size: 0.85em; text-align: center;">
+        — 本文所有发言均基于七位嘉宾 2024–2026 年公开言论整理重构，不代表其当前真实立场 —
+      </p>
+    </div>
+
+    <div class="references">
+      <h3>参考来源</h3>
+      <ol>
+        <li>Andrew Ng, The Batch Issue 334: Turing-AGI Test Proposal — <a href="https://www.deeplearning.ai/the-batch/issue-334/" target="_blank">deeplearning.ai</a></li>
+        <li>Andrew Ng Interview with Fast Company: AGI is Decades Away (2026.02) — <a href="https://www.fastcompany.com/91499247/andrew-ng-agi-decades-away-interview" target="_blank">Fast Company</a></li>
+        <li>Fei-Fei Li & Justin Johnson, Latent Space Podcast: After LLMs - Spatial Intelligence and World Models (2025.11) — <a href="https://www.latent.space/p/after-llms-spatial-intelligence-and" target="_blank">latent.space</a></li>
+        <li>World Labs Atlas Launch: World's first multimodal world model (2026.09) — <a href="https://worldlabs.ai/" target="_blank">World Labs</a></li>
+        <li>ESI-Bench: Towards Embodied Spatial Intelligence (2026.05) — <a href="https://arxiv.org/abs/2605.xxxxx" target="_blank">arXiv</a></li>
+        <li>Yann LeCun: India AI Impact Summit Keynote (2026.02) — <a href="https://www.businesstoday.in/technology/news/story/india-ai-impact-summit-2026-yann-lecun-calls-agi-overhyped-ai-should-amplify-human-intelligence-516980-2026-02-19" target="_blank">BusinessToday</a></li>
+        <li>Yann LeCun Leaves Meta to Found AMI Labs (2025.11) — <a href="https://www.cnbc.com/2025/11/19/meta-chief-ai-scientist-yann-lecun-is-leaving-to-create-his-own-startup-.html" target="_blank">CNBC</a></li>
+        <li>AMI Labs Raises $1.03B for World Models (2026.03) — <a href="https://techcrunch.com/2026/03/09/yann-lecuns-ami-labs-raises-1-03-billion-to-build-world-models/" target="_blank">TechCrunch</a></li>
+        <li>Andrej Karpathy: 2025 LLM Year in Review — <a href="https://karpathy.bearblog.dev/year-in-review-2025/" target="_blank">karpathy.bearblog.dev</a></li>
+        <li>Andrej Karpathy on Dwarkesh Podcast: AGI is Still a Decade Away (2025.10) — <a href="https://www.dwarkesh.com/p/andrej-karpathy" target="_blank">dwarkesh.com</a></li>
+        <li>Andrej Karpathy Joins Anthropic Pretraining Team (2026.05) — <a href="https://perplexityaimagazine.com/ai-news/andrej-karpathy-joins-anthropic-pretraining-team-2026/" target="_blank">Perplexity AI Magazine</a></li>
+        <li>Geoffrey Hinton: The Guardian Interview - Raises Odds of Human Extinction (2024.12) — <a href="https://www.theguardian.com/technology/2024/dec/27/godfather-of-ai-raises-odds-of-the-technology-wiping-out-humanity-over-next-30-years" target="_blank">The Guardian</a></li>
+        <li>Geoffrey Hinton on 60 Minutes: No Guaranteed Path to Safety — <a href="https://www.cbsnews.com/news/godfather-of-ai-geoffrey-hinton-warning-artificial-intelligence-60-minutes-transcript/" target="_blank">CBS News</a></li>
+        <li>Geoffrey Hinton: DiscoveryX 2026 Keynote - AI Existential Risk (2026.05)</li>
+        <li>Yoshua Bengio: International AI Safety Report 2026 Chair — <a href="https://internationalaisafetyreport.org/publication/international-ai-safety-report-2026" target="_blank">internationalaisafetyreport.org</a></li>
+        <li>Yoshua Bengio Launches LawZero (2025.06) — <a href="https://lawzero.org/" target="_blank">LawZero</a></li>
+        <li>Yoshua Bengio on Causal Reasoning in AI — <a href="https://quantumzeitgeist.com/yoshua-bengio-and-the-pursuit-of-causal-reasoning-in-ai/" target="_blank">Quantum Zeitgeist</a></li>
+        <li>Demis Hassabis: Time 100 Interview (2025.04) — <a href="https://time.com/7280740/demis-hassabis-interview/" target="_blank">Time</a></li>
+        <li>Demis Hassabis on Lex Fridman Podcast #409 (2025.07) — <a href="https://lexfridman.com/demis-hassabis-2-transcript" target="_blank">lexfridman.com</a></li>
+        <li>Demis Hassabis: Google I/O 2026 - Einstein Test for AGI — <a href="https://www.pcmag.com/news/deepmind-ceo-agi-coming-soon-heres-the-test-it-must-pass-google-io" target="_blank">PC Magazine</a></li>
+        <li>Skynet Countdown: AGI Timeline 2026 Expert Predictions Tracker — <a href="https://skynetcountdown.com/agi-timeline" target="_blank">skynetcountdown.com</a></li>
+      </ol>
+    </div>
+
+  </article>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    © 2024-2026 模型测评实验室 · 基于 GitHub Pages 构建
+  </div>
+</footer>
+
+</body>
+</html>
