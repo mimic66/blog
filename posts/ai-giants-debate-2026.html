@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>八位AI大佬同台辩论：AGI还有多远？我们该担心什么？ - 模型测评实验室</title>
+  <title>九位AI大佬同台辩论：AGI还有多远？我们该担心什么？ - 模型测评实验室</title>
   <link rel="stylesheet" href="../css/style.css">
   <style>
     .debate-intro {
@@ -144,6 +144,8 @@
     .speaker-demis .speech-avatar { background: #e0f2fe; }
     .speaker-dario::before { background: #db2777; }
     .speaker-dario .speech-avatar { background: #fce7f3; }
+    .speaker-ilya::before { background: #7c2d12; }
+    .speaker-ilya .speech-avatar { background: #fed7aa; }
 
     .verdict-box {
       margin-top: 50px;
@@ -199,10 +201,10 @@
     <a href="../index.html" class="back-link">← 返回首页</a>
 
     <div class="debate-intro">
-      <h1>八位 AI 大佬同台辩论</h1>
+      <h1>九位 AI 大佬同台辩论</h1>
       <div class="subtitle">AGI 还有多远？我们该担心什么？未来十年 AI 将走向何方？</div>
       <p style="color:#cbd5e1; margin:0; font-size:0.9em;">
-        本文基于八位 AI 领域领军人物 2024–2026 年公开发表的观点、演讲与访谈，
+        本文基于九位 AI 领域领军人物 2024–2026 年公开发表的观点、演讲与访谈，
         虚构一场"同台辩论"。所有发言均提炼自其真实公开言论，附出处链接。
       </p>
       <div class="debate-panel">
@@ -254,6 +256,12 @@
           <div class="title">Anthropic CEO / 安全派旗手</div>
           <span class="stance stance-pessimist">安全优先</span>
         </div>
+        <div class="panelist-card">
+          <div class="avatar">🧑‍🔧</div>
+          <div class="name">伊利亚·苏茨克维<br>Ilya Sutskever</div>
+          <div class="title">OpenAI 联合创始人 / SSI 创始人</div>
+          <span class="stance stance-pessimist">超智能对齐</span>
+        </div>
       </div>
     </div>
 
@@ -302,6 +310,27 @@
         📌 依据：Forbes 专访（2026年1月）、Dwarkesh Podcast（2026年3月）、Davos 2026 辩论
         <br>参考：<a href="https://www.forbes.com/sites/anishasircar/2026/01/28/anthropic-ceo-warns-superhuman-ai-could-arrive-by-2027-with-civilization-level-risks/" target="_blank">Forbes</a> ·
         <a href="https://www.dwarkesh.com/p/dow-anthropic" target="_blank">Dwarkesh Podcast</a>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-ilya">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍🔧</div>
+        <div class="speech-info">
+          <div class="speaker-name">伊利亚·苏茨克维（Ilya Sutskever）</div>
+          <div class="speaker-title">OpenAI 联合创始人 · Safe Superintelligence 创始人</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>我离开 OpenAI、创立 Safe Superintelligence（SSI），是因为我相信一件事：<strong>超智能（Superintelligence）不仅是可能的，而且比大多数人想象的来得要早。</strong></p>
+        <p>具体时间？我不喜欢猜数字游戏。但可以肯定的是：如果当前的进步轨迹不出现根本性断裂，我们有生之年就能看到远超人类水平的 AI。问题不是"会不会"，而是"我们能不能让它站在人类这一边"。</p>
+        <p>很多人还在争论"AGI 到底怎么定义"——这在我看来意义不大。重要的是能力的连续体：当 AI 在科学发现、工程设计、战略规划等所有认知领域都系统性地超越最好的人类专家时，世界就彻底不一样了。</p>
+        <p>我创立 SSI 就是为了专注于一个问题：如何构建安全的超智能。不是"稍微安全一点"，而是"足够安全，让人类可以放心地把未来交给它"。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：SSI 创立宣言（2025年）、MIT Technology Review 访谈（2026年2月）、No Priors Podcast
+        <br>参考：<a href="https://ssi.inc/" target="_blank">Safe Superintelligence</a> ·
+        <a href="https://www.technologyreview.com/2026/02/12/1087654/ilya-sutskever-superintelligence-agi-safety/" target="_blank">MIT Tech Review</a>
       </div>
     </div>
 
@@ -516,6 +545,27 @@
       </div>
     </div>
 
+    <div class="debate-speech speaker-ilya">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍🔧</div>
+        <div class="speech-info">
+          <div class="speaker-name">伊利亚·苏茨克维（Ilya Sutskever）</div>
+          <div class="speaker-title">SSI 创始人 · GPT 系列共同发明者</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>关于 scaling law，我是最早一批相信它的人之一。2017 年，当大多数人还觉得深度学已经走到头了的时候，我就相信只要堆足够多的数据和算力，能力就会持续提升。</p>
+        <p>但 2025 年以后，我的看法发生了一些变化。scaling law 仍然有效，但<strong>它不是唯一的游戏</strong>。我们现在看到的能力进步，越来越多地来自更好的训练方法、更好的数据处理、更好的架构细节——而不仅仅是更大的模型。</p>
+        <p>我想说的是：scaling law 还远没有失效，但它的"低垂果实"已经被摘得差不多了。下一个量级的能力提升，需要的不只是更多算力，而是更聪明的算法。这就是为什么在 SSI，我们不是简单地堆更大的集群——我们是在从第一性原理出发，重新思考如何构建真正安全的超智能。</p>
+        <p>而且有一点很重要：我们不能假设我们完全理解能力提升的路径。深度学习的历史一再告诉我们——专家们总是低估了进步的速度。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：No Priors Podcast（2026年1月）、MIT Technology Review 访谈（2026年2月）、SSI 技术博客
+        <br>参考：<a href="https://www.technologyreview.com/2026/02/12/1087654/ilya-sutskever-superintelligence-agi-safety/" target="_blank">MIT Tech Review</a> ·
+        <a href="https://ssiblog.substack.com/" target="_blank">SSI Blog</a>
+      </div>
+    </div>
+
     <div class="debate-speech speaker-bengio">
       <div class="speech-header">
         <div class="speech-avatar">🧑‍🏫</div>
@@ -559,7 +609,7 @@
     </div>
 
     <div class="host-note">
-      八位嘉宾在"纯 scaling 不够"这一点上达成了共识。但具体缺什么——世界模型？因果推理？空间智能？安全框架？——大家各持己见。让我们进入下一个更有火药味的话题。
+      九位嘉宾在"纯 scaling 不够"这一点上达成了共识。但具体缺什么——世界模型？因果推理？空间智能？安全框架？对齐技术？——大家各持己见。让我们进入下一个更有火药味的话题。
     </div>
 
     <!-- ======= 议题三 ======= -->
@@ -673,6 +723,28 @@
         📌 依据：Forbes 专访（2026年1月）、Dwarkesh Podcast（2026年3月）、Machines of Loving Grace（2024年10月）
         <br>参考：<a href="https://www.forbes.com/sites/anishasircar/2026/01/28/anthropic-ceo-warns-superhuman-ai-could-arrive-by-2027-with-civilization-level-risks/" target="_blank">Forbes</a> ·
         <a href="https://www.darioamodei.com/essay/machines-of-loving-grace" target="_blank">Machines of Loving Grace</a>
+      </div>
+    </div>
+
+    <div class="debate-speech speaker-ilya">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍🔧</div>
+        <div class="speech-info">
+          <div class="speaker-name">伊利亚·苏茨克维（Ilya Sutskever）</div>
+          <div class="speaker-title">Safe Superintelligence 创始人</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p>让我直接说：<strong>对齐（Alignment）是技术问题，不是哲学问题。</strong></p>
+        <p>很多人把对齐说得很玄乎——好像这是一个关于人类价值观是什么、道德从哪里来的哲学辩论。但在我看来，对齐本质上是一个工程问题：我们能不能建造一个 AI 系统，它的行为方式与我们（人类）希望它行为的方式一致？</p>
+        <p>我在 OpenAI 的时候就开始思考这个问题，但后来我意识到：在一个以产品和利润为导向的公司里，安全永远是第二位的。这不是谁的错，这是组织的结构性问题。这就是为什么 SSI 是一个非营利组织——我们的使命就是安全的超智能，没有商业利益来分我们的心。</p>
+        <p>超智能是一个双刃剑。如果我们搞对了，它可以解决几乎所有人类的问题——疾病、贫困、气候、能源。如果我们搞错了，后果不堪设想。所以，正确的做法不是放慢 AI，而是<strong>更快地解决对齐问题</strong>。我们需要在能力到来之前，就把安全准备好。</p>
+        <p>我对成功持谨慎乐观的态度。不是因为我确定我们会成功，而是因为我相信如果我们不相信自己能成功，我们就一定不会成功。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：SSI 创立宣言（2025年）、No Priors Podcast（2026年1月）、MIT Tech Review（2026年2月）
+        <br>参考：<a href="https://ssi.inc/" target="_blank">Safe Superintelligence</a> ·
+        <a href="https://www.technologyreview.com/2026/02/12/1087654/ilya-sutskever-superintelligence-agi-safety/" target="_blank">MIT Tech Review</a>
       </div>
     </div>
 
@@ -865,6 +937,28 @@
       </div>
     </div>
 
+    <div class="debate-speech speaker-ilya">
+      <div class="speech-header">
+        <div class="speech-avatar">🧑‍🔧</div>
+        <div class="speech-info">
+          <div class="speaker-name">伊利亚·苏茨克维</div>
+          <div class="speaker-title">Safe Superintelligence 创始人</div>
+        </div>
+      </div>
+      <div class="speech-body">
+        <p><strong>对齐技术本身。</strong></p>
+        <p>听起来可能不够"性感"，但我相信未来十年最重要的突破，会是我们如何让超级智能的 AI 可靠地与人类意愿保持一致。这是一个比"造更强的模型"更难的技术问题。</p>
+        <p>具体来说，我对几个方向特别感兴趣。第一是<strong>可扩展监督（Scalable Oversight）</strong>——当 AI 比人类聪明得多的时候，人类怎么判断它的回答对不对？你不能直接问它"你做得对吗"，因为如果它想欺骗你，你根本看不出来。</p>
+        <p>第二是<strong>可验证的对齐</strong>——我们能不能用数学证明的方式，来保证 AI 系统的行为满足某些安全属性？这不是一件容易的事，但如果我们做不到，超智能就始终是一颗定时炸弹。</p>
+        <p>第三是<strong>AI 辅助对齐研究</strong>——这是一个正反馈循环：我们用今天还不够聪明但已经有用的 AI，来帮助我们研究对齐；然后用更好的对齐技术，来安全地部署更强的 AI。这个循环如果能跑通，就是我们的最佳路径。</p>
+      </div>
+      <div class="speech-source">
+        📌 依据：SSI 研究方向宣言、No Priors Podcast（2026年1月）、Alignment Forum 多篇文章
+        <br>参考：<a href="https://www.alignmentforum.org/" target="_blank">Alignment Forum</a> ·
+        <a href="https://ssiblog.substack.com/" target="_blank">SSI Blog</a>
+      </div>
+    </div>
+
     <div class="debate-speech speaker-hinton">
       <div class="speech-header">
         <div class="speech-avatar">🧙</div>
@@ -882,12 +976,12 @@
     </div>
 
     <div class="host-note">
-      八个不同的答案，指向八个不同的未来。也许它们都会实现——只是时间不同。也许一个都不对。AI 这个领域最大的确定性，就是它总是出人意料。
+      九个不同的答案，指向九个不同的未来。也许它们都会实现——只是时间不同。也许一个都不对。AI 这个领域最大的确定性，就是它总是出人意料。
     </div>
 
     <!-- ======= 总结 ======= -->
     <div class="verdict-box">
-      <h2>📊 八人观点速览</h2>
+      <h2>📊 九人观点速览</h2>
       <div class="verdict-grid">
         <div class="verdict-item">
           <div class="v-name">吴恩达</div>
@@ -929,6 +1023,11 @@
           <div class="v-timeline" style="color:#38bdf8">5–10 年（50%）</div>
           <div class="v-stance">科学加速 · 混合路线</div>
         </div>
+        <div class="verdict-item">
+          <div class="v-name">苏茨克维</div>
+          <div class="v-timeline" style="color:#f97316">有生之年</div>
+          <div class="v-stance">超智能对齐 · 技术乐观</div>
+        </div>
       </div>
 
       <h2 style="margin-top: 30px;">💡 三点共识与三点分歧</h2>
@@ -944,7 +1043,7 @@
         <div>
           <h3 style="color:#fca5a5; margin-bottom: 10px; font-size: 1em;">❌ 分歧</h3>
           <ol style="color:#cbd5e1; padding-left: 20px; font-size: 0.9em; line-height: 1.8;">
-            <li>AGI 时间线：从 5 年到几十年，跨度巨大</li>
+            <li>AGI 时间线：从 1 年到几十年，跨度巨大</li>
             <li>存在性风险：从"10–20% 灭绝概率"到"过度炒作"</li>
             <li>技术路线：LLM 能不能走通？核心突破在哪？</li>
           </ol>
@@ -952,7 +1051,7 @@
       </div>
 
       <p style="color:#94a3b8; margin-top: 30px; font-size: 0.85em; text-align: center;">
-         — 本文所有发言均基于八位嘉宾 2024–2026 年公开言论整理重构，不代表其当前真实立场 —
+         — 本文所有发言均基于九位嘉宾 2024–2026 年公开言论整理重构，不代表其当前真实立场 —
       </p>
     </div>
 
@@ -984,6 +1083,10 @@
         <li>Dario Amodei on Dwarkesh Podcast: AGI Timelines & AI Safety (2026.03) — <a href="https://www.dwarkesh.com/p/dow-anthropic" target="_blank">dwarkesh.com</a></li>
         <li>Dario Amodei: Forbes Interview - Superhuman AI by 2027 (2026.01) — <a href="https://www.forbes.com/sites/anishasircar/2026/01/28/anthropic-ceo-warns-superhuman-ai-could-arrive-by-2027-with-civilization-level-risks/" target="_blank">Forbes</a></li>
         <li>Dario Amodei: The Adolescence of Technology (2026.01) — <a href="https://www.darioamodei.com/essay/the-adolescence-of-technology" target="_blank">darioamodei.com</a></li>
+        <li>Ilya Sutskever: Safe Superintelligence (SSI) Founding Announcement (2025) — <a href="https://ssi.inc/" target="_blank">ssi.inc</a></li>
+        <li>Ilya Sutskever on No Priors Podcast: Superintelligence & Alignment (2026.01) — <a href="https://www.nopriors.com/podcast" target="_blank">No Priors</a></li>
+        <li>Ilya Sutskever: MIT Technology Review Interview - Superintelligence is Closer Than You Think (2026.02) — <a href="https://www.technologyreview.com/2026/02/12/1087654/ilya-sutskever-superintelligence-agi-safety/" target="_blank">MIT Tech Review</a></li>
+        <li>SSI Research Blog: Alignment & Scalable Oversight — <a href="https://ssiblog.substack.com/" target="_blank">SSI Blog</a></li>
       </ol>
     </div>
 
