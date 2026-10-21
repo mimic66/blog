@@ -959,7 +959,10 @@
     </p>
 
     <p>
-      传统的经验法则是 1:3:1 或者 1:4:1（产品:开发:测试），但那个比例是建立在"测试是最后一道防线、所有功能都要人工测一遍"的假设上的。
+      传统的经验法则是 1:3:1 到 1:5:1（产品:开发:测试），不同行业和团队差异很大。
+      中小团队常见 1:3:1，大厂成熟产品线通常在 1:4:1 到 1:6:1 之间——
+      因为大厂自动化程度更高、测试基础设施更完善，不需要那么多手工测试人员。
+      但不管是哪个比例，底层假设都是一样的：<strong>测试是最后一道防线，所有功能都要过一遍测试。</strong>
       在 AI 放大 + 质量内建的新模式下，这个比例会发生显著变化。
     </p>
 
@@ -1174,8 +1177,8 @@
       </tr>
       <tr style="background: #fef2f2;">
         <td><strong>传统模式对比</strong><br>（人工测试为主）</td>
-        <td style="text-align: center; font-weight: 700; color: #dc2626;">1 : 3 : 1 ~ 1: 2 : 1</td>
-        <td>AI 工具未普及<br>测试以人工功能测试为主</td>
+        <td style="text-align: center; font-weight: 700; color: #dc2626;">1:3:1 ~ 1:5:1</td>
+        <td>AI 工具未普及，自动化程度不一<br>中小团队 1:3:1，大厂 1:4:1 ~ 1:6:1</td>
         <td>测试是最后一道防线<br>质量靠堆测试人力兜底</td>
       </tr>
     </table>
@@ -1183,9 +1186,11 @@
     <div class="callout yellow">
       <strong>关键判断：测试不是越少越好</strong><br>
       AI 时代测试的人数会减少，但测试的质量要求会更高。
-      从 1:3:1 变成 1:4:1.5，测试的<strong>相对比例</strong>确实降了（从 20% 降到约 14%），
-      但测试团队的<strong>能力密度</strong>需要大幅提升——
-      从"按用例执行的人"变成"设计失效模式、搭建质量基础设施、做独立审计的专家"。
+      从传统的 1:4:1 变成 AI 时代的 1:4:1.5？不对，应该这样看——
+      在 AI 加持下，开发的产出效率大幅提升，而测试的角色从"执行者"升级为"策略设计者"，
+      <strong>相对比例看起来变化不大，但绝对值变了</strong>：
+      以前 10 个开发配 2.5 个测试，现在 10 个开发（AI 加持后产出顶以前 15 个）配 3~4 个更资深的测试。
+      比例差不多，但测试的能力密度和价值密度完全不一样了。
       <br><br>
       换句话说：<strong>测试人数可以少一半，但每个人的能力要求要翻一倍。</strong>
     </div>
@@ -1644,8 +1649,9 @@
         <li><strong>测试金字塔与测试左移</strong>——Mike Cohn 提出的测试金字塔（2009）是行业经典模型；"测试左移"（Shift-Left Testing）在 DevOps 运动中被广泛采用，核心是把测试往开发流程上游推。
           <br>参考：<a href="https://www.mountaingoatsoftware.com/blog/the-forgotten-layer-of-the-test-automation-pyramid" target="_blank">Mike Cohn - Test Automation Pyramid</a>
         </li>
-        <li><strong>独立测试团队的价值再定位</strong>——Rex Black 等测试领域学者提出了"质量审计"视角的测试团队定位；Google Test Analytics 和 Microsoft 工程部的实践也验证了"测试从执行者转向策略设计者"的趋势。
-          <br>参考：<a href="https://testing.googleblog.com/" target="_blank">Google Testing Blog</a>
+        <li><strong>独立测试团队的价值再定位</strong>——Rex Black 等测试领域学者提出了"质量审计"视角的测试团队定位；Google Test Analytics 和 Microsoft 工程部的实践也验证了"测试从执行者转向策略设计者"的趋势。大厂成熟产品线的开发:测试比例通常在 4:1 到 6:1 之间，远高于行业平均水平——核心原因是自动化测试基础设施完善，不需要大量手工测试人员。
+          <br>参考：<a href="https://testing.googleblog.com/" target="_blank">Google Testing Blog</a> ·
+          <a href="https://medium.com/microsoft-engineering" target="_blank">Microsoft Engineering</a>
         </li>
         <li><strong>组织变革推进方法</strong>——基于 John Kotter 的 "8-Step Process for Leading Change" 组织变革模型，以及 Lean Change Management（Jason Little）中"小步快跑 + 反馈闭环"的落地方法。
           <br>参考：<a href="https://www.kotterinc.com/8-steps-process-for-leading-change/" target="_blank">Kotter 8-Step</a> ·
