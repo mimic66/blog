@@ -898,6 +898,187 @@
       而人类的工作是从线上问题中学习，反向更新各自的"质量模型"。
     </p>
 
+    <h2>全周期人力投入地图：各阶段角色占比参考</h2>
+
+    <p>
+      讲完了分工和协同方式，一个很实际的问题是：<strong>产品、开发、测试到底应该配多少人？比例是多少？</strong>
+    </p>
+
+    <p>
+      传统的经验法则是 1:3:1 或者 1:4:1（产品:开发:测试），但那个比例是建立在"测试是最后一道防线、所有功能都要人工测一遍"的假设上的。
+      在 AI 放大 + 质量内建的新模式下，这个比例会发生显著变化。
+    </p>
+
+    <p>下面这张图展示了在新模式下，一个典型研发周期（从需求到上线后运营）中，三个角色在各阶段的人力投入占比：</p>
+
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 28px 24px; margin: 24px 0; overflow-x: auto;">
+      <svg viewBox="0 0 720 420" xmlns="http://www.w3.org/2000/svg" style="width: 100%; min-width: 600px; font-family: -apple-system, 'PingFang SC', sans-serif;">
+        <defs>
+          <linearGradient id="pmGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+          </linearGradient>
+          <linearGradient id="devGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+          </linearGradient>
+          <linearGradient id="qaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+
+        <text x="360" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#0f172a">各阶段角色人力投入占比（以阶段总人力为100%）</text>
+
+        <g transform="translate(120, 50)">
+          <text x="0" y="28" font-size="12" font-weight="600" fill="#334155">需求定义期</text>
+          <rect x="0" y="38" width="60" height="22" fill="url(#pmGrad)" rx="3"/>
+          <text x="30" y="53" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">50%</text>
+          <rect x="60" y="38" width="36" height="22" fill="url(#devGrad)" rx="0 3 3 0"/>
+          <text x="78" y="53" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">30%</text>
+          <rect x="96" y="38" width="24" height="22" fill="url(#qaGrad)" rx="0 3 3 0"/>
+          <text x="108" y="53" text-anchor="middle" font-size="10" font-weight="600" fill="#78350f">20%</text>
+
+          <text x="0" y="90" font-size="12" font-weight="600" fill="#334155">设计评审期</text>
+          <rect x="0" y="100" width="48" height="22" fill="url(#pmGrad)" rx="3"/>
+          <text x="24" y="115" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">40%</text>
+          <rect x="48" y="100" width="48" height="22" fill="url(#devGrad)"/>
+          <text x="72" y="115" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">40%</text>
+          <rect x="96" y="100" width="24" height="22" fill="url(#qaGrad)" rx="0 3 3 0"/>
+          <text x="108" y="115" text-anchor="middle" font-size="10" font-weight="600" fill="#78350f">20%</text>
+
+          <text x="0" y="152" font-size="12" font-weight="600" fill="#334155">开发实现期</text>
+          <rect x="0" y="162" width="18" height="22" fill="url(#pmGrad)" rx="3"/>
+          <text x="9" y="177" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">15%</text>
+          <rect x="18" y="162" width="66" height="22" fill="url(#devGrad)"/>
+          <text x="51" y="177" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">55%</text>
+          <rect x="84" y="162" width="36" height="22" fill="url(#qaGrad)" rx="0 3 3 0"/>
+          <text x="102" y="177" text-anchor="middle" font-size="11" font-weight="600" fill="#78350f">30%</text>
+
+          <text x="0" y="214" font-size="12" font-weight="600" fill="#334155">验证测试期</text>
+          <rect x="0" y="224" width="18" height="22" fill="url(#pmGrad)" rx="3"/>
+          <text x="9" y="239" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">15%</text>
+          <rect x="18" y="224" width="48" height="22" fill="url(#devGrad)"/>
+          <text x="42" y="239" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">40%</text>
+          <rect x="66" y="224" width="54" height="22" fill="url(#qaGrad)" rx="0 3 3 0"/>
+          <text x="93" y="239" text-anchor="middle" font-size="11" font-weight="600" fill="#78350f">45%</text>
+
+          <text x="0" y="276" font-size="12" font-weight="600" fill="#334155">上线运营期</text>
+          <rect x="0" y="286" width="42" height="22" fill="url(#pmGrad)" rx="3"/>
+          <text x="21" y="301" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">35%</text>
+          <rect x="42" y="286" width="36" height="22" fill="url(#devGrad)"/>
+          <text x="60" y="301" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">30%</text>
+          <rect x="78" y="286" width="42" height="22" fill="url(#qaGrad)" rx="0 3 3 0"/>
+          <text x="99" y="301" text-anchor="middle" font-size="11" font-weight="600" fill="#78350f">35%</text>
+        </g>
+
+        <g transform="translate(320, 50)">
+          <rect x="0" y="0" width="280" height="310" rx="8" fill="#fff" stroke="#e2e8f0" stroke-width="1"/>
+          <text x="140" y="26" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">阶段任务清单（核心交付物）</text>
+          <line x1="20" y1="36" x2="260" y2="36" stroke="#e2e8f0"/>
+
+          <text x="20" y="58" font-size="11" font-weight="600" fill="#1e40af">需求定义期（~15% 总周期）</text>
+          <text x="20" y="76" font-size="10" fill="#475569">· 价值假设陈述 · 用户场景梳理</text>
+          <text x="20" y="92" font-size="10" fill="#475569">· 成功指标定义 · 技术可行性初判</text>
+
+          <text x="20" y="116" font-size="11" font-weight="600" fill="#1e40af">设计评审期（~15% 总周期）</text>
+          <text x="20" y="134" font-size="10" fill="#475569">· 方案设计 · 架构评审 · 测试策略设计</text>
+          <text x="20" y="150" font-size="10" fill="#475569">· 数据口径确认 · 非功能需求明确</text>
+
+          <text x="20" y="174" font-size="11" font-weight="600" fill="#166534">开发实现期（~35% 总周期）</text>
+          <text x="20" y="192" font-size="10" fill="#475569">· 编码实现 · 单元/集成测试 · 自测</text>
+          <text x="20" y="208" font-size="10" fill="#475569">· 测试用例设计（QA 平行推进）</text>
+
+          <text x="20" y="232" font-size="11" font-weight="600" fill="#92400e">验证测试期（~20% 总周期）</text>
+          <text x="20" y="250" font-size="10" fill="#475569">· 功能/性能/安全测试 · 缺陷修复</text>
+          <text x="20" y="266" font-size="10" fill="#475569">· 回归验证 · 验收评审</text>
+
+          <text x="20" y="290" font-size="11" font-weight="600" fill="#7c3aed">上线运营期（~15% 总周期）</text>
+          <text x="20" y="308" font-size="10" fill="#475569">· 灰度发布 · 业务效果评估</text>
+          <text x="20" y="324" font-size="10" fill="#475569">· 线上质量监控 · 复盘迭代</text>
+        </g>
+
+        <g transform="translate(120, 365)">
+          <rect width="20" height="14" fill="url(#pmGrad)" rx="2"/>
+          <text x="28" y="12" font-size="11" fill="#334155">产品经理 (PM)</text>
+          <rect x="130" width="20" height="14" fill="url(#devGrad)" rx="2"/>
+          <text x="158" y="12" font-size="11" fill="#334155">开发工程师 (Dev)</text>
+          <rect x="270" width="20" height="14" fill="url(#qaGrad)" rx="2"/>
+          <text x="298" y="12" font-size="11" fill="#334155">测试工程师 (QA)</text>
+        </g>
+      </svg>
+    </div>
+
+    <p>这张图的读法：每一行代表一个研发阶段，三个色块的宽度代表该阶段中三个角色的人力投入占比。
+    注意几个关键趋势：</p>
+
+    <ul>
+      <li><strong>越早期，产品占比越高</strong>——需求定义期产品投入接近一半，因为方向错了，后面全是浪费</li>
+      <li><strong>开发期测试不是零投入</strong>——测试团队在开发期就开始设计测试策略，做"平行验证"</li>
+      <li><strong>验证期开发仍然占 40%</strong>——因为质量内建在开发手里，发现的 bug 主要是开发自己修</li>
+      <li><strong>上线后三方都要持续投入</strong>——上线不是终点，而是验证的开始</li>
+    </ul>
+
+    <h3>团队整体配比参考</h3>
+
+    <p>如果把全周期的人力加总起来，整体的角色配比大约是多少？基于上面的阶段占比，我们可以算出一个参考值：</p>
+
+    <table>
+      <tr>
+        <th>团队类型</th>
+        <th>产品 : 开发 : 测试</th>
+        <th>适用场景</th>
+        <th>质量策略</th>
+      </tr>
+      <tr>
+        <td><strong>探索型团队</strong><br>（新产品 / 新业务）</td>
+        <td style="text-align: center; font-weight: 700; color: #3b82f6;">2 : 3 : 1</td>
+        <td>方向不确定、需求频繁变化<br>需要快速验证价值假设</td>
+        <td>业务维度优先，快速迭代<br>架构/数据质量适度放松</td>
+      </tr>
+      <tr style="background: #f0fdf4;">
+        <td><strong>⭐ 成熟型团队</strong><br>（主力业务 / 稳态）</td>
+        <td style="text-align: center; font-weight: 700; color: #166534;">1 : 4 : 1.5</td>
+        <td>业务方向清晰、需求相对稳定<br>质量要求高、用户体量大</td>
+        <td>五维均衡，数据/架构质量高投入<br>测试以自动化和审计为主</td>
+      </tr>
+      <tr>
+        <td><strong>基础设施团队</strong><br>（平台 / 中间件 / 底层）</td>
+        <td style="text-align: center; font-weight: 700; color: #7c3aed;">0.5 : 5 : 1</td>
+        <td>技术驱动、用户是内部团队<br>稳定性和性能是生命线</td>
+        <td>架构/数据维度优先<br>深度性能测试、混沌工程</td>
+      </tr>
+      <tr style="background: #fef2f2;">
+        <td><strong>传统模式对比</strong><br>（人工测试为主）</td>
+        <td style="text-align: center; font-weight: 700; color: #dc2626;">1 : 3 : 1 ~ 1: 2 : 1</td>
+        <td>AI 工具未普及<br>测试以人工功能测试为主</td>
+        <td>测试是最后一道防线<br>质量靠堆测试人力兜底</td>
+      </tr>
+    </table>
+
+    <div class="callout yellow">
+      <strong>关键判断：测试不是越少越好</strong><br>
+      AI 时代测试的人数会减少，但测试的质量要求会更高。
+      从 1:3:1 变成 1:4:1.5，测试的<strong>相对比例</strong>确实降了（从 20% 降到约 14%），
+      但测试团队的<strong>能力密度</strong>需要大幅提升——
+      从"按用例执行的人"变成"设计失效模式、搭建质量基础设施、做独立审计的专家"。
+      <br><br>
+      换句话说：<strong>测试人数可以少一半，但每个人的能力要求要翻一倍。</strong>
+    </div>
+
+    <h3>配比不是拍脑袋：三个调节因子</h3>
+
+    <p>上面的比例只是基准参考。实际调整时，要看三个关键因子：</p>
+
+    <ol>
+      <li><strong>业务复杂度因子</strong>：业务越复杂、规则越多，产品和测试的比例越高。
+        金融、医疗、政务类业务，产品:测试可能需要从 1:1.5 升到 1:2。</li>
+      <li><strong>系统可靠性要求因子</strong>：对稳定性要求越高，开发中质量内建的投入越大，测试的深度也要求越高。
+        基础设施、核心交易链路，开发:测试中测试的占比要上调。</li>
+      <li><strong>AI 成熟度因子</strong>：团队 AI 工具用得越好、自动化覆盖率越高，测试的人力需求就越低，
+        但测试团队需要从"执行型"转向"策略型"——人少了，但每个人更贵了。</li>
+    </ol>
+
     <div class="callout green">
       <strong>最终结论</strong>
       AI 不会取代任何一个角色，但会重塑每个角色的核心价值。
