@@ -787,39 +787,45 @@
 
     <h3>AI 时代三个角色的新岗位说明书</h3>
 
-    <p>下面是按照五维失效空间重新定义的岗位核心职责。简洁、清晰，每个角色三句话就能说清。</p>
+    <p>下面是按照五维失效空间重新定义的岗位核心职责。每个角色都有明确的使命、责任边界和具体工作内容，一看就懂。</p>
 
     <table>
       <tr>
-        <th style="width: 16%;">角色</th>
-        <th style="width: 42%;">核心使命</th>
-        <th style="width: 42%;">核心职责（按优先级排序）</th>
+        <th style="width: 14%;">角色</th>
+        <th style="width: 28%;">核心使命</th>
+        <th style="width: 58%;">核心职责（具体做什么）</th>
       </tr>
       <tr style="background: #eff6ff;">
-        <td style="font-weight: 700; color: #1e40af;">产品经理<br>Product Manager</td>
-        <td><strong>定义正确的问题，确保做的事情有价值。</strong><br>对业务维度和用户维度的失效负第一责任。</td>
-        <td>
-          1. <strong>价值定义</strong>：提出清晰的价值假设，定义成功标准和验收标准<br>
-          2. <strong>需求对齐</strong>：组织三方共同定义需求，确保开发和测试理解一致<br>
-          3. <strong>效果验证</strong>：上线后验证价值假设是否成立，驱动迭代决策
+        <td style="font-weight: 700; color: #1e40af; vertical-align: top;">产品经理</td>
+        <td style="vertical-align: top;"><strong>定义正确的问题，确保做的事情有价值。</strong><br><br>对业务维度和用户维度的失效负第一责任。</td>
+        <td style="font-size: 0.9em;">
+          <p style="margin-bottom: 6px;"><strong>1. 价值定义与验证：</strong>提出清晰的价值假设（给谁做、解决什么问题、成功标准是什么），定义反例和失败指标，上线后用数据验证假设是否成立。</p>
+          <p style="margin-bottom: 6px;"><strong>2. 需求共定义：</strong>组织开发和测试一起定义需求，输出"价值假设 + 质量验收标准 + 验证方案"三件套，而不是只扔一份 PRD。确保所有人对"什么叫做好"有共识。</p>
+          <p style="margin-bottom: 6px;"><strong>3. 业务规则与数据口径：</strong>明确定义业务规则、状态机流转逻辑、数据指标口径和边界条件。出了数据问题，先查口径定义对不对。</p>
+          <p style="margin-bottom: 6px;"><strong>4. 优先级与取舍：</strong>在多个需求之间做优先级判断，在质量和速度之间做权衡决策。告诉团队"什么最重要"，而不是"什么都重要"。</p>
+          <p style="margin: 0;"><strong>5. 用户体验最终裁判：</strong>定义体验标准（加载时间、交互反馈、错误提示、空状态等），判断体验问题的严重等级，对用户满意度负最终责任。</p>
         </td>
       </tr>
       <tr style="background: #f0fdf4;">
-        <td style="font-weight: 700; color: #166534;">开发工程师<br>Engineer</td>
-        <td><strong>构建可靠的系统，确保技术方案正确高效。</strong><br>对数据维度和架构维度的失效负第一责任。</td>
-        <td>
-          1. <strong>质量内建</strong>：从设计到编码到自测，对代码质量负第一责任<br>
-          2. <strong>方案设计</strong>：设计合理的技术方案，在性能/可维护性/成本间做权衡<br>
-          3. <strong>快速交付</strong>：高效实现需求，持续维护系统健康度
+        <td style="font-weight: 700; color: #166534; vertical-align: top;">开发工程师</td>
+        <td style="vertical-align: top;"><strong>构建可靠的系统，确保技术方案正确高效。</strong><br><br>对数据维度和架构维度的失效负第一责任。</td>
+        <td style="font-size: 0.9em;">
+          <p style="margin-bottom: 6px;"><strong>1. 质量内建第一责任人：</strong>写代码的同时写单元测试、集成测试、契约测试。提测之前自己先测过一遍，而不是"写完就扔给测试"。对代码质量负第一责任。</p>
+          <p style="margin-bottom: 6px;"><strong>2. 技术方案设计：</strong>设计合理的架构方案、数据模型、接口契约。在性能、可维护性、开发成本之间做权衡。关键方案主动邀请测试和产品评审。</p>
+          <p style="margin-bottom: 6px;"><strong>3. 数据正确性保证：</strong>确保数据生产、传输、存储过程的一致性和准确性。写数据契约、做数据自测、关注数据质量监控。数据出了问题，开发是第一责任人。</p>
+          <p style="margin-bottom: 6px;"><strong>4. 系统可运维性：</strong>写可监控、可调试、可回滚的代码。打好日志、做好告警、设计好异常处理。确保线上出了问题能快速定位、快速恢复。</p>
+          <p style="margin: 0;"><strong>5. 持续交付与重构：</strong>维护代码库健康度，持续重构技术债务。用 AI 工具提效，把节省下来的时间投入质量提升和架构优化。</p>
         </td>
       </tr>
       <tr style="background: #fffbeb;">
-        <td style="font-weight: 700; color: #92400e;">测试工程师<br>QA Engineer</td>
-        <td><strong>系统性地发现失效模式，确保质量防线有效。</strong><br>对质量体系的完整性和有效性负第一责任。</td>
-        <td>
-          1. <strong>质量策略</strong>：设计验证策略，定义各层质量准入准出标准<br>
-          2. <strong>独立审计</strong>：从独立视角做深度验证，发现开发自测覆盖不到的问题<br>
-          3. <strong>质量基础设施</strong>：建设自动化测试体系和质量监控体系
+        <td style="font-weight: 700; color: #92400e; vertical-align: top;">测试工程师</td>
+        <td style="vertical-align: top;"><strong>系统性地发现失效模式，确保质量防线有效。</strong><br><br>对质量体系的完整性和有效性负第一责任。</td>
+        <td style="font-size: 0.9em;">
+          <p style="margin-bottom: 6px;"><strong>1. 质量策略设计：</strong>从五个维度设计验证策略，定义各阶段的质量准入准出标准。不是"把所有用例都测一遍"，而是"用最少的投入覆盖最大的风险"。</p>
+          <p style="margin-bottom: 6px;"><strong>2. 独立质量审计：</strong>从独立视角做深度验证——探索性测试、边缘场景、并发竞态、异常注入。发现开发自测覆盖不到的盲区，是质量的第二道防线。</p>
+          <p style="margin-bottom: 6px;"><strong>3. 质量基础设施：</strong>建设自动化测试体系、质量监控看板、缺陷跟踪机制。用 AI 工具扩大测试覆盖面，提升测试深度和效率。</p>
+          <p style="margin-bottom: 6px;"><strong>4. 失效模式专家：</strong>系统性地积累和整理失效模式库，推动质量左移——把经验教训转化为开发自测的检查项、需求评审的必选项。</p>
+          <p style="margin: 0;"><strong>5. 质量数据驱动：</strong>统计各层缺陷拦截率、线上故障率、返工率，用数据量化质量状况和改进效果。为管理层提供质量决策依据。</p>
         </td>
       </tr>
     </table>
