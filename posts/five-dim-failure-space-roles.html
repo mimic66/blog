@@ -84,17 +84,18 @@
     .collab-step {
       display: flex;
       gap: 14px;
-      margin-bottom: 14px;
+      margin-bottom: 20px;
       position: relative;
     }
     .collab-step:last-child { margin-bottom: 0; }
     .collab-step:not(:last-child)::after {
       content: "↓";
       position: absolute;
-      left: 17px;
-      bottom: -12px;
+      left: 16px;
+      bottom: -18px;
       color: #cbd5e1;
       font-size: 0.9em;
+      z-index: 1;
     }
     .step-badge {
       flex-shrink: 0;
@@ -117,11 +118,12 @@
       font-size: 0.95em;
     }
     .step-body p {
-      margin: 0;
+      margin: 0 0 8px 0;
       font-size: 0.85em;
       color: #475569;
       line-height: 1.6;
     }
+    .step-body p:last-child { margin-bottom: 0; }
 
     .verdict-summary {
       background: #0f172a;
