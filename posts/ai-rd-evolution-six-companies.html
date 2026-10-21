@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI时代的研发流程进化论：六家公司的六种答案 - 模型测评实验室</title>
+  <meta name="description" content="深入对比Anthropic、OpenAI、Google DeepMind、Hugging Face、DeepSeek、智谱六家大模型公司的研发流程实践，分析各自业务特点、面临的问题与解决方案，提炼AI Native研发范式的共同规律与差异化路径。">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="../index.html" class="site-title">模型<span>测评</span>实验室</a>
+    <nav>
+      <a href="../index.html">首页</a>
+      <a href="../about.html">关于</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <article class="post-content">
+    <a href="../index.html" class="back-link">← 返回首页</a>
+
+    <h1>AI时代的研发流程进化论：六家公司的六种答案</h1>
+    <div class="post-meta">
+      2026-10-22 · 阅读约 20 分钟 · 标签：<span class="tag blue">研发流程</span> <span class="tag yellow">研发效能</span> <span class="tag green">AI Native</span> <span class="tag red">深度分析</span>
+    </div>
+
+    <div class="callout blue">
+      <strong>核心问题</strong>
+      当 AI 开始写代码，研发流程会变成什么样？过去三个月，Anthropic、OpenAI、Google DeepMind、Hugging Face、DeepSeek、智谱——六家站在 AI 最前沿的公司——相继发布了他们的研发流程实践。表面上看，每家讲的都是自己的工具和方法，但拨开细节，你会发现一个正在成型的新范式。
+    </div>
+
+    <h2>一、为什么现在研发流程突然成了热点？</h2>
+
+    <p>有一个数字值得反复提及：Anthropic 的 monorepo，日合并量从 5 月的 2,500 次涨到了 9 月的 30,000 次以上——<strong>五个月涨了 12 倍</strong>。</p>
+
+    <p>这不是某个团队的特例，而是整个行业的缩影。当 AI 编码率从 10% 走向 50%、80% 甚至更高，研发流程中每一个环节都在承受前所未有的压力：</p>
+
+    <ul>
+      <li><strong>代码审查跟不上</strong> — PR 数量翻倍，人力没涨，review 队列越来越长</li>
+      <li><strong>CI 顶不住</strong> — 构建和测试时间越来越长，合并队列堵成了停车场</li>
+      <li><strong>质量控不住</strong> — 代码量上去了，bug 数量会不会也跟着上去？</li>
+      <li><strong>版本管理失灵</strong> — Git 是为人类写代码设计的，面对机器生成的海量变更，从工具到流程都在颤抖</li>
+    </ul>
+
+    <p>但最有意思的是：<strong>每家公司遇到的问题不一样，给出的答案也不一样</strong>。没有统一的标准答案，却有清晰的模式可循。</p>
+
+    <p>让我们一家一家看。</p>
+
+    <h2>二、Anthropic：被逼到墙角后，从基础设施重建</h2>
+
+    <div class="callout yellow">
+      <strong>业务特点</strong>
+      Claude Code 团队自身就是 AI 编程的重度用户——约 90% 的代码由 Claude 编写。他们是全世界 AI 编码率最高的团队之一，也因此最先撞到天花板。
+    </div>
+
+    <h3>问题：Git 不够用了</h3>
+
+    <p>Anthropic 最近发布了两篇重磅工程文章，合在一起讲了一个完整的故事：当 AI 写代码写到 Git 都撑不住的时候，你该怎么办？</p>
+
+    <p>第一篇是 <em>Redesigning source control at Anthropic</em>，讲的是<strong>底层基础设施的重建</strong>。他们花了五个月从零构建了内部版本控制系统 Scion，核心改动包括：</p>
+
+    <ul>
+      <li>客户端-服务器不对称架构——把大量计算从客户端移到服务器端</li>
+      <li>内容寻址存储，水平扩展</li>
+      <li>CI 结账速度提升两个数量级，基础设施占用缩小 200 倍</li>
+    </ul>
+
+    <p>这篇文章最有价值的不是技术细节，而是它揭示的一个趋势：<strong>当写代码的速度提升了 10 倍，版本控制系统也需要被重新设计</strong>。Git 是 2005 年为人类开发者设计的，它假设人类一天写几百行代码、提交几次。当 AI 一天提交几万个变更，Git 的每一个设计假设都开始失效。</p>
+
+    <h3>解法：七层审查体系</h3>
+
+    <p>第二篇文章 <em>How the Claude Code team does code review</em>，讲的是<strong>审查流程的重建</strong>。他们做了一件很简单的事：把"人读每一行代码"变成了"七层滤网"。</p>
+
+    <p>这七层分别是：工作自验证 → AI 审查 → 安全审查 → CI → 风险分级审批 → 合并队列 → 快速回滚。</p>
+
+    <p>其中最有启发性的是<strong>风险分级审批</strong>——低风险改动（文档、文案、功能开关内的新功能）零人工审批，中风险改动一人审批，高风险改动两人审批。级别由改动内容决定，不由作者身份决定。</p>
+
+    <p>这背后是一个深刻的认知转变：<strong>人的注意力是最稀缺的资源，应该花在风险最高的地方，而不是平均分配在每一行代码上</strong>。</p>
+
+    <h3>更有意思的：质量飞轮</h3>
+
+    <p>但我认为两篇文章中最被低估的部分，是他们的<strong>质量进化机制</strong>：</p>
+
+    <ul>
+      <li>每一次线上事故都变成评测集的一个 case</li>
+      <li>AI 审查器每天在这套集子上跑一遍</li>
+      <li>任何对审查器的改动（prompt、工具、模型）都要在这套集子上跑分验证</li>
+      <li>噪音控制看"人是怎么处理 AI 评论的"——修复了说明提对了，忽略了可能是误报</li>
+    </ul>
+
+    <p>这不是一个工具，而是一个<strong>自我改进的飞轮</strong>。事故越多，审查器越准；审查器越准，事故越少。</p>
+
+    <p>Anthropic 路径的本质是：<strong>因为 AI 编码率最高，所以最先遇到所有天花板，也最先被迫重建从版本控制到代码审查的整条链路</strong>。他们的经验最极端，也最有前瞻性。</p>
+
+    <h2>三、OpenAI：用 AI 优化 AI 自身的研发</h2>
+
+    <div class="callout yellow">
+      <strong>业务特点</strong>
+      OpenAI 是一家以模型为核心产品的公司，它的研发流程既服务于自身工程团队，也服务于模型本身的迭代——从训练到推理到安全，全链路都是 AI 研发的范畴。
+    </div>
+
+    <p>近三个月 OpenAI 的研发流程相关文章不多，但每一篇分量都很重。它们共同指向一个方向：<strong>用 AI 来优化 AI 自身的研发</strong>。</p>
+
+    <h3>Jalapeño：硬件-软件协同设计</h3>
+
+    <p>自研推理芯片 Jalapeño 的首批结果公布，这件事的意义不止于"造芯片"。更重要的是它揭示了 OpenAI 的研发流程已经<strong>下沉到了硬件层面</strong>。</p>
+
+    <p>当模型架构和芯片架构可以协同设计时，研发流程就不再只包含软件——它变成了从算法到芯片的全栈优化。这是只有头部公司才能走的路，但它定义了行业的天花板。</p>
+
+    <h3>存储基础设施：10 亿用户规模的工程</h3>
+
+    <p>支撑 10 亿+ ChatGPT 用户的在线存储系统文章，展示了顶级 AI 公司在<strong>基础设施层面的研发管控能力</strong>。数据模型设计、多区域部署、一致性保证——这些传统的分布式系统难题，在 AI 产品的规模下被推到了新的极端。</p>
+
+    <p>这篇文章提醒我们：不管 AI 多厉害，<strong>底层基础设施的工程能力仍然是产品体验的地基</strong>。模型再聪明，存储挂了也白搭。</p>
+
+    <h3>小众编程语言：研发覆盖面的扩展</h3>
+
+    <p>提升 GPT 在小众编程语言上的代码生成能力——看似是个小问题，其实反映了 OpenAI 研发流程的一个特点：<strong>用系统方法持续扩展能力边界</strong>。数据增强、合成训练、评估方法论，这些流程可以复用到任何能力维度的提升上。</p>
+
+    <p>OpenAI 路径的本质是：<strong>把研发流程本身变成一个可以用 AI 优化的系统</strong>——从芯片到存储到模型能力，每一层都在被 AI 重塑，同时每一层也都在为 AI 服务。</p>
+
+    <h2>四、Google DeepMind：科学研究式的严谨</h2>
+
+    <div class="callout yellow">
+      <strong>业务特点</strong>
+      DeepMind 出身于研究实验室，它的研发流程带着浓厚的科研方法论烙印——强调评估方法的严谨性、结果的可验证性、流程的可复现。
+    </div>
+
+    <p>近三个月 DeepMind 研发流程相关的文章不多，但有一篇非常有代表性：<em>Piloting the world's first double-blind AI evaluations</em>。</p>
+
+    <h3>双盲评估：把科研方法引入模型发布</h3>
+
+    <p>双盲——评估者和被评估模型互不知晓对方身份。这个在医学和社会科学中用了几十年的方法，被 DeepMind 搬到了 AI 模型评估中。</p>
+
+    <p>为什么这件事重要？因为<strong>模型评估中的人为偏差是一个被严重低估的问题</strong>：</p>
+
+    <ul>
+      <li>评估者知道这是"新版模型"，打分可能不自觉地更高</li>
+      <li>评估者对某个模型有偏见，会更倾向于挑它的错</li>
+      <li>模型的"身份信息"（比如输出风格、特定措辞）会成为评估中的干扰信号</li>
+    </ul>
+
+    <p>双盲评估的试点，本质上是在回答一个问题：<strong>我们怎么确保模型发布前的质量评估是可靠的？</strong></p>
+
+    <p>这直接关联到变更管控——如果你连新模型到底好不好都测不准，灰度发布、A/B 测试的结果也就不可信。评估的可靠性是所有发布流程的基础。</p>
+
+    <p>DeepMind 路径的本质是：<strong>用科学研究的严谨性来治理 AI 研发流程</strong>。当别人在讨论"快不快"的时候，他们在关心"准不准"。这是一种不同的优先级排序，但对于前沿模型的安全发布至关重要。</p>
+
+    <h2>五、Hugging Face：开源社区的 Agent 落地实践</h2>
+
+    <div class="callout yellow">
+      <strong>业务特点</strong>
+      Hugging Face 是开源模型生态的中心，它的研发流程面临独特挑战：维护着大量开源库（transformers、diffusers、tokenizers 等），社区贡献者众多，代码质量管控和 Agent 落地必须与开源工作流兼容。
+    </div>
+
+    <p>Hugging Face 近三个月的三篇文章，正好覆盖了 Agent 融入研发流程的三个层面。</p>
+
+    <h3>Serge：一个 Bug 修复 Agent 的诞生</h3>
+
+    <p><em>Anatomy of a bug-fixing agent</em> 可能是目前公开的最具体的 Agent 融入真实研发流程的案例。</p>
+
+    <p>Serge 这个 Agent 做的事情很简单：自动检测 transformers 库的集成测试失败，定位问题，生成补丁，提交 PR。六步循环：选失败测试 → 复现失败 → 检查是否有人在修 → 生成补丁 → 验证补丁 → 创建 PR。</p>
+
+    <p>但真正有意思的是<strong>它如何融入现有流程</strong>：</p>
+
+    <ul>
+      <li><strong>安全隔离</strong>——无 GitHub 凭证、无集群 API Token、网络受限。Agent 可以创建 PR，但不能自动合入</li>
+      <li><strong>人工把关</strong>——所有修改必须经过维护者审查才能合入主分支</li>
+      <li><strong>有限范围</strong>——只处理集成测试失败的 bug，不做新功能开发，不碰架构</li>
+    </ul>
+
+    <p>这才是 Agent 落地的正确姿势：<strong>不是一下子替代工程师，而是从一个具体、低风险、高频的小任务切入，在明确的边界内运行，由人类做最终决策</strong>。</p>
+
+    <h3>Agent 记忆：让 AI 理解项目上下文</h3>
+
+    <p><em>Give Your Coding Agents a Memory You Own</em> 讨论了一个非常实际的问题：Agent 不了解项目历史和规范，写出来的代码总是"不太对劲"。</p>
+
+    <p>他们的解决方案是为 Agent 配备仓库级记忆系统——历史 issue、PR、审查评论、Git 历史、维护者讨论。有了这些上下文，Agent 才能写出符合项目规范的代码，而不是"语法正确但风格格格不入"的补丁。</p>
+
+    <p>这篇文章揭示了 Agent 研发流程中的一个关键基础设施：<strong>项目记忆系统</strong>。它就像新人入职时的 onboarding 文档——只不过是给 AI 读的。</p>
+
+    <h3>tokenizers v1：开源工具的工程化</h3>
+
+    <p>tokenizers 库发布 v1.0 这件事本身看起来跟 AI 研发流程关系不大，但它反映了 Hugging Face 作为开源基础设施提供商的研发特点：<strong>在社区协作中保持工程质量</strong>。性能优化、API 设计、跨语言一致性——这些都是开源项目特有的研发管理挑战。</p>
+
+    <p>Hugging Face 路径的本质是：<strong>在开源社区的开放环境中，把 Agent 小心翼翼地嵌入现有研发流程</strong>。从具体任务切入，以安全为边界，用记忆提升质量，这可能是大多数团队最容易复制的路径。</p>
+
+    <h2>六、DeepSeek：从开源框架到工程化工作流</h2>
+
+    <div class="callout yellow">
+      <strong>业务特点</strong>
+      DeepSeek 是国产大模型中最重视开发者生态的公司之一。它既要做模型，也要做工具链和框架，因此它的研发流程思考天然带着"工具化"和"可复用"的倾向。
+    </div>
+
+    <h3>DeepSeek Harness：一切皆插件</h3>
+
+    <p>DeepSeek Harness 的核心理念非常清晰：<strong>把 Agent 的所有能力都做成插件</strong>——模型、工具、技能、会话、沙箱、存储、循环、调度、UI，全部可插拔可组合。</p>
+
+    <p>这背后有一个重要的判断：Agent 的研发流程不应该是固定的，而应该是可组合的。不同的任务需要不同的 Agent 配置——简单任务用极简模式，复杂任务用标准模式，创造性任务用创意模式。</p>
+
+    <p>对研发流程的意义在于：<strong>当 Agent 的工作流本身可以被编程、被组合、被版本控制时，Agent 研发才能真正工程化</strong>。</p>
+
+    <p>还有一个细节很重要：每次运行都有完整的<strong>仅追加式会话日志</strong>可追溯。这是工程化的标志——你需要知道 Agent 做了什么、为什么这么做、出了问题怎么回放。</p>
+
+    <h3>四种运行模式：对任务复杂度的分级</h3>
+
+    <p>标准 / PTC / 极简 / 创造四种运行模式，本质上是对任务复杂度的分级处理，跟 Claude Code 的 effort 调节异曲同工。</p>
+
+    <p>简单任务用最少的计算资源快速完成，复杂任务调动更多资源深度思考——这种<strong>按任务难度动态调配算力</strong>的思路，正在成为所有 Agent 工具的共识。</p>
+
+    <p>DeepSeek 路径的本质是：<strong>用开源框架把 Agent 研发流程工程化</strong>。Anthropic 在内部用自己的工具，DeepSeek 把框架开源出来，让更多团队可以构建自己的 Agent 工作流。</p>
+
+    <h2>七、智谱 AI：Agentic Engineering 的系统化尝试</h2>
+
+    <div class="callout yellow">
+      <strong>业务特点</strong>
+      智谱在 GLM-5.3 发布时提出了"Agentic Engineering"（智能体工程）的概念，试图把 AI 编程从"Vibe Coding 玩票"升级成系统化的工程实践。这是国产厂商中少有的对研发范式进行顶层设计的尝试。
+    </div>
+
+    <h3>从 Vibe Coding 到 Agentic Engineering</h3>
+
+    <p>智谱提出的 Agentic Engineering，核心是对 Vibe Coding（氛围编程）的反思——Vibe Coding 写 Demo 很快，但写生产级代码不靠谱。怎么办？系统化。</p>
+
+    <p>他们的思路包括几个层面：</p>
+
+    <ul>
+      <li><strong>异步 RL 基础设施</strong>——让强化学习可以大规模、异步地用于代码优化</li>
+      <li><strong>CC-Bench-V2 全自动评估体系</strong>——前端用 Agent-as-a-Judge 评估，后端用真实项目测试，长程任务用任务链评估</li>
+      <li><strong>ZCode Harness + AutoGLM</strong>——从模型到框架到应用的完整工具链</li>
+    </ul>
+
+    <p>这件事的价值不在于智谱做了多少，而在于<strong>它明确提出了一个方向：AI 编程需要从"技巧"变成"工程学科"</strong>。</p>
+
+    <p>这跟 Anthropic 的 SDD（规范驱动开发）、淘宝闪购的 Harness 编程思路遥相呼应——大家都在从不同角度回答同一个问题：<strong>怎么让 AI 写的代码不靠运气也能高质量交付？</strong></p>
+
+    <p>智谱路径的本质是：<strong>试图为 AI 时代的研发建立一套系统化的方法论和工具链</strong>。它还在早期，但方向是对的。</p>
+
+    <h2>八、横向对比：六条路径的一张地图</h2>
+
+    <p>把六家公司放在一起看，你会发现一幅清晰的图景：</p>
+
+    <table>
+      <tr>
+        <th>公司</th>
+        <th>核心痛点</th>
+        <th>切入角度</th>
+        <th>代表性实践</th>
+        <th>最值得借鉴的理念</th>
+      </tr>
+      <tr>
+        <td><strong>Anthropic</strong></td>
+        <td>AI 编码率太高，Git 和 review 都顶不住了</td>
+        <td>从基础设施到审查流程全面重建</td>
+        <td>Scion 版本控制、七层审查体系、事故转 eval 飞轮</td>
+        <td>把人的注意力按风险分配，而不是平均分配</td>
+      </tr>
+      <tr>
+        <td><strong>OpenAI</strong></td>
+        <td>AI 产品规模太大，全栈都需要优化</td>
+        <td>用 AI 优化 AI 自身的研发全栈</td>
+        <td>Jalapeño 芯片、10 亿用户存储、低资源语言优化</td>
+        <td>从算法到硬件的全栈协同优化</td>
+      </tr>
+      <tr>
+        <td><strong>Google DeepMind</strong></td>
+        <td>模型评估不可靠，发布决策缺乏科学依据</td>
+        <td>用科研方法论提升评估的严谨性</td>
+        <td>双盲评估试点、Model Card 制度</td>
+        <td>评估的可靠性是所有发布流程的基础</td>
+      </tr>
+      <tr>
+        <td><strong>Hugging Face</strong></td>
+        <td>开源项目怎么安全地引入 Agent</td>
+        <td>从具体小任务切入，在边界内运行</td>
+        <td>Serge Bug 修复 Agent、仓库级记忆系统</td>
+        <td>Agent 落地从低风险、高频的小任务开始</td>
+      </tr>
+      <tr>
+        <td><strong>DeepSeek</strong></td>
+        <td>Agent 工作流缺乏工程化框架</td>
+        <td>开源可组合的 Agent 框架</td>
+        <td>Harness 插件化架构、四种运行模式、会话日志可追溯</td>
+        <td>Agent 的工作流本身应该是可编程、可组合的</td>
+      </tr>
+      <tr>
+        <td><strong>智谱 AI</strong></td>
+        <td>Vibe Coding 不靠谱，需要系统化方法</td>
+        <td>提出 Agentic Engineering 范式</td>
+        <td>异步 RL 基础设施、CC-Bench-V2 评估体系</td>
+        <td>AI 编程需要从"技巧"变成"工程学科"</td>
+      </tr>
+    </table>
+
+    <h2>九、五条正在浮现的共同规律</h2>
+
+    <p>六家公司路径不同，但深处有五条共同的线索在浮现。</p>
+
+    <h3>1. 审查从"人做判断"变成"AI 做多轮筛查 + 人做最终决策"</h3>
+
+    <p>所有公司都在做同一件事：把 AI 审查放在前面，把人力省下来做最后的把关。区别只在于 AI 审查做到了第几层——有的只做语法和规范，有的已经做到了安全和架构。</p>
+
+    <p>这不是"AI 替代人类 reviewer"，而是"人类 reviewer 的工作被升维了"——从逐行找 bug，变成了定义审查标准、校准 AI 审查器、处理真正困难的判断。</p>
+
+    <h3>2. 评估是新的单元测试</h3>
+
+    <p>传统软件有单元测试做质量门禁，AI 时代对应的就是评估集（eval）。</p>
+
+    <p>Anthropic 把事故变成 eval，OpenAI 用 GPT-Red 做自动化红队评估，DeepMind 搞双盲评估提升评估质量，智谱建了 CC-Bench-V2 全自动评估体系——大家都在往同一个方向走：<strong>让评估像 CI 一样自动运行，成为质量的守门员</strong>。</p>
+
+    <p>而且评估本身也在升级：从静态基准到动态生成、从单一维度到多维度矩阵、从人工评分到 AI-as-a-Judge。</p>
+
+    <h3>3. Agent 落地从"取代人"变成"在边界内辅助人"</h3>
+
+    <p>早期大家都在说"AI 替代程序员"，现在最前沿的实践反而非常务实。</p>
+
+    <p>Hugging Face 的 Serge 只修集成测试 bug，有严格的安全边界；Anthropic 的低风险改动零人工审批，但高风险改动反而要两个人审；DeepSeek 的 Harness 有极简模式也有标准模式——</p>
+
+    <div class="callout green">
+      <strong>共识是：AI 越强大，越需要明确的边界。</strong>
+      在边界内给 AI 最大自由，在边界外由人牢牢控制。
+    </div>
+
+    <p>这不是保守，而是工程化成熟的标志。</p>
+
+    <h3>4. 质量改进变成了数据飞轮</h3>
+
+    <p>传统的质量改进是"出了 bug → 修 bug → 加测试用例"。AI 时代的质量改进是"出了问题 → 加入评测集 → 审查器/模型在评测集上跑 → 优化 → 验证 → 上线"。</p>
+
+    <p>本质区别在于：<strong>质量改进的对象从代码变成了模型/审查器</strong>，而改进的方式从人工编码变成了数据驱动的优化循环。</p>
+
+    <p>Anthropic 的事故转 eval 飞轮、OpenAI 的 GPT-Red 攻防循环、DeepMind 的评估方法论——都是这个飞轮的不同形式。</p>
+
+    <h3>5. 基础设施必须被重新设计</h3>
+
+    <p>这可能是最容易被忽视但影响最深远的一点：<strong>当写代码的方式变了，支撑研发的基础设施也必须变</strong>。</p>
+
+    <p>Anthropic 重建了版本控制系统，因为 Git 不够用了。</p>
+
+    <p>那 CI 呢？合并队列呢？问题追踪系统呢？代码搜索呢？文档系统呢？</p>
+
+    <p>这些为人类开发者设计的工具，在 AI 时代都需要被重新思考。这不是某个工具的升级，而是整个研发基础设施栈的重构。Anthropic 只是第一个走到这一步的公司。</p>
+
+    <h2>十、对普通团队的启示</h2>
+
+    <p>读这些前沿公司的实践，不是为了看热闹，而是为了回答一个问题：<strong>我们这样的普通团队，应该从哪里开始？</strong></p>
+
+    <p>我的建议是三步：</p>
+
+    <ol>
+      <li><strong>从 AI 代码审查开始</strong>——这是投入产出比最高的第一步。AI 审查能覆盖语法、规范、简单 bug，把人工 review 的精力腾出来关注架构和设计。Hugging Face 的 Serge 模式值得参考：从一个具体的小问题切入。</li>
+      <li><strong>建立评估集的习惯</strong>——不必一上来就搞大而全的评测体系。从你最在意的几个质量维度开始，每个线上事故都加一个测试 case 进去。慢慢积累，飞轮就会转起来。</li>
+      <li><strong>重新思考"人在流程中的位置"</strong>——不要把 AI 当成替代者，而要把它放在合适的位置上做它擅长的事。人做判断、AI 做执行；人定标准、AI 做筛查；人兜底、AI 探路。</li>
+    </ol>
+
+    <div class="callout blue">
+      <strong>最后一句话</strong>
+      AI 时代的研发流程，不是把 AI 塞进现有流程就完事了，而是要重新设计整个流程——让 AI 的能力被充分释放，让人的判断力被用在最有价值的地方，让质量有可靠的保证机制。这不是一蹴而就的事，但方向已经很清晰了。
+    </div>
+
+    <div class="references">
+      <h3>参考文章</h3>
+      <ol>
+        <li>Anthropic, "Redesigning source control at Anthropic", 2026.10 — <a href="https://www.anthropic.com/research/redesigning-source-control">anthropic.com</a></li>
+        <li>Claude.dev, "How the Claude Code team does code review", 2026.10 — <a href="https://claude.dev/blog/solving-code-review-at-anthropic/">claude.dev</a></li>
+        <li>Claude.dev, "How we made claude.ai 3x faster in two weeks", 2026.9 — <a href="https://claude.dev/blog/how-we-made-claude-ai-faster/">claude.dev</a></li>
+        <li>Claude.dev, "Automating eval design and hillclimbing", 2026.9 — <a href="https://claude.dev/blog/automating-eval-design-and-hillclimbing/">claude.dev</a></li>
+        <li>Claude.dev, "Building effective agent automations", 2026.10 — <a href="https://claude.dev/blog/building-effective-agent-automations/">claude.dev</a></li>
+        <li>OpenAI, "Jalapeño's first results", 2026.8 — <a href="https://openai.com/index/jalapeno-first-results/">openai.com</a></li>
+        <li>OpenAI, "Rapidly scaling online storage to serve over 1 billion ChatGPT users", 2026.9 — <a href="https://openai.com/index/scaling-storage-one-billion-users-part-one/">openai.com</a></li>
+        <li>OpenAI, "Advancing coding in low-resource programming languages", 2026.10 — <a href="https://openai.com/index/low-resource-programming-languages/">openai.com</a></li>
+        <li>Google DeepMind, "Piloting the world's first double-blind AI evaluations", 2026.8 — <a href="https://deepmind.google/blog/piloting-the-worlds-first-double-blind-ai-evaluations/">deepmind.google</a></li>
+        <li>Hugging Face, "Anatomy of a bug-fixing agent", 2026.9 — <a href="https://huggingface.co/blog/huggingface/anatomy-of-a-bug-fixing-agent">huggingface.co</a></li>
+        <li>Hugging Face, "Give Your Coding Agents a Memory You Own", 2026.9 — <a href="https://huggingface.co/blog/huggingface/give-your-coding-agents-a-memory-you-own">huggingface.co</a></li>
+        <li>DeepSeek, "DeepSeek V4.1 Flash", 2026.9 — <a href="https://www.deepseek.com/news/deepseek-v4-1-flash/">deepseek.com</a></li>
+        <li>DeepSeek, "DeepSeek Harness: 一切皆插件", 2026.8 — <a href="https://www.deepseek.com/harness/">deepseek.com</a></li>
+        <li>智谱 AI, "GLM-5.3：前沿编程能力与涌现的网络安全能力", 2026.8 — <a href="https://www.zhipuai.cn/zh/research">zhipuai.cn</a></li>
+        <li>字节跳动 Seed, "Seed2.1 正式发布", 2026.6 — <a href="https://seed.bytedance.com/zh/blog">seed.bytedance.com</a></li>
+      </ol>
+    </div>
+
+  </article>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    © 2024-2026 模型测评实验室 · 基于 GitHub Pages 构建
+  </div>
+</footer>
+
+</body>
+</html>
