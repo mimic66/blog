@@ -130,7 +130,90 @@
       <li>更激进的是虚拟化检出（virtualized checkout）——按需物化文件，读了哪个文件才加载哪个</li>
     </ul>
 
-    <h2>三、Scion 怎么工作：核心数据结构与架构</h2>
+    <h2>三、从 Git 到 Scion：架构演进全景</h2>
+
+    <p>从 Git 到 Scion 的转变，不是某一个点的优化，而是<strong>整个架构范式的翻转</strong>。
+    下面这张图从五个维度对比了两套系统的架构差异——可以看到，几乎在每一个层面，Scion 都做了根本性的反转。</p>
+
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; margin: 24px 0; overflow-x: auto;">
+      <svg viewBox="0 0 760 520" xmlns="http://www.w3.org/2000/svg" style="width: 100%; min-width: 600px; font-family: -apple-system, 'PingFang SC', sans-serif;">
+        <defs>
+          <linearGradient id="gitGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#fef3c7;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#fde68a;stop-opacity:1" />
+          </linearGradient>
+          <linearGradient id="scionGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#dbeafe;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#bfdbfe;stop-opacity:1" />
+          </linearGradient>
+          <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+          </marker>
+        </defs>
+
+        <text x="380" y="28" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a">Git vs Scion 架构对比</text>
+
+        <line x1="380" y1="50" x2="380" y2="500" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4,4"/>
+
+        <text x="190" y="55" text-anchor="middle" font-size="14" font-weight="700" fill="#92400e">Git（分布式模式）</text>
+        <text x="570" y="55" text-anchor="middle" font-size="14" font-weight="700" fill="#1e40af">Scion（中心化服务）</text>
+
+        <rect x="40" y="70" width="300" height="80" rx="8" fill="url(#gitGrad)" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="190" y="95" text-anchor="middle" font-size="13" font-weight="600" fill="#78350f">客户端 = 完整仓库</text>
+        <text x="190" y="115" text-anchor="middle" font-size="11" fill="#92400e">本地有全部历史、全部对象</text>
+        <text x="190" y="132" text-anchor="middle" font-size="11" fill="#92400e">离线可独立工作</text>
+
+        <rect x="420" y="70" width="300" height="80" rx="8" fill="url(#scionGrad)" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="570" y="95" text-anchor="middle" font-size="13" font-weight="600" fill="#1e3a8a">客户端 ≈ 薄客户端 + 缓存</text>
+        <text x="570" y="115" text-anchor="middle" font-size="11" fill="#1e40af">只缓存需要的对象</text>
+        <text x="570" y="132" text-anchor="middle" font-size="11" fill="#1e40af">离线几乎什么都做不了</text>
+
+        <path d="M 340 110 L 410 110" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="5,3"/>
+        <text x="380" y="104" text-anchor="middle" font-size="9" fill="#64748b">范式反转</text>
+
+        <rect x="40" y="170" width="300" height="100" rx="8" fill="url(#gitGrad)" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="190" y="193" text-anchor="middle" font-size="13" font-weight="600" fill="#78350f">提交模型：快照 + packfile</text>
+        <text x="190" y="213" text-anchor="middle" font-size="11" fill="#92400e">Commit = 整棵树的快照指针</text>
+        <text x="190" y="230" text-anchor="middle" font-size="11" fill="#92400e">写入需要 gc 维护</text>
+        <text x="190" y="247" text-anchor="middle" font-size="11" fill="#92400e">有仓库级别的"打包"成本</text>
+
+        <rect x="420" y="170" width="300" height="100" rx="8" fill="url(#scionGrad)" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="570" y="193" text-anchor="middle" font-size="13" font-weight="600" fill="#1e3a8a">提交模型：Changeset + WAL</text>
+        <text x="570" y="213" text-anchor="middle" font-size="11" fill="#1e40af">Changeset = 增量变更列表</text>
+        <text x="570" y="230" text-anchor="middle" font-size="11" fill="#1e40af">预写日志追加写入</text>
+        <text x="570" y="247" text-anchor="middle" font-size="11" fill="#1e40af">成本与变更量成正比</text>
+
+        <rect x="40" y="290" width="300" height="100" rx="8" fill="url(#gitGrad)" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="190" y="313" text-anchor="middle" font-size="13" font-weight="600" fill="#78350f">扩展模式：镜像垂直扩展</text>
+        <text x="190" y="333" text-anchor="middle" font-size="11" fill="#92400e">几百个 Git 镜像扛流量</text>
+        <text x="190" y="350" text-anchor="middle" font-size="11" fill="#92400e">镜像有内存/磁盘上限</text>
+        <text x="190" y="367" text-anchor="middle" font-size="11" fill="#92400e">ref 同步是瓶颈</text>
+
+        <rect x="420" y="290" width="300" height="100" rx="8" fill="url(#scionGrad)" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="570" y="313" text-anchor="middle" font-size="13" font-weight="600" fill="#1e3a8a">扩展模式：三层水平扩展</text>
+        <text x="570" y="333" text-anchor="middle" font-size="11" fill="#1e40af">Server → Cache → Daemon</text>
+        <text x="570" y="350" text-anchor="middle" font-size="11" fill="#1e40af">每层独立水平扩容</text>
+        <text x="570" y="367" text-anchor="middle" font-size="11" fill="#1e40af">每层缓存命中率 99%+</text>
+
+        <rect x="40" y="410" width="300" height="80" rx="8" fill="url(#gitGrad)" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="190" y="433" text-anchor="middle" font-size="13" font-weight="600" fill="#78350f">检出协议：大包推送</text>
+        <text x="190" y="453" text-anchor="middle" font-size="11" fill="#92400e">客户端说"我有什么"</text>
+        <text x="190" y="470" text-anchor="middle" font-size="11" fill="#92400e">服务器算 delta 打大包返回</text>
+
+        <rect x="420" y="410" width="300" height="80" rx="8" fill="url(#scionGrad)" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="570" y="433" text-anchor="middle" font-size="13" font-weight="600" fill="#1e3a8a">检出协议：按需拉取</text>
+        <text x="570" y="453" text-anchor="middle" font-size="11" fill="#1e40af">客户端说"我要什么"</text>
+        <text x="570" y="470" text-anchor="middle" font-size="11" fill="#1e40af">按对象递归请求，可缓存</text>
+
+        <text x="190" y="510" text-anchor="middle" font-size="11" fill="#b45309">适合：人写代码、分布式协作、离线工作</text>
+        <text x="570" y="510" text-anchor="middle" font-size="11" fill="#2563eb">适合：Agent 写代码、海量检出、在线优先</text>
+      </svg>
+    </div>
+
+    <p>这张图里的每一对对比，都是一个设计决策的翻转。它们不是孤立的选择，而是<strong>一整套互相支撑的设计哲学</strong>——
+    一旦你接受了"客户端永远在线"这个前提，后面所有的选择几乎都是必然的。</p>
+
+    <h2>四、Scion 怎么工作：核心数据结构与架构</h2>
 
     <p>原则讲完了，我们来看看具体是怎么实现的。</p>
 
@@ -224,7 +307,7 @@
       <li><strong>虚拟化检出也容易</strong>——读了哪个文件才请求哪个</li>
     </ul>
 
-    <h2>四、效果数据</h2>
+    <h2>五、效果数据</h2>
 
     <p>讲了这么多设计，效果到底怎么样？</p>
 
@@ -269,7 +352,7 @@
 
     <p>7 个人、5 个月，从零写了一个版本控制系统 + 代码审查工具（Antique）+ 半打相关系统，还完成了全量迁移——期间代码合并量还涨了 10 倍。这个速度在以前是不可想象的。</p>
 
-    <h2>五、Scion 的适用场景和不适用场景</h2>
+    <h2>六、Scion 的适用场景和不适用场景</h2>
 
     <p>Scion 很厉害，但它不是 Git 的替代品。Anthropic 自己也明确说了：Scion 不适合作为通用 Git 替代品。</p>
 
@@ -306,7 +389,82 @@
 
     <p>Anthropic 自己也说，不打算把 Scion 做成公共产品。原因很实际：迁移成本太高了——不只是版本控制系统本身，还有代码审查、代码搜索、CI 等等全套工具链都要换。</p>
 
-    <h2>六、更深的启示：Agent 时代的研发基础设施</h2>
+    <h3>一图看懂：Git vs Scion 适用场景对照表</h3>
+
+    <p>如果你在判断"我们公司该选哪个方向"，下面这张表格可以作为决策参考：</p>
+
+    <table>
+      <tr>
+        <th style="width: 22%;">对比维度</th>
+        <th style="width: 39%; background: #fef3c7; color: #78350f;">Git（分布式）</th>
+        <th style="width: 39%; background: #dbeafe; color: #1e3a8a;">Scion（中心化服务）</th>
+      </tr>
+      <tr>
+        <td><strong>仓库规模</strong></td>
+        <td>中小仓库（几 GB 以下）表现完美，超大仓库（几十 GB+）体验急剧下降</td>
+        <td>天然面向超大 monorepo 设计，仓库越大优势越明显</td>
+      </tr>
+      <tr>
+        <td><strong>提交频率</strong></td>
+        <td>人级提交频率（每天几十到几百次合并）绰绰有余</td>
+        <td>Agent 级提交频率（每天几千到几万次合并）仍然线性扩展</td>
+      </tr>
+      <tr>
+        <td><strong>检出量</strong></td>
+        <td>每天万级检出没问题，百万级以上需要大量镜像集群</td>
+        <td>三层缓存架构天然支撑千万级日检出</td>
+      </tr>
+      <tr>
+        <td><strong>客户端环境</strong></td>
+        <td>需要离线工作的开发者、笔记本环境、不稳定网络</td>
+        <td>在线优先：CI 任务、Agent 沙箱、云端开发环境</td>
+      </tr>
+      <tr>
+        <td><strong>协作模式</strong></td>
+        <td>分布式开源协作、跨组织贡献、fork + PR 模式</td>
+        <td>单一组织内的集中式 monorepo、统一代码基线</td>
+      </tr>
+      <tr>
+        <td><strong>程序化查询</strong></td>
+        <td>需要本地拉仓库或依赖平台 API，查询深度受限</td>
+        <td>所有版本控制操作都是 RPC API，可程序化深度集成</td>
+      </tr>
+      <tr>
+        <td><strong>运维成本</strong></td>
+        <td>低。标准 Git 服务几乎不需要维护</td>
+        <td>高。需要分布式存储、缓存层、监控、专业运维团队</td>
+      </tr>
+      <tr>
+        <td><strong>迁移成本</strong></td>
+        <td>几乎为零（业界标准）</td>
+        <td>极高。需同步改造代码审查、CI、代码搜索、发布系统等全套工具链</td>
+      </tr>
+      <tr>
+        <td><strong>典型用户</strong></td>
+        <td>99% 的公司、开源社区、中小团队</td>
+        <td>Google（Piper）、Meta（Sapling）、Anthropic、AI Agent 密集型企业</td>
+      </tr>
+      <tr>
+        <td><strong>核心优势</strong></td>
+        <td>分布式、离线可用、生态成熟、工具链丰富</td>
+        <td>极致可扩展性、高吞吐、低延迟检出、服务化 API</td>
+      </tr>
+      <tr>
+        <td><strong>核心劣势</strong></td>
+        <td>大仓库 + 高提交量下扩展性有天花板</td>
+        <td>依赖网络、中心化单点风险、迁移和运维成本高</td>
+      </tr>
+    </table>
+
+    <div class="callout blue">
+      <strong>一句话决策原则</strong><br>
+      如果你还在问"我们要不要搞 Scion 式的系统"——那你大概率不需要。
+      当有一天你发现 Git 镜像堆到几百台还扛不住、CI 检出时间从秒级掉到分钟级、
+      仓库大小按 TB 算的时候，Scion 这条路才值得认真考虑。
+      在此之前，<strong>Git 加上浅克隆、稀疏检出、部分克隆这些优化，足以覆盖绝大多数场景</strong>。
+    </div>
+
+    <h2>七、更深的启示：Agent 时代的研发基础设施</h2>
 
     <p>Scion 这个项目最有价值的地方，不是它的技术细节有多牛，而是它揭示了一个更宏观的趋势：<strong>当 AI 开始大规模写代码，整个研发基础设施栈都需要被重新设计</strong>。</p>
 
@@ -359,7 +517,7 @@
 
     <p>这可能是 AI 时代运维的新形态：<strong>每个组件有一个专属 AI 运维工程师，人类运维团队处理真正复杂的情况</strong>。</p>
 
-    <h2>七、对行业的影响</h2>
+    <h2>八、对行业的影响</h2>
 
     <p>Anthropic 明确表示不打算开源 Scion 或者做成产品，但这不意味着这篇文章只有八卦价值。恰恰相反，它的价值在于<strong>给整个行业指了一个方向</strong>。</p>
 
