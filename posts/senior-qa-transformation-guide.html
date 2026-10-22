@@ -373,10 +373,12 @@
       突然全都变成了你的<strong>核心竞争力</strong>。
     </p>
 
-    <h2>三、编码能力怎么补？补到什么程度够？</h2>
+    <h2>三、编码怎么捡回来？捡回来到什么程度够？</h2>
 
     <p>
-      先说结论：<strong>不需要补到"能从零写框架"的程度，补到"能看懂、能改、能指挥 AI 写"就够了。</strong>
+      先说结论：<strong>不是"从退化里补回来"，是"把手感捡回来 + 让 AI 当你的代码手"。</strong>
+      你不是不会写，是近三年写得少、手生了、新框架不熟悉了——
+      这跟"能力退化"是两码事。底子还在，捡回来比从零开始快得多。
     </p>
 
     <p>
@@ -385,27 +387,28 @@
 
     <div class="tool-grid">
       <div class="tool-card">
-        <div class="tool-name">Level 1：读得懂</div>
-        <div class="tool-use">能读懂常见的代码、能看懂自动化脚本在干什么、能 review AI 生成的代码靠不靠谱。</div>
+        <div class="tool-name">Level 1：读得懂 + 判断得对</div>
+        <div class="tool-use">能读懂代码、能看懂脚本在干什么、能 review AI 写的代码靠不靠谱、能判断逻辑有没有问题。</div>
         <div class="tool-level level-1">● 必达 · 基础要求</div>
       </div>
       <div class="tool-card">
-        <div class="tool-name">Level 2：改得动</div>
-        <div class="tool-use">能修改已有的自动化脚本、能写简单的测试用例代码、能调试基本的报错。</div>
+        <div class="tool-name">Level 2：改得动 + 调得通</div>
+        <div class="tool-use">能修改已有脚本、能写新的测试用例、能 debug 常见报错、能指挥 AI 写出你想要的东西。</div>
         <div class="tool-level level-2">● 力争 · 大部分场景够用</div>
       </div>
       <div class="tool-card">
-        <div class="tool-name">Level 3：写得出</div>
-        <div class="tool-use">能从零搭建测试框架、能写复杂的测试工具、能做性能测试和安全测试开发。</div>
+        <div class="tool-name">Level 3：写得出 + 搭得起来</div>
+        <div class="tool-use">能从零搭测试框架、能写复杂工具、能做性能/安全测试开发。</div>
         <div class="tool-level level-3">● 可选 · 不是必须</div>
       </div>
     </div>
 
     <p>
       对你来说，<strong>Level 2 就是甜点区</strong>——投入产出比最高。
-      Level 3 不是不能学，但要花的时间太多，而且跟你的优势比，投入产出比不高。
+      Level 3 不是不能捡回来，但要花的时间太多，
+      而且跟你其他的优势（策略、风险、业务、探索/模糊测试）比，投入产出比不高。
       尤其你已经熟练使用 AI 编程工具、还懂 AI 底层原理——
-      这意味着你指挥 AI 写代码的效率，可能比你自己写高得多得多。
+      这意味着你指挥 AI 写代码的效率，可能比你自己硬写高得多得多。
       真需要 Level 3 的能力怎么办？两个办法：
     </p>
 
@@ -414,22 +417,27 @@
       <li><strong>团队分工互补。</strong>如果你带团队，招一个编码强的测试开发，跟你形成"你定策略 + 他写工具"的组合。你负责"做什么、为什么做"，他负责"怎么做"。一加一大于二。</li>
     </ul>
 
-    <h3>Level 1 → Level 2 怎么补？给你一个三个月计划</h3>
+    <h3>Level 2 怎么捡回来？给你一个三个月手感恢复计划</h3>
+    <p style="font-size:0.9em; color:#64748b; margin-top:-12px;">
+      注意：这不是"从零学编码"的计划，是"有底子但手生了"的恢复计划。
+      你以前会的东西都还在，只是需要一点时间重新激活。
+    </p>
 
     <div class="roadmap-step">
       <div class="step-num">1</div>
       <div class="step-body">
-        <h4>第一个月：把生锈的手练回来</h4>
+        <h4>第一个月：把手感找回来</h4>
         <p style="margin: 0; font-size: 0.9em; line-height: 1.7;">
-          不用学新东西，先把你以前会的捡回来。
+          不用学新东西，先把以前会的捡回来。
+          你底子在，不需要从零开始——主要是"肌肉记忆"和"语感"的恢复。
         </p>
         <ul>
-          <li>挑你项目里最常用的一门语言（Python/Java/TypeScript），找一份基础教程，每天花 30 分钟过一遍</li>
-          <li>找你团队现成的自动化脚本，一行行读，边读边想：这行在干嘛？为什么这么写？</li>
-          <li>试着改一个小功能——比如加一条断言、改一个定位方式，跑通它</li>
-          <li><strong>关键：从你日常工作中的真实需求入手，不要为了学而学。</strong></li>
+          <li>挑你最熟悉的语言和框架，找一份速查表/cheat sheet，每天花 20 分钟过一遍语法和常用 API</li>
+          <li>读代码：拿你项目里现成的自动化脚本，从头到尾读一遍，边读边在脑子里解释"这行在干嘛"</li>
+          <li>小改一下：挑一个简单的需求（加个断言、改个配置、加个日志），自己动手改，跑通它</li>
+          <li><strong>关键：从工作中真实的小需求入手，不要为了练而练。</strong>用起来才是最好的恢复。</li>
         </ul>
-        <div class="step-time">⏱ 每天 30-60 分钟 · 目标：读代码不犯怵，能改小功能</div>
+        <div class="step-time">⏱ 每天 20-30 分钟 · 目标：读代码不犯怵，小改动不发怵</div>
       </div>
     </div>
 
