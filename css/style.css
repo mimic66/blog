@@ -270,6 +270,34 @@ footer.site-footer {
   background: var(--surface);
 }
 
+.article-copyright {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+.article-copyright strong {
+  color: var(--text);
+}
+.article-copyright a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.article-copyright a:hover {
+  text-decoration: underline;
+}
+
+.svg-watermark {
+  pointer-events: none;
+  user-select: none;
+  fill: rgba(148, 163, 184, 0.35);
+  font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+}
+
 .about-page {
   padding: 40px 0 60px;
 }
