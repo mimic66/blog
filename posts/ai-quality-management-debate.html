@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>六位质量权威同台激辩：AI时代，软件质量管理该怎么办？ - 质量实验室</title>
+  <meta name="description" content="Humphrey、戴明、朱兰、克罗斯比、周震漪、郝丹——六位横跨半世纪的质量权威，围绕AI时代软件质量管理的五大核心问题展开思想交锋。真实观点，有据可查。">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .debate-hero {
+      background: linear-gradient(135deg, #0c4a6e 0%, #1e40af 50%, #5b21b6 100%);
+      color: #f1f5f9;
+      padding: 48px 40px;
+      border-radius: 12px;
+      margin-bottom: 36px;
+    }
+    .debate-hero h1 { color: #fff; font-size: 1.7em; margin-bottom: 12px; line-height: 1.4; }
+    .debate-hero .subtitle { color: #bfdbfe; font-size: 0.95em; line-height: 1.7; }
+    .debate-hero .meta { color: #93c5fd; font-size: 0.85em; margin-top: 16px; }
+
+    .thinker-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .thinker-card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 14px 12px;
+      text-align: center;
+    }
+    .thinker-card .t-name { font-weight: 700; font-size: 0.92em; color: #e0f2fe; }
+    .thinker-card .t-country { font-size: 0.73em; color: #93c5fd; margin-top: 2px; }
+    .thinker-card .t-slogan { font-size: 0.78em; color: #bae6fd; margin-top: 6px; font-style: italic; line-height: 1.5; }
+
+    .debate-section { margin: 48px 0; }
+    .debate-topic {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: #f1f5f9;
+      padding: 24px 28px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+    }
+    .debate-topic .topic-label {
+      font-size: 0.8em; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .debate-topic h3 {
+      color: #fff; font-size: 1.3em; margin: 0 0 8px 0;
+    }
+    .debate-topic .topic-desc {
+      color: #94a3b8; font-size: 0.9em; line-height: 1.6;
+    }
+
+    .speech {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      background: #fff;
+    }
+    .speech:last-child { margin-bottom: 0; }
+    .avatar {
+      flex-shrink: 0;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.82em;
+      line-height: 1.2;
+      text-align: center;
+    }
+    .avatar.humphrey { background: linear-gradient(135deg, #2563eb, #1e3a8a); }
+    .avatar.deming { background: linear-gradient(135deg, #dc2626, #991b1b); }
+    .avatar.juran { background: linear-gradient(135deg, #059669, #065f46); }
+    .avatar.crosby { background: linear-gradient(135deg, #d97706, #92400e); }
+    .avatar.zhou { background: linear-gradient(135deg, #7c3aed, #5b21b6); }
+    .avatar.hao { background: linear-gradient(135deg, #db2777, #9d174d); }
+
+    .speech-body { flex: 1; min-width: 0; }
+    .speech-body .speaker {
+      font-weight: 700; font-size: 0.95em; margin-bottom: 4px;
+    }
+    .speech-body .speaker-title {
+      font-size: 0.8em; color: #64748b; font-weight: 400; margin-left: 6px;
+    }
+    .speech-body .speaker-tag {
+      display: inline-block;
+      font-size: 0.7em;
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-left: 6px;
+      vertical-align: middle;
+      font-weight: 500;
+    }
+    .tag-humphrey { background: #dbeafe; color: #1e40af; }
+    .tag-deming { background: #fee2e2; color: #991b1b; }
+    .tag-juran { background: #d1fae5; color: #065f46; }
+    .tag-crosby { background: #fef3c7; color: #92400e; }
+    .tag-zhou { background: #ede9fe; color: #6d28d9; }
+    .tag-hao { background: #fce7f3; color: #9d174d; }
+
+    .speech-body p {
+      margin: 6px 0; font-size: 0.9em; line-height: 1.75; color: #334155;
+    }
+    .speech-body p:first-child { margin-top: 2px; }
+    .speech-body p:last-child { margin-bottom: 0; }
+    .speech-body .key-line {
+      background: #f8fafc;
+      border-left: 3px solid #475569;
+      padding: 8px 12px;
+      margin: 10px 0;
+      font-style: italic;
+      color: #1e293b;
+      border-radius: 0 6px 6px 0;
+    }
+
+    .cite-note {
+      font-size: 0.75em;
+      color: #94a3b8;
+      margin-top: 6px;
+      font-style: italic;
+    }
+
+    .verdict-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e2e8f0;
+      border-radius: 12px;
+      padding: 32px;
+      margin: 36px 0;
+    }
+    .verdict-box h3 { color: #fff; margin-top: 0; }
+    .verdict-box p { color: #94a3b8; font-size: 0.9em; line-height: 1.7; margin: 8px 0; }
+    .verdict-box .key-line {
+      color: #fbbf24; font-size: 1.1em; font-weight: 600; margin: 16px 0;
+    }
+
+    .compare-table-wrap {
+      overflow-x: auto;
+      margin: 24px 0;
+    }
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85em;
+      min-width: 700px;
+    }
+    .compare-table th {
+      background: #1e293b;
+      color: #f1f5f9;
+      padding: 12px 14px;
+      text-align: left;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+    .compare-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: top;
+      line-height: 1.6;
+    }
+    .compare-table tr:nth-child(even) td { background: #f8fafc; }
+    .compare-table .master-col {
+      font-weight: 600;
+      white-space: nowrap;
+      min-width: 90px;
+    }
+
+    .references-section {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 24px 28px;
+      margin-top: 40px;
+    }
+    .references-section h3 {
+      margin-top: 0;
+      color: #1e293b;
+    }
+    .references-section ol {
+      padding-left: 22px;
+      font-size: 0.82em;
+      line-height: 1.7;
+      color: #475569;
+    }
+    .references-section li {
+      margin: 6px 0;
+    }
+
+    .article-copyright {
+      margin-top: 48px;
+      padding: 20px 24px;
+      background: #f8fafc;
+      border-left: 4px solid #94a3b8;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.85em;
+      color: #64748b;
+      line-height: 1.7;
+    }
+    .article-copyright strong { color: #475569; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo"><a href="../index.html">质量<span>实验</span>室</a></div>
+    <nav>
+      <a href="../index.html">首页</a>
+      <a href="../about.html">关于</a>
+    </nav>
+  </header>
+
+  <article>
+    <div class="debate-hero">
+      <h1>六位质量权威同台激辩：<br>AI时代，软件质量管理该怎么办？</h1>
+      <div class="subtitle">
+        从CMM之父到北大学者，从戴明十四点到LLM测试生成——<br>
+        六位横跨半个世纪的思想者，围绕五大核心问题展开交锋。
+      </div>
+      <div class="thinker-grid">
+        <div class="thinker-card">
+          <div class="t-name">Watts Humphrey</div>
+          <div class="t-country">美国 · SEI</div>
+          <div class="t-slogan">软件质量之父<br>CMM/PSP/TSP</div>
+        </div>
+        <div class="thinker-card">
+          <div class="t-name">W.E. Deming</div>
+          <div class="t-country">美国 · 统计学家</div>
+          <div class="t-slogan">质量管理之父<br>十四点 + SoPK</div>
+        </div>
+        <div class="thinker-card">
+          <div class="t-name">Joseph Juran</div>
+          <div class="t-country">美国 · 质量大师</div>
+          <div class="t-slogan">质量三部曲<br>适用性 + 帕累托</div>
+        </div>
+        <div class="thinker-card">
+          <div class="t-name">Philip Crosby</div>
+          <div class="t-country">美国 · 质量大师</div>
+          <div class="t-slogan">零缺陷<br>质量免费</div>
+        </div>
+        <div class="thinker-card">
+          <div class="t-name">周震漪</div>
+          <div class="t-country">中国 · 行业推动者</div>
+          <div class="t-slogan">TMMi/ISTQB中国<br>标准+过程+人才</div>
+        </div>
+        <div class="thinker-card">
+          <div class="t-name">郝丹</div>
+          <div class="t-country">中国 · 北大教授</div>
+          <div class="t-slogan">IEEE Fellow<br>测试优化 + LLM测试</div>
+        </div>
+      </div>
+      <div class="meta">2026-10-23 · 深度分析 · 约 22 分钟阅读</div>
+    </div>
+
+    <p>
+      当 AI 开始写代码、生成测试用例、甚至做代码审查，
+      软件质量管理的底层逻辑正在被改写。
+      测试还重要吗？过程改进还有意义吗？
+      质量的定义变了吗？人才的标准变了吗？
+    </p>
+    <p>
+      我们请来了六位横跨半个世纪的质量权威——
+      从"软件质量之父"Humphrey，到"质量管理之父"戴明，
+      从朱兰和克罗斯比这对经典的"适用性 vs 符合性"辩友，
+      到国内质量工程推动者周震漪和北大软件测试学者郝丹。
+      他们将围绕五大辩题，展开一场跨越时空的思想交锋。
+    </p>
+    <p>
+      <strong>说明：</strong>本文中各位大师的发言均基于其已发表的真实观点和著作推演而来，
+      关键论述附有出处标注。文中"AI时代"的延伸观点，是从其核心思想出发的合理推演，
+      不代表本人原话。读者可自行判断哪些是原话、哪些是推演。
+    </p>
+
+    <!-- ================================================== -->
+    <!-- 辩题一：AI时代，软件质量的核心定义变了吗？ -->
+    <!-- ================================================== -->
+
+    <div class="debate-section">
+      <div class="debate-topic">
+        <div class="topic-label">辩题一</div>
+        <h3>AI时代，软件质量的核心定义变了吗？</h3>
+        <div class="topic-desc">
+          当AI参与写代码、当大模型本身成为软件的一部分，
+          软件质量的定义——"适用性"还是"符合要求"——是否需要被重新书写？
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar juran">朱兰</div>
+        <div class="speech-body">
+          <div class="speaker">
+            Joseph M. Juran
+            <span class="speaker-title">质量三部曲提出者</span>
+            <span class="speaker-tag tag-juran">适用性</span>
+          </div>
+          <p>
+            我这辈子一直在说一件事：<strong>质量就是适用性（Fitness for Use）。</strong>
+            不是"符合规格"，不是"通过测试"，是用户用起来能不能解决他的问题。
+          </p>
+          <p>
+            AI时代来了，这个定义变了吗？<em>没有。</em>
+            反而更重要了。以前软件的"适用性"主要是功能对不对、性能够不够。
+            现在多了很多新维度：AI生成的内容准不准确？有没有偏见？会不会胡说八道？
+            用户能不能信任它的输出？
+          </p>
+          <p>
+            你看，定义没变，但"适用性"的内涵扩展了。
+            以前我讲质量的多重维度——设计质量、一致性、可用性、安全性、现场使用——
+            现在要再加一个：<strong>智能可信度。</strong>
+          </p>
+          <div class="cite-note">
+            核心观点来源：Juran's Quality Control Handbook; Juran on Quality by Design (1992)
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar crosby">克罗斯</div>
+        <div class="speech-body">
+          <div class="speaker">
+            Philip B. Crosby
+            <span class="speaker-title">零缺陷提出者</span>
+            <span class="speaker-tag tag-crosby">符合要求</span>
+          </div>
+          <p>
+            朱兰老兄，我们争了一辈子了。我说的是：<strong>质量是符合要求，不是"好"。</strong>
+            "好"太主观了，每个人对"好"的理解都不一样。
+            质量必须是可衡量的——不符合要求的代价，就是质量的度量。
+          </p>
+          <p>
+            AI来了，我这个定义反而<em>更需要</em>了。为什么？
+            因为AI写的代码，最大的问题不是"看起来好不好"，是"<strong>它到底有没有满足需求</strong>"。
+            AI可以生成一大堆看起来很美的代码，但如果需求定义不清、验收标准模糊，
+            那这些代码就是漂亮的垃圾。
+          </p>
+          <p>
+            我的回答：质量的定义没变，而且更重要了。
+            在AI时代，你必须把"要求"定义得比以前任何时候都清楚——
+            否则AI就会给你一堆"看起来对但其实不对"的东西。
+          </p>
+          <div class="cite-note">
+            核心观点来源：Quality is Free (1979), "四绝对"第一条
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar humphrey">汉弗莱</div>
+        <div class="speech-body">
+          <div class="speaker">
+            Watts S. Humphrey
+            <span class="speaker-title">CMM / PSP 之父</span>
+            <span class="speaker-tag tag-humphrey">满足客户</span>
+          </div>
+          <p>
+            我同意戴明、朱兰和其他质量大师的定义——<strong>质量就是尽一切努力真正满足客户。</strong>
+            不是满足规格，是满足客户。规格只是客户需求的一种不完美的表达。
+          </p>
+          <p>
+            AI时代，这个定义有新的含义。第一，客户的期望更高了——
+            他们期望软件更智能、更个性化、响应更快。第二，质量的挑战更难了——
+            大模型的输出是概率性的，不是确定性的，你怎么定义"满足客户"？
+          </p>
+          <p>
+            但我最关心的是：<strong>谁对质量负责？</strong>
+            以前我说，软件工程师必须对自己产出的质量感到个人负责。
+            现在AI写代码了，工程师还有个人责任吗？
+            我的回答是：<em>有，而且责任更重了。</em>
+            你是那个判断AI写得对不对的人，你是那个最终拍板的人。
+            AI只是工具，你才是质量的守门人。
+          </p>
+          <div class="cite-note">
+            核心观点来源：Computer History Museum Oral History (2009); CMU/SEI-2000-TR-022
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar deming">戴明</div>
+        <div class="speech-body">
+          <div class="speaker">
+            W. Edwards Deming
+            <span class="speaker-title">质量管理之父</span>
+            <span class="speaker-tag tag-deming">持续改进</span>
+          </div>
+          <p>
+            质量是什么？质量是<em>通过降低变异和改进过程来满足客户的需求</em>。
+            我不争论"适用性"还是"符合性"——它们是一个硬币的两面。
+            我关心的是：<strong>你怎么持续地、系统地提高质量？</strong>
+          </p>
+          <p>
+            AI来了，质量的目标没变，但质量的"敌人"变了。
+            以前最大的敌人是<strong>变异</strong>——同一段代码，十个人写有十种写法，质量参差不齐。
+            AI来了之后，变异可能减少了（大家都用同一个模型生成的代码），
+            但出现了新的敌人：<strong>系统性偏差 + 不可预测性。</strong>
+          </p>
+          <p>
+            我的渊博知识体系里的四条——系统的欣赏、变异的知识、知识理论、心理学——
+            在AI时代一条都不会过时。反而，你需要更深刻地理解变异：
+            AI的输出变异是共同原因还是特殊原因？
+            你需要更深刻地理解系统：AI在你的开发系统里扮演什么角色？
+            这些才是根本问题。
+          </p>
+          <div class="cite-note">
+            核心观点来源：The New Economics (1993); Out of the Crisis (1986)
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar zhou">周震漪</div>
+        <div class="speech-body">
+          <div class="speaker">
+            周震漪
+            <span class="speaker-title">TMMi / ISTQB 中国推动者</span>
+            <span class="speaker-tag tag-zhou">全生命周期质量</span>
+          </div>
+          <p>
+            从行业实践的角度，我认为AI时代质量的<strong>核心定义没有变，但质量的范畴大大扩展了</strong>。
+            我们一直在说，质量必须贯穿软件生命周期的每一个阶段，
+            不能把质量等同于测试——测试只是质量保障的一个环节。
+          </p>
+          <p>
+            AI来了之后，这个"全生命周期质量"的内涵更丰富了：
+            需求阶段，你要定义AI的行为边界和验收标准；
+            开发阶段，你要考虑AI生成代码的质量控制；
+            测试阶段，你要面对大模型的非确定性输出怎么测；
+            运维阶段，你要持续监控AI模型的漂移和退化。
+          </p>
+          <p>
+            用一句话说：<strong>质量不是最终的检查环节，是从需求到运维的全链路管控。</strong>
+            AI没有改变这个本质，它只是让全链路的每一个环节都多了新的挑战。
+          </p>
+          <div class="cite-note">
+            核心观点来源：第四届电子信息测试产业大会主题演讲 (2026-07)
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar hao">郝丹</div>
+        <div class="speech-body">
+          <div class="speaker">
+            郝丹
+            <span class="speaker-title">北大教授 / IEEE Fellow</span>
+            <span class="speaker-tag tag-hao">故障检测能力</span>
+          </div>
+          <p>
+            从学术研究的角度，软件质量的一个核心衡量维度是<strong>故障检测能力</strong>——
+            你的测试套件能不能有效地发现缺陷？你的质量保障手段能不能拦住问题？
+          </p>
+          <p>
+            AI时代，这个维度变得更复杂了。一方面，AI可以用来增强测试——
+            我们团队的 TestTailor 框架，用路径邻近测试引导LLM生成高覆盖率测试，
+            在不同LLM骨干上都表现出鲁棒性。
+            ConTested 框架则用一致性辅助和用户反馈，显著提升测试代码生成质量。
+            这些都说明，AI可以成为质量保障的强大工具。
+          </p>
+          <p>
+            但另一方面，AI本身也带来了新的质量问题。
+            大模型的幻觉、偏见、不可解释性，这些都是传统软件没有的质量挑战。
+            所以我的观点是：<strong>质量的定义没变，但质量的维度变多了、测量变难了。</strong>
+            以前你测的是确定性的代码，现在你还要测概率性的模型。
+            这是一个全新的质量空间。
+          </p>
+          <div class="cite-note">
+            研究成果来源：TestTailor (FSE 2026); ConTested (ISSTA 2025)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================== -->
+    <!-- 辩题二：AI时代，测试还是质量保障的主要手段吗？ -->
+    <!-- ================================================== -->
+
+    <div class="debate-section">
+      <div class="debate-topic">
+        <div class="topic-label">辩题二</div>
+        <h3>AI时代，测试还是质量保障的主要手段吗？</h3>
+        <div class="topic-desc">
+          当AI可以自动生成测试用例、当测试效率被AI大幅提升，
+          测试的地位是上升了还是下降了？还是说，我们应该像戴明说的那样——
+          停止依靠检验来获得质量？
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar deming">戴明</div>
+        <div class="speech-body">
+          <div class="speaker">
+            W. Edwards Deming
+            <span class="speaker-title">质量管理之父</span>
+            <span class="speaker-tag tag-deming">停止靠检验</span>
+          </div>
+          <p>
+            我1986年就说了：<strong>停止依靠大规模检验来获得质量。</strong>
+            你要做的是在生产过程中就把质量建造进去，而不是靠事后检验来把坏的挑出来。
+          </p>
+          <p class="key-line">
+            "Cease dependence on inspection to achieve quality. Eliminate the need for inspection on a mass basis by building quality into the product in the first place."
+          </p>
+          <p>
+            四十年过去了，到了AI时代，这句话更重要了，不是更不重要了。
+            为什么？因为AI写代码的速度太快了——如果你的质量策略还是"写完了再测"，
+            那测试永远追不上AI生成代码的速度。你会陷入一个恶性循环：
+            AI写得越多，待测试的代码就越多，测试就越赶不上。
+          </p>
+          <p>
+            正确的做法是什么？把质量<em>建造</em>到过程里去。
+            需求阶段就定义清楚验收标准，编码阶段有严格的评审和检查，
+            测试只是最后一道防线，不是主力。
+            发现错误不是过程的改进——改进过程才是。
+          </p>
+          <div class="cite-note">
+            核心观点来源：Out of the Crisis (1986), 第三点; Deming Library 视频资料
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar crosby">克罗斯</div>
+        <div class="speech-body">
+          <div class="speaker">
+            Philip B. Crosby
+            <span class="speaker-title">零缺陷提出者</span>
+            <span class="speaker-tag tag-crosby">预防系统</span>
+          </div>
+          <p>
+            戴明说的对，我补充一下我的"四绝对"第二条：
+            <strong>质量的系统是预防，不是检验。</strong>
+          </p>
+          <p>
+            检验是事后的、昂贵的、不可靠的。你靠检验来保证质量，
+            就像靠称体重来减肥——你只是知道自己胖了，但体重不会因为你天天称就降下来。
+          </p>
+          <p>
+            AI时代，预防变得更重要，也更可行了。
+            以前预防靠人的自觉和培训，现在AI可以帮你做很多预防的事：
+            在编码阶段实时提示最佳实践、自动发现常见问题、在代码写出来的同时就做检查。
+          </p>
+          <p>
+            所以测试的地位？测试当然还是需要的，但它不应该是"主要手段"。
+            主要手段是<strong>预防</strong>——第一次就把事情做对。
+            测试只是验证你是不是真的做对了。
+          </p>
+          <div class="cite-note">
+            核心观点来源：Quality is Free (1979), 四绝对第二条
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar humphrey">汉弗莱</div>
+        <div class="speech-body">
+          <div class="speaker">
+            Watts S. Humphrey
+            <span class="speaker-title">PSP / TSP 之父</span>
+            <span class="speaker-tag tag-humphrey">高质量进，高质量出</span>
+          </div>
+          <p>
+            用数据说话。我的PSP研究里有一组数据：
+            代码评审中平均每小时发现 6.52 个缺陷，
+            设计评审中 2.96 个/小时，
+            单元测试中只有 2.21 个/小时。
+            移除100个缺陷，单元测试需要约45小时，代码评审仅需约15小时。
+          </p>
+          <p class="key-line">
+            任何测试方法都只能发现大型复杂产品中缺陷的一小部分，产品越大越复杂，这个比例就越小。这意味着，要想从测试中得到高质量产品，就必须把高质量产品送进测试。
+          </p>
+          <p>
+            到了AI时代，这个逻辑完全适用——而且产品更复杂了。
+            AI参与开发的软件，系统更复杂、输出更多样、缺陷更隐蔽。
+            测试能发现的比例只会更低，不会更高。
+          </p>
+          <p>
+            所以我的答案很明确：<strong>测试从来都不是质量保障的"主要手段"，现在更不是。</strong>
+            主要手段是个人层面的质量纪律（PSP）、团队层面的质量流程（TSP）、
+            组织层面的过程成熟度（CMM）。测试是最后一道防线，不是主力军。
+            AI可以让测试效率更高，但你不能指望测试当主力。
+          </p>
+          <div class="cite-note">
+            数据来源：CMU/SEI-2000-TR-022, Chapter 6; CMU/SEI-2006-TR-017
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar juran">朱兰</div>
+        <div class="speech-body">
+          <div class="speaker">
+            Joseph M. Juran
+            <span class="speaker-title">质量三部曲</span>
+            <span class="speaker-tag tag-juran">三部曲框架</span>
+          </div>
+          <p>
+            我用质量三部曲来回答这个问题：质量策划、质量控制、质量改进。
+            测试属于"质量控制"的范畴——它是发现偏差、纠正偏差的手段之一。
+          </p>
+          <p>
+            AI时代，三者的重要性排序没有变：
+            <strong>质量策划最重要，其次是质量改进，最后才是质量控制。</strong>
+            但三者的内容都变了。
+          </p>
+          <p>
+            质量策划：你不仅要策划功能需求的质量，还要策划AI模型的质量——
+            准确率、鲁棒性、公平性、可解释性。这些都是"质量策划"阶段就要定义清楚的。
+          </p>
+          <p>
+            质量控制：测试当然还是控制手段之一，但控制的对象更多了。
+            你要控制需求质量、设计质量、代码质量、模型质量、数据质量。
+            测试只是其中一环。
+          </p>
+          <p>
+            质量改进：AI可以大大加速质量改进——自动分析缺陷模式、
+            自动定位根因、自动生成改进建议。改进的效率会大大提高。
+          </p>
+          <div class="cite-note">
+            核心观点来源：Juran Institute 官方资料；Juran Trilogy 框架
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar hao">郝丹</div>
+        <div class="speech-body">
+          <div class="speaker">
+            郝丹
+            <span class="speaker-title">北大教授 / IEEE Fellow</span>
+            <span class="speaker-tag tag-hao">测试的新角色</span>
+          </div>
+          <p>
+            从学术研究的角度，我给出一个更具体的答案：
+            <strong>测试的"主力"地位在下降，但测试的"难度"和"价值"在上升。</strong>
+          </p>
+          <p>
+            什么意思呢？以前测试的很大一部分工作量是<em>写用例</em>——
+            设计测试场景、编写测试代码、维护测试脚本。
+            这部分工作，AI正在快速替代。我们的研究和其他很多研究都表明，
+            LLM在测试生成方面已经达到了相当高的水平，
+            尤其是在覆盖率导向的测试生成上。
+          </p>
+          <p>
+            但测试不只是写用例。测试还有更核心的部分：
+            <strong>测什么？怎么断言？怎么验证正确性？</strong>
+            也就是测试预言（test oracle）的问题——这才是测试真正的硬骨头。
+            AI生成测试用例很厉害，但AI生成的测试断言对不对？
+            AI怎么知道"正确的行为"是什么？这就是测试预言问题。
+          </p>
+          <p>
+            我们团队在蜕变测试、测试预言自动推断方面做了很多工作，
+            但到目前为止，测试预言仍然是软件测试中最难的问题之一。
+            AI时代，这个问题不仅没解决，反而更突出了——
+            因为AI系统的输出本身就是概率性的，什么是"正确"更难定义。
+          </p>
+          <div class="cite-note">
+            研究成果来源：TOSEM (2014); 北大计算机学院研究成果介绍
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar zhou">周震漪</div>
+        <div class="speech-body">
+          <div class="speaker">
+            周震漪
+            <span class="speaker-title">TMMi / ISTQB 中国推动者</span>
+            <span class="speaker-tag tag-zhou">AI赋能人</span>
+          </div>
+          <p>
+            从行业实践的角度，我的观点是：<strong>测试还是质量保障的重要手段，
+            但测试的形态正在被AI重塑。</strong>
+          </p>
+          <p>
+            我一直说：<strong>人工智能不是取代人，而是在赋能人。</strong>
+            在软件质量保障领域，AI已经通过自动化测试用例生成、智能回归测试、
+            智能缺陷分析等手段，切实为企业提质增效。
+          </p>
+          <p>
+            但你不能指望AI自动搞定一切。TMMi模型里讲测试成熟度的五级提升——
+            从初始级到优化级，核心是过程的持续改进和人的能力提升。
+            AI来了，工具更强了，但如果你的测试过程还是一团乱、
+            测试人员的能力跟不上，再强的AI工具也发挥不了作用。
+          </p>
+          <p>
+            所以测试的地位？它不再是"唯一的手段"，它是"AI增强的手段"。
+            未来属于那些能够将人类专业能力与人工智能能力相结合，
+            从而交付可信、高效且高质量软件的专业人士和组织。
+          </p>
+          <div class="cite-note">
+            核心观点来源：第四届电子信息测试产业大会主题演讲 (2026-07)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================== -->
+    <!-- 辩题三：AI写的代码出了质量问题，谁该负责？ -->
+    <!-- ================================================== -->
+
+    <div class="debate-section">
+      <div class="debate-topic">
+        <div class="topic-label">辩题三</div>
+        <h3>AI写的代码出了质量问题，谁该负责？</h3>
+        <div class="topic-desc">
+          当代码是AI生成的、测试用例是AI生成的、甚至代码审查都是AI做的，
+          线上出了bug，板子打在谁身上？开发者？测试工程师？产品经理？还是AI模型提供方？
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar humphrey">汉弗莱</div>
+        <div class="speech-body">
+          <div class="speaker">
+            Watts S. Humphrey
+            <span class="speaker-title">PSP / TSP 之父</span>
+            <span class="speaker-tag tag-humphrey">个人责任</span>
+          </div>
+          <p>
+            我的答案很明确：<strong>使用AI的工程师负责。</strong>
+            不管代码是谁写的——你写的、你同事写的、AI写的——
+            只要从你这里提交出去了，你就是最终的质量责任人。
+          </p>
+          <p>
+            我在PSP里反复强调：要生产高质量产品，工程师必须对产品质量感到个人负责。
+            优质产品不是偶然产生的；工程师必须努力做好质量工作。
+            这个原则，不会因为工具变了就改变。
+          </p>
+          <p>
+            AI是工具，就像编译器是工具、IDE是工具一样。
+            编译器帮你把代码翻译成机器码，但编译出的程序有bug，你不会怪编译器——
+            你会回去检查自己的代码。AI也一样，它只是帮你生成了代码的草稿，
+            <strong>你才是那个审核、修改、最终确认的人。</strong>
+          </p>
+          <div class="cite-note">
+            核心观点来源：CMU/SEI-2000-TR-022, Chapter 6 "PSP Quality Management"
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar deming">戴明</div>
+        <div class="speech-body">
+          <div class="speaker">
+            W. Edwards Deming
+            <span class="speaker-title">质量管理之父</span>
+            <span class="speaker-tag tag-deming">系统责任</span>
+          </div>
+          <p>
+            等等，汉弗莱，不要急着把责任都推给个人。
+            我一辈子都在说：<strong>94%的问题属于系统，只有6%是特殊原因。</strong>
+          </p>
+          <p class="key-line">
+            "I should estimate that in my experience most troubles and most possibilities for improvement add up to the proportions something like this: 94% belongs to the system (responsibility of management), 6% special."
+          </p>
+          <p>
+            AI写的代码出了问题，第一反应不应该是"谁的错"，
+            而应该是"<strong>系统出了什么问题，让这个bug流到了线上？</strong>"
+          </p>
+          <p>
+            你的代码评审流程有效吗？你的测试覆盖到位了吗？
+            你有没有建立AI生成代码的质量门禁？
+            你有没有培训工程师怎么正确使用AI工具？
+            这些都是管理层的责任，是系统的责任。
+          </p>
+          <p>
+            如果你只是把板子打在使用AI的工程师身上，
+            那只会导致一个结果——大家不敢用AI了，或者出了问题藏着掖着。
+            消除恐惧，这是我的第八点。恐惧会导致数据注水、绩效受损。
+          </p>
+          <div class="cite-note">
+            核心观点来源：Out of the Crisis (1986), p.315; 第八点"消除恐惧"
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar crosby">克罗斯</div>
+        <div class="speech-body">
+          <div class="speaker">
+            Philip B. Crosby
+            <span class="speaker-title">零缺陷提出者</span>
+            <span class="speaker-tag tag-crosby">管理层责任</span>
+          </div>
+          <p>
+            戴明说得对，我补充一句：<strong>当你把质量委派出去的时候，质量就开始完蛋了。</strong>
+          </p>
+          <p>
+            我说的承诺，是指CEO亲自参与做事，不是只说"好的，我祝福，给你点钱去做"。
+            AI时代也一样。如果公司管理层只是说了一句"大家都去用AI提高效率"，
+            然后出了问题就怪下面的人没用好——那这就是管理层的问题。
+          </p>
+          <p>
+            质量是文化环境的产物。它必须是组织的结构，而不是结构的一部分。
+            AI来了，你不能在原有的结构上加个AI就完事了。
+            你要重新审视：我们对AI生成代码的质量标准是什么？
+            我们有没有清晰的要求？我们有没有预防的系统？
+            我们的执行标准是什么？我们用什么来度量质量？
+          </p>
+          <p>
+            你看，还是那四绝对：定义是符合要求、系统是预防、标准是零缺陷、度量是不符合要求的代价。
+            <strong>一个都不能少。少了，出问题就是必然的。</strong>
+          </p>
+          <div class="cite-note">
+            核心观点来源：IndustryWeek 访谈 (1995); Quality is Free (1979)
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar juran">朱兰</div>
+        <div class="speech-body">
+          <div class="speaker">
+            Joseph M. Juran
+            <span class="speaker-title">质量三部曲</span>
+            <span class="speaker-tag tag-juran">关键少数</span>
+          </div>
+          <p>
+            我用帕累托原则来回答这个问题。
+            AI代码出了质量问题，责任不是一个人的，是一个分布——
+            <strong>20%的原因造成了80%的问题。</strong>
+          </p>
+          <p>
+            那这20%的"关键少数"是什么？我列几个：
+          </p>
+          <p>
+            第一，<strong>需求不清楚</strong>。需求都没说清楚，AI怎么可能写对？
+            需求问题是质量策划的问题，是产品和管理层的责任。
+          </p>
+          <p>
+            第二，<strong>没有AI使用规范</strong>。什么场景可以用AI？什么场景不能用？
+            AI生成的代码需要走什么样的审查流程？没有规范就是系统问题。
+          </p>
+          <p>
+            第三，<strong>个人审核不到位</strong>。这是工程师的责任，但只是第三位。
+            你不能指望一个在规范不清、需求模糊的环境下工作的人，
+            单靠个人能力拦住所有问题。
+          </p>
+          <p>
+            所以，别问"谁该负责"，问"<strong>关键少数的原因是什么</strong>"。
+            解决了关键少数，80%的问题就没了。
+          </p>
+          <div class="cite-note">
+            核心观点来源：Juran Institute 帕累托原则指南；质量三部曲
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar zhou">周震漪</div>
+        <div class="speech-body">
+          <div class="speaker">
+            周震漪
+            <span class="speaker-title">TMMi / ISTQB 中国推动者</span>
+            <span class="speaker-tag tag-zhou">全链路责任</span>
+          </div>
+          <p>
+            从行业实践的角度，AI代码的质量责任问题，
+            本质上是<strong>全生命周期各环节的质量责任分配问题</strong>。
+          </p>
+          <p>
+            需求阶段，产品经理要对需求的清晰度和完整性负责——
+            这是AI能写出正确代码的前提。
+            开发阶段，工程师要对AI生成代码的审核和确认负责——
+            就像Humphrey说的，你是最终守门人。
+            测试阶段，测试工程师要对测试的充分性和有效性负责——
+            AI生成的测试用例也需要人来判断覆盖面够不够。
+            运维阶段，SRE要对线上质量监控和快速响应负责。
+          </p>
+          <p>
+            所以不是"谁该负责"，是<strong>"每个环节都有自己的质量责任"</strong>。
+            质量不是测试一个环节的事，是全生命周期每个人的事。
+            AI只是工具，责任链不会因为工具变了就消失。
+            这也是为什么我说质量必须贯穿软件生命周期的每一个阶段，
+            结合先进的人工智能，并形成全员的质量文化。
+          </p>
+          <div class="cite-note">
+            核心观点来源：第四届电子信息测试产业大会主题演讲 (2026-07)
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar hao">郝丹</div>
+        <div class="speech-body">
+          <div class="speaker">
+            郝丹
+            <span class="speaker-title">北大教授 / IEEE Fellow</span>
+            <span class="speaker-tag tag-hao">技术手段保障</span>
+          </div>
+          <p>
+            从研究的角度，我更关心：能不能用<strong>技术手段</strong>来减少"谁该负责"这种扯皮的问题？
+          </p>
+          <p>
+            比如，我们可以做AI代码的可信度评估——
+            给AI生成的每一段代码打个"质量置信度"，
+            置信度高的可以快速通过，置信度低的需要更严格的人工审查。
+            我们团队在做的测试生成、变异测试、优先级排序等研究，
+            本质上都是在用技术手段提升质量保障的效率和确定性。
+          </p>
+          <p>
+            再比如，自动化程序修复（APR）——
+            如果AI写的代码有bug，能不能让另一个AI自动修复？
+            我们最近的CausalRepair工作，就是针对大语言模型自动程序修复中的因果性问题。
+            当修复工具越来越智能，"谁的责任"可能就没那么重要了——
+            因为问题可以被快速发现、快速修复。
+          </p>
+          <p>
+            当然，技术不能替代责任。但技术可以让责任更清晰、
+            问题更容易追溯、缺陷更容易控制。
+            这是我作为研究者更关注的方向。
+          </p>
+          <div class="cite-note">
+            研究成果来源：CausalRepair (ISSTA 2026); Predictive Mutation Testing (ISSTA 2016)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================== -->
+    <!-- 辩题四：AI来了，软件过程改进还有意义吗？ -->
+    <!-- ================================================== -->
+
+    <div class="debate-section">
+      <div class="debate-topic">
+        <div class="topic-label">辩题四</div>
+        <h3>AI来了，软件过程改进还有意义吗？</h3>
+        <div class="topic-desc">
+            当AI可以大幅提升个体和团队的生产力，
+            CMM、TMMi这些传统的过程改进框架是不是过时了？
+            过程改进的逻辑在AI时代还成立吗？
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar humphrey">汉弗莱</div>
+        <div class="speech-body">
+          <div class="speaker">
+            Watts S. Humphrey
+            <span class="speaker-title">CMM / PSP / TSP 之父</span>
+            <span class="speaker-tag tag-humphrey">过程更重要</span>
+          </div>
+          <p>
+            有人问我：工具变了，过程还重要吗？
+            我的回答是：<strong>工具越强，过程越重要。</strong>
+          </p>
+          <p>
+            想想看，一个有纪律的工程师和一个没有纪律的工程师，
+            都用AI写代码——谁的产出质量更高？
+            当然是有纪律的那个。因为他知道怎么定义需求、
+            怎么设计方案、怎么审查代码、怎么测试验证。
+            AI只是放大了他的能力。
+          </p>
+          <p>
+            而没有纪律的工程师呢？AI只会放大他的混乱。
+            以前他一天写100行烂代码，现在AI帮他一天写1000行烂代码。
+            问题不是大了，是大了十倍。
+          </p>
+          <p class="key-line">
+            CMM提供组织改进框架，PSP提供工程师个人纪律，TSP指导工程师实际开展工作。三者互补，缺一不可。
+          </p>
+          <p>
+            AI来了，这个框架不仅没过时，反而更重要了。
+            以前过程改进提升的是效率和质量，
+            现在过程改进决定的是——你能不能<em>安全地</em>使用AI。
+            没有好的过程，AI就是危险品。
+          </p>
+          <div class="cite-note">
+            核心观点来源：CMU/SEI-2000-TR-022 & TR-023; Managing the Software Process (1989)
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar deming">戴明</div>
+        <div class="speech-body">
+          <div class="speaker">
+            W. Edwards Deming
+            <span class="speaker-title">质量管理之父</span>
+            <span class="speaker-tag tag-deming">持续改进永不停止</span>
+          </div>
+          <p>
+            改进质量会自动提高生产率。这句话我说了几十年，
+            AI时代，这句话反过来也成立：<strong>提高生产率（用AI）如果不改进质量，就是灾难。</strong>
+          </p>
+          <p>
+            我的第五点：持续不断地改进生产和服务的系统。
+            注意，是"持续不断"——不是改进一次就完事了，
+            不是"上了AI就不用改进了"。改进是永无止境的。
+          </p>
+          <p>
+            PDSA循环——计划、执行、学习、行动。
+            你用AI开发软件，这个循环就停了吗？
+            不会。你需要更大的循环、更快的循环。
+            因为AI让开发速度变快了，如果你的改进速度跟不上，
+            你就会在错误的方向上越跑越快。
+          </p>
+          <p>
+            而且我要强调"学习"（Study），不是"检查"（Check）。
+            AI时代最危险的是什么？是你只看指标、只看结果，
+            不去理解为什么。你不知道AI为什么产出这个结果，
+            不知道改进为什么有效或无效——那你就不是在管理，你是在赌博。
+          </p>
+          <div class="cite-note">
+            核心观点来源：The New Economics (1993); Out of the Crisis (1986), 第五点
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar juran">朱兰</div>
+        <div class="speech-body">
+          <div class="speaker">
+            Joseph M. Juran
+            <span class="speaker-title">质量三部曲</span>
+            <span class="speaker-tag tag-juran">突破性改进</span>
+          </div>
+          <p>
+            过程改进当然有意义。但我要区分两种改进：
+            <strong>渐进式改进</strong>和<strong>突破性改进</strong>。
+          </p>
+          <p>
+            渐进式改进是在现有框架下小步快跑、持续优化。
+            突破性改进是创造有益变革，达到前所未有的绩效水平。
+          </p>
+          <p>
+            AI带来的是什么？是<em>突破性改进的机会</em>。
+            以前你觉得不可能的事——比如一天写完以前一周的代码、
+            一小时分析完以前一个月的缺陷数据——现在都可能了。
+          </p>
+          <p>
+            但突破性改进不会自动发生。
+            你需要用"项目-by-项目"的方法，聚焦关键少数项目，
+            一个一个地取得突破。
+            不能什么都想改，什么都改不深。
+          </p>
+          <p>
+            所以过程改进不仅有意义，而且意义更大了——
+            只是你改进的对象和方式要升级。
+            以前改进的是人的效率，现在改进的是"人+AI"的协作效率。
+          </p>
+          <div class="cite-note">
+            核心观点来源：Juran Institute 质量三部曲资料；Juran on Leadership for Quality (1989)
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar crosby">克罗斯</div>
+        <div class="speech-body">
+          <div class="speaker">
+            Philip B. Crosby
+            <span class="speaker-title">零缺陷提出者</span>
+            <span class="speaker-tag tag-crosby">质量疫苗</span>
+          </div>
+          <p>
+            我用"质量疫苗"来比喻。
+            质量疫苗有五个成分：正直、系统、沟通、运营、政策。
+            这五样东西打进去，组织就对"质量问题"有免疫力了。
+          </p>
+          <p>
+            AI是什么？AI是新的医疗设备、新的药物、新的治疗手段。
+            它可以让治疗更快、更有效，但它不能替代疫苗。
+            没有疫苗，再先进的医疗设备也救不了一个反复生病的人。
+          </p>
+          <p>
+            过程改进就是在给组织打疫苗。
+            你说AI来了疫苗还有用吗？当然有用——
+            而且你需要更强的疫苗，因为AI带来了新的病毒。
+          </p>
+          <p>
+            我的质量改进十四步，AI来了一步都不能少。
+            管理层承诺、质量改进团队、质量度量、质量成本评估……
+            这些都是基本功。基本功不扎实，用什么高级工具都没用。
+          </p>
+          <div class="cite-note">
+            核心观点来源：Quality is Free (1979), 质量疫苗 & 十四步
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar zhou">周震漪</div>
+        <div class="speech-body">
+          <div class="speaker">
+            周震漪
+            <span class="speaker-title">TMMi / ISTQB 中国推动者</span>
+            <span class="speaker-tag tag-zhou">标准在演进</span>
+          </div>
+          <p>
+            从行业角度，我的答案是：<strong>过程改进的意义没有变，但过程改进的内容必须演进。</strong>
+          </p>
+          <p>
+            TMMi基金会已经在发布《人工智能系统测试与 TMMi®》相关白皮书，
+            ISTQB也在不断更新AI时代的测试知识体系。
+            这些国际标准组织都没有说"过程改进过时了"，
+            而是在积极地把AI相关的内容融入现有的框架里。
+          </p>
+          <p>
+            我一直在推动的三大支柱——标准体系、过程体系、人才培养——
+            在AI时代不是不需要了，是更需要了。
+            因为AI让变化更快了，变化越快，你越需要标准和过程来兜底。
+            否则大家都在用AI，但每个人用法都不一样，质量就没谱了。
+          </p>
+          <p>
+            标准、过程与人才培养体系的深度融合，
+            是AI时代软件质量保障破局的关键答案。
+            这句话不是口号，是我们在很多企业实践中验证过的。
+          </p>
+          <div class="cite-note">
+            核心观点来源：第四届电子信息测试产业大会主题演讲 (2026-07); TMMi Foundation 白皮书
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar hao">郝丹</div>
+        <div class="speech-body">
+          <div class="speaker">
+            郝丹
+            <span class="speaker-title">北大教授 / IEEE Fellow</span>
+            <span class="speaker-tag tag-hao">数据驱动改进</span>
+          </div>
+          <p>
+            从研究角度我补充一点：AI让过程改进从"经验驱动"变得更"数据驱动"了。
+          </p>
+          <p>
+            以前过程改进怎么搞？
+            请顾问来评估、定改进方案、推行、看效果。
+            很多时候靠的是顾问的经验和判断。
+          </p>
+          <p>
+            现在不一样了。开发过程中的每一步都有数据——
+            代码提交数据、评审数据、测试数据、缺陷数据、AI使用数据。
+            有了这些数据，你就可以更精准地知道：
+            瓶颈在哪？哪个环节的问题最多？AI在哪些场景下帮助最大？
+          </p>
+          <p>
+            我们团队做的测试优先级、测试约简、预测性变异测试，
+            本质上都是在用数据和算法来优化测试过程。
+            未来，过程改进也会越来越多地用数据说话、用算法优化。
+          </p>
+          <p>
+            所以过程改进不会过时，它会升级——
+            从"大师经验驱动"升级为"数据+经验双轮驱动"。
+            这是进化，不是淘汰。
+          </p>
+          <div class="cite-note">
+            研究成果来源：Predictive Mutation Testing (ISSTA 2016); TOSEM (2014, 2016)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================== -->
+    <!-- 辩题五：AI时代，软件质量人才最核心的能力是什么？ -->
+    <!-- ================================================== -->
+
+    <div class="debate-section">
+      <div class="debate-topic">
+        <div class="topic-label">辩题五</div>
+        <h3>AI时代，软件质量人才最核心的能力是什么？</h3>
+        <div class="topic-desc">
+          当AI可以写代码、写测试、做评审，
+          一个做质量的人，最值钱的能力到底是什么？
+          编码？测试设计？业务理解？还是别的什么？
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar humphrey">汉弗莱</div>
+        <div class="speech-body">
+          <div class="speaker">
+            Watts S. Humphrey
+            <span class="speaker-title">PSP / TSP 之父</span>
+            <span class="speaker-tag tag-humphrey">自我管理</span>
+          </div>
+          <p>
+            我说了一辈子：<strong>软件人员是非常出色的人，做着卓越的工作，但他们被当作失败者对待。</strong>
+            为什么？因为他们没有被教会怎么管理自己的工作、怎么对自己的质量负责。
+          </p>
+          <p>
+            AI时代，这个问题更加突出。
+            以前工程师的价值是"能写代码"，现在AI也能写了。
+            那工程师的价值在哪？<strong>在于能管理自己的工作、对自己的产出负责、持续自我改进。</strong>
+          </p>
+          <p>
+            PSP教的是什么？时间记录、缺陷记录、规模度量、个人评审、缺陷预防。
+            这些东西，本质上是教你怎么<strong>做自己工作的主人</strong>，而不是代码的奴隶。
+            有了这些能力，AI就是你的工具；没有这些能力，你就是AI的工具。
+          </p>
+          <div class="cite-note">
+            核心观点来源：Computer History Museum Oral History (2009); PSP 核心原则
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar deming">戴明</div>
+        <div class="speech-body">
+          <div class="speaker">
+            W. Edwards Deming
+            <span class="speaker-title">质量管理之父</span>
+            <span class="speaker-tag tag-deming">渊博知识</span>
+          </div>
+          <p>
+            我的答案：<strong>渊博知识体系的四个维度。</strong>
+            每一个质量人都应该懂这四样东西。
+          </p>
+          <p>
+            第一，<strong>对系统的欣赏</strong>。你要理解软件是一个系统，
+            理解各部分的相互依存关系。AI来了，系统更复杂了——
+            代码、模型、数据、人，交织在一起。
+            没有系统思维，你只能看到局部，看不到全局。
+          </p>
+          <p>
+            第二，<strong>关于变异的知识</strong>。
+            你要能区分共同原因和特殊原因的变异。
+            AI系统的输出天然有变异——同一个输入，不同时候输出可能不一样。
+            你要理解这种变异、控制这种变异。
+          </p>
+          <p>
+            第三，<strong>知识理论</strong>。
+            知识建立在理论基础上，通过预测-检验循环获得。
+            不能只看经验、只看直觉。你要能提出假设、设计实验、验证结论。
+          </p>
+          <p>
+            第四，<strong>心理学</strong>。理解人的动机、恐惧、自豪感。
+            最终质量还是靠人做出来的。
+            AI越强，越需要理解人——理解人怎么和AI协作、
+            怎么让人保持工作的自豪感、怎么消除恐惧。
+          </p>
+          <div class="cite-note">
+            核心观点来源：The New Economics (1993), Chapter 4
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar juran">朱兰</div>
+        <div class="speech-body">
+          <div class="speaker">
+            Joseph M. Juran
+            <span class="speaker-title">质量三部曲</span>
+            <span class="speaker-tag tag-juran">客户视角</span>
+          </div>
+          <p>
+            质量的定义是适用性——从客户的角度看问题。
+            所以质量人才最核心的能力，是<strong>站在客户的视角思考质量</strong>。
+          </p>
+          <p>
+            你编码再厉害、测试再厉害，如果不知道客户真正关心什么，
+            那你做的很多工作可能都是无用功。
+            你花了大量精力去优化一个客户根本不在意的功能的质量，
+            却忽略了客户最在意的那个体验——这就是没有客户视角。
+          </p>
+          <p>
+            AI时代，这个能力更重要了。为什么？
+            因为AI可以帮你做很多技术层面的事——写代码、写测试、找bug。
+            但AI不知道客户真正想要什么。AI不知道"适用性"是什么。
+            <strong>定义质量，这是人的事，不是AI的事。</strong>
+          </p>
+          <p>
+            所以，最值钱的质量人，不是最会写测试的人，
+            是最懂客户、最懂业务、最能定义"什么是好质量"的人。
+          </p>
+          <div class="cite-note">
+            核心观点来源：Juran on Quality by Design (1992); 质量定义"适用性"
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar crosby">克罗斯</div>
+        <div class="speech-body">
+          <div class="speaker">
+            Philip B. Crosby
+            <span class="speaker-title">零缺陷提出者</span>
+            <span class="speaker-tag tag-crosby">要求清晰</span>
+          </div>
+          <p>
+            我的答案跟朱兰不一样。质量是符合要求。
+            所以质量人才最核心的能力，是<strong>把"要求"定义清楚的能力</strong>。
+          </p>
+          <p>
+            你注意到没有？AI时代最大的问题是什么？
+            是"输入不清晰，输出就不靠谱"。
+            你给AI一个模糊的需求，AI就给你一个看起来对但其实不对的结果。
+            问题出在哪？出在要求不清楚。
+          </p>
+          <p>
+            以前要求不清楚，你还可以边做边沟通、边做边改。
+            现在AI速度太快了，要求不清楚的代价被放大了十倍百倍。
+            你可能花了一周时间，最后发现做出来的东西根本不是想要的。
+          </p>
+          <p>
+            所以，谁能把需求说清楚、把验收标准定义清楚、
+            把"符合要求"的"要求"两个字写明白，
+            谁就是AI时代最值钱的质量人。
+          </p>
+          <p class="key-line">
+            没有质量问题这种东西。所有质量问题，本质上都是要求不清楚的问题。
+          </p>
+          <div class="cite-note">
+            核心观点来源：Quality is Free (1979); "没有质量问题这种东西"
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar zhou">周震漪</div>
+        <div class="speech-body">
+          <div class="speaker">
+            周震漪
+            <span class="speaker-title">TMMi / ISTQB 中国推动者</span>
+            <span class="speaker-tag tag-zhou">人+AI结合</span>
+          </div>
+          <p>
+            从行业人才培养的角度，我认为AI时代质量人才的核心能力是——
+            <strong>将人类专业能力与人工智能能力相结合的能力。</strong>
+          </p>
+          <p>
+            光有专业能力不行——你效率跟不上，别人用AI一天顶你一周。
+            光会用AI也不行——你不知道结果对不对、不知道怎么用在刀刃上。
+            必须两者结合。
+          </p>
+          <p>
+            具体来说，我认为有三个层次：
+          </p>
+          <p>
+            第一层，<strong>会用AI工具</strong>。
+            知道在什么场景下用什么AI工具、怎么用才能达到最好效果。
+            这是基础。
+          </p>
+          <p>
+            第二层，<strong>懂质量专业</strong>。
+            有扎实的质量工程知识体系——测试设计、质量度量、过程改进、风险管理。
+            这是根本。
+          </p>
+          <p>
+            第三层，<strong>能整合创新</strong>。
+            把AI能力和质量专业知识结合起来，创造新的方法、
+            新的流程、新的工具。这是最高层次。
+          </p>
+          <p>
+            未来属于能够交付可信、高效且高质量软件的专业人士。
+            这个"可信"，既来自专业能力，也来自对AI的有效运用。
+          </p>
+          <div class="cite-note">
+            核心观点来源：第四届电子信息测试产业大会主题演讲 (2026-07)
+          </div>
+        </div>
+      </div>
+
+      <div class="speech">
+        <div class="avatar hao">郝丹</div>
+        <div class="speech-body">
+          <div class="speaker">
+            郝丹
+            <span class="speaker-title">北大教授 / IEEE Fellow</span>
+            <span class="speaker-tag tag-hao">判断力+学习力</span>
+          </div>
+          <p>
+            从学术和研究的角度，我认为AI时代质量人才最核心的能力有两个：
+            <strong>判断力</strong>和<strong>学习力</strong>。
+          </p>
+          <p>
+            先说判断力。AI可以生成测试用例、生成代码、生成分析报告，
+            但它不知道这些东西对不对、好不好、有用没用。
+            <strong>判断AI产出质量的能力，本身就是质量能力。</strong>
+            你能不能一眼看出AI生成的测试用例有没有覆盖关键场景？
+            你能不能判断AI写的代码有没有隐藏的设计问题？
+            这就是判断力。
+          </p>
+          <p>
+            再说学习力。AI技术发展太快了——今天是LLM生成测试，
+            明天可能是AI做全流程测试，后天可能是新的测试范式。
+            你今天学的工具，三年后可能就过时了。
+            所以你不能靠吃老本，你必须有持续学习的能力。
+          </p>
+          <p>
+            我们做研究的人感受很深——这个领域变化太快，
+            每年都有新的方法、新的模型、新的结果。
+            你不学习，就会被甩在后面。
+          </p>
+          <p>
+            判断力让你用好当下的AI，学习力让你跟上未来的AI。
+            这两个能力，哪个都不能少。
+          </p>
+          <div class="cite-note">
+            研究视角来源：郝丹团队近年LLM测试方向顶会论文 (FSE/ISSTA/ASE)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================== -->
+    <!-- 总结 -->
+    <!-- ================================================== -->
+
+    <div class="verdict-box">
+      <h3>总结：六位大师的共识与分歧</h3>
+      <p class="key-line">共识远大于分歧。</p>
+      <p>
+        六位思想者虽然来自不同时代、不同背景、不同理论体系，
+        但在AI时代软件质量管理这个话题上，他们的底层逻辑惊人地一致：
+      </p>
+      <p>
+        <strong>1. 质量的本质没变。</strong>无论是朱兰的"适用性"、克罗斯比的"符合要求"、
+        Humphrey的"满足客户"，核心都是围绕用户和需求——AI只是工具，不能改变质量的目标。
+      </p>
+      <p>
+        <strong>2. 预防胜于检测。</strong>从戴明的"停止依靠检验"到克罗斯比的"质量的系统是预防"，
+        从Humphrey的"高质量进、高质量出"到周震漪的"全生命周期质量"——
+        AI时代，预防的重要性不是下降了，是上升了。
+      </p>
+      <p>
+        <strong>3. 过程改进永不过时。</strong>CMM、质量三部曲、TMMi、十四点——
+        这些框架的具体形式会演进，但过程改进的基本逻辑（策划-控制-改进循环）不会变。
+        AI只会让过程改进更重要、更数据驱动。
+      </p>
+      <p>
+        <strong>4. 人是质量的最终决定因素。</strong>无论是个人责任、消除恐惧、客户视角，
+        还是人+AI结合、判断力与学习力——最终决定质量的，还是人。
+        AI越强，人的判断力、系统思维、质量文化就越重要。
+      </p>
+    </div>
+
+    <h2>六大核心观点对照表</h2>
+
+    <div class="compare-table-wrap">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>维度</th>
+            <th>Humphrey</th>
+            <th>戴明</th>
+            <th>朱兰</th>
+            <th>克罗斯比</th>
+            <th>周震漪</th>
+            <th>郝丹</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="master-col">质量定义</td>
+            <td>满足客户</td>
+            <td>持续降低变异</td>
+            <td>适用性</td>
+            <td>符合要求</td>
+            <td>全生命周期质量</td>
+            <td>故障检测能力</td>
+          </tr>
+          <tr>
+            <td class="master-col">测试地位</td>
+            <td>最后一道防线</td>
+            <td>不能靠检验</td>
+            <td>质量控制的一环</td>
+            <td>预防为主</td>
+            <td>AI赋能的手段</td>
+            <td>难度上升、价值上升</td>
+          </tr>
+          <tr>
+            <td class="master-col">责任归属</td>
+            <td>工程师个人</td>
+            <td>系统/管理层</td>
+            <td>关键少数原因</td>
+            <td>管理层承诺</td>
+            <td>全链路各环节</td>
+            <td>用技术明确责任</td>
+          </tr>
+          <tr>
+            <td class="master-col">过程改进</td>
+            <td>工具越强越重要</td>
+            <td>永无止境</td>
+            <td>突破性改进机会</td>
+            <td>质量疫苗</td>
+            <td>标准在演进</td>
+            <td>数据驱动升级</td>
+          </tr>
+          <tr>
+            <td class="master-col">核心能力</td>
+            <td>自我管理</td>
+            <td>渊博知识体系</td>
+            <td>客户视角</td>
+            <td>定义清晰要求</td>
+            <td>人+AI结合</td>
+            <td>判断力+学习力</td>
+          </tr>
+          <tr>
+            <td class="master-col">AI角色</td>
+            <td>放大器</td>
+            <td>新的变异源</td>
+            <td>突破性机会</td>
+            <td>新工具</td>
+            <td>赋能者</td>
+            <td>研究和工具</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="margin-top: 24px;">
+      六位大师，六种视角，一个共同的结论：
+      <strong>AI不是质量的敌人，也不是质量的救世主。</strong>
+      它是一个强大的工具——用好了，能让好的质量体系如虎添翼；
+      用不好，能让混乱的团队雪上加霜。
+    </p>
+    <p>
+      决定质量的从来都不是工具，是使用工具的人、
+      人所在的系统、系统背后的文化。
+      这一点，过去七十年没变，未来七十年也不会变。
+    </p>
+
+    <div class="references-section">
+      <h3>主要参考来源</h3>
+      <ol>
+        <li>Humphrey, W.S. Managing the Software Process. Addison-Wesley, 1989.</li>
+        <li>Humphrey, W.S. A Discipline for Software Engineering. Addison-Wesley, 1995.</li>
+        <li>CMU/SEI-2000-TR-022: The Personal Software Process (PSP). Watts S. Humphrey.</li>
+        <li>CMU/SEI-2000-TR-023: The Team Software Process (TSP). Watts S. Humphrey.</li>
+        <li>CMU/SEI-2006-TR-017: Systems of Systems: Scaling Up the Development Process.</li>
+        <li>Deming, W.E. Out of the Crisis. MIT Press, 1986/2000.</li>
+        <li>Deming, W.E. The New Economics for Industry, Government, Education. MIT Press, 1993.</li>
+        <li>The W. Edwards Deming Institute 官方资料 (deming.org)</li>
+        <li>Juran, J.M. Juran on Quality by Design. Free Press, 1992.</li>
+        <li>Juran, J.M. Quality Control Handbook. McGraw-Hill, 多版.</li>
+        <li>Juran Institute 官方资料 (juran.com)</li>
+        <li>Crosby, P.B. Quality Is Free: The Art of Making Quality Certain. McGraw-Hill, 1979.</li>
+        <li>IndustryWeek 1995 访谈 "Quality is Still Free".</li>
+        <li>周震漪. 第四届电子信息测试产业大会主题演讲《AI时代软件质量保障的破局之道——标准、过程和人才培养体系》. 2026-07.</li>
+        <li>TMMi Foundation 官方资料 (tmmi.org)；《人工智能系统测试与 TMMi®》白皮书.</li>
+        <li>Hao, D. et al. TestTailor: Generating High-Coverage Tests via Path-Proximal Tests with LLMs. FSE 2026.</li>
+        <li>Hao, D. et al. ConTested: Consistency-Aided Tested Code Generation with LLM. ISSTA 2025.</li>
+        <li>Hao, D. et al. From Greedy Steps to Global Optimization: Learning Sequential Test Suite Generation. ISSTA 2026.</li>
+        <li>Hao, D. et al. CausalRepair: Bridging the Causal Gap in LLM-based Automated Program Repair via Dual Slicing. ISSTA 2026.</li>
+        <li>Hao, D. et al. A Unified Test Case Prioritization Approach. TOSEM, 2014.</li>
+        <li>Hao, D. et al. Predictive Mutation Testing. ISSTA 2016.</li>
+      </ol>
+    </div>
+
+    <div class="article-copyright">
+      <strong>版权声明：</strong>本文为「质量实验室」原创，作者保留所有权利。
+      转载请保留完整文章及本声明，禁止修改演绎，禁止商业用途。
+      <br>
+      依据：<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a>
+    </div>
+  </article>
+
+  <footer>
+    <p>© 2026 质量实验室 · 连接过去与未来</p>
+  </footer>
+</body>
+</html>
