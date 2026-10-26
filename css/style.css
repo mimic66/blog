@@ -306,9 +306,9 @@ body > header {
   z-index: 10;
 }
 body > header > * {
-  max-width: 820px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
 }
 body > header .logo {
   position: absolute;
@@ -340,15 +340,25 @@ body > header nav a {
 body > header nav a:hover { color: var(--accent); }
 
 body > article {
-  max-width: 820px;
-  margin: 32px auto 0;
-  padding: 0 20px;
+  max-width: 1000px;
+  margin: 36px auto 0;
+  padding: 0 24px;
+  font-size: 16px;
+  line-height: 1.85;
+}
+body > article p {
+  max-width: 46em;
+  margin-bottom: 18px;
+}
+body > article h2,
+body > article h3 {
+  max-width: 46em;
 }
 
 body > footer {
-  max-width: 820px;
+  max-width: 1000px;
   margin: 48px auto 0;
-  padding: 30px 20px;
+  padding: 30px 24px;
   border-top: 1px solid var(--border);
   text-align: center;
   color: var(--text-secondary);
@@ -356,7 +366,15 @@ body > footer {
 }
 @media (max-width: 600px) {
   body > header .logo { font-size: 17px; }
+  body > header > *,
+  body > article,
+  body > footer { padding-left: 16px; padding-right: 16px; }
   body > article { margin-top: 20px; }
+  body > article p,
+  body > article h2,
+  body > article h3 { max-width: none; }
+  body > article > .hero,
+  body > article > .debate-hero { padding: 28px 20px !important; }
 }
 
 .about-page {
