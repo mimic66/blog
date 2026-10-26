@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Humphrey 的 PSP 在 AI 编程时代：30年前的纪律，治今天的混乱 - 质量实验室</title>
+  <meta name="description" content="METR 实验：开发者感觉 AI 让自己快了 20%，实际测量慢了 19%。这正是 Watts Humphrey 30 年前创立 PSP 要解决的问题——没有个人级度量，你的感觉全是错觉。">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #1e40af 100%);
+      color: #f1f5f9;
+      padding: 48px 40px;
+      border-radius: 12px;
+      margin-bottom: 36px;
+    }
+    .hero h1 { color: #fff; font-size: 1.7em; margin-bottom: 12px; line-height: 1.4; }
+    .hero .subtitle { color: #bfdbfe; font-size: 0.95em; line-height: 1.7; }
+    .hero .meta { color: #93c5fd; font-size: 0.85em; margin-top: 16px; }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin: 28px 0;
+    }
+    .stat-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #2563eb;
+      border-radius: 8px;
+      padding: 18px 20px;
+    }
+    .stat-card .num {
+      font-size: 1.8em;
+      font-weight: 800;
+      color: #1e3a8a;
+      line-height: 1.1;
+    }
+    .stat-card .num.red { color: #b91c1c; }
+    .stat-card .num.green { color: #047857; }
+    .stat-card .num.amber { color: #b45309; }
+    .stat-card .label {
+      font-size: 0.82em;
+      color: #64748b;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .quote-callout {
+      background: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      padding: 18px 22px;
+      margin: 24px 0;
+      border-radius: 0 10px 10px 0;
+      font-size: 0.95em;
+      line-height: 1.8;
+      color: #78350f;
+    }
+    .quote-callout .src {
+      display: block;
+      margin-top: 8px;
+      font-size: 0.8em;
+      color: #a16207;
+      font-style: italic;
+    }
+
+    .dark-quote {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e2e8f0;
+      padding: 24px 28px;
+      border-radius: 10px;
+      margin: 28px 0;
+      font-size: 0.95em;
+      line-height: 1.8;
+    }
+    .dark-quote .en {
+      color: #93c5fd;
+      font-style: italic;
+      font-size: 0.9em;
+      margin: 8px 0;
+    }
+    .dark-quote .src {
+      display: block;
+      margin-top: 10px;
+      font-size: 0.8em;
+      color: #64748b;
+    }
+
+    .table-wrap { overflow-x: auto; margin: 24px 0; }
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88em;
+      min-width: 600px;
+    }
+    .data-table th {
+      background: #1e293b;
+      color: #f1f5f9;
+      padding: 12px 14px;
+      text-align: left;
+      font-weight: 600;
+    }
+    .data-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: top;
+      line-height: 1.65;
+    }
+    .data-table tr:nth-child(even) td { background: #f8fafc; }
+    .data-table .highlight { background: #fef3c7 !important; font-weight: 600; }
+
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin: 24px 0;
+    }
+    .concept-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .concept-card .c-num {
+      display: inline-block;
+      width: 26px;
+      height: 26px;
+      background: #1e3a8a;
+      color: #fff;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 26px;
+      font-weight: 700;
+      font-size: 0.85em;
+      margin-bottom: 10px;
+    }
+    .concept-card h4 {
+      margin: 0 0 8px 0;
+      color: #0f172a;
+      font-size: 1em;
+    }
+    .concept-card p {
+      margin: 0;
+      font-size: 0.86em;
+      line-height: 1.7;
+      color: #475569;
+    }
+
+    .practice-box {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 10px;
+      padding: 24px 28px;
+      margin: 24px 0;
+    }
+    .practice-box h4 {
+      margin: 0 0 14px 0;
+      color: #0c4a6e;
+      font-size: 1.05em;
+    }
+    .practice-box .pb-item {
+      display: flex;
+      gap: 12px;
+      margin: 12px 0;
+      font-size: 0.9em;
+      line-height: 1.7;
+      color: #0c4a6e;
+    }
+    .practice-box .pb-item .pb-icon {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      background: #0284c7;
+      color: #fff;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 22px;
+      font-size: 0.75em;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .warn-box {
+      background: #fef2f2;
+      border-left: 4px solid #dc2626;
+      padding: 18px 22px;
+      margin: 24px 0;
+      border-radius: 0 10px 10px 0;
+      font-size: 0.9em;
+      line-height: 1.75;
+      color: #7f1d1d;
+    }
+    .warn-box strong { color: #991b1b; }
+
+    .verdict-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e2e8f0;
+      border-radius: 12px;
+      padding: 32px;
+      margin: 36px 0;
+    }
+    .verdict-box h3 { color: #fff; margin-top: 0; }
+    .verdict-box p { color: #94a3b8; font-size: 0.9em; line-height: 1.75; margin: 10px 0; }
+    .verdict-box .key-line {
+      color: #fbbf24; font-size: 1.1em; font-weight: 600; margin: 16px 0;
+    }
+
+    .checklist {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 20px 0;
+    }
+    .checklist h4 {
+      margin: 0 0 12px 0;
+      color: #1e293b;
+    }
+    .checklist ul {
+      margin: 0;
+      padding-left: 22px;
+      font-size: 0.88em;
+      line-height: 1.85;
+      color: #334155;
+    }
+    .checklist li { margin: 4px 0; }
+
+    .references-section {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 24px 28px;
+      margin-top: 40px;
+    }
+    .references-section h3 { margin-top: 0; color: #1e293b; }
+    .references-section ol {
+      padding-left: 22px;
+      font-size: 0.82em;
+      line-height: 1.7;
+      color: #475569;
+    }
+    .references-section li { margin: 6px 0; }
+
+    .article-copyright {
+      margin-top: 48px;
+      padding: 20px 24px;
+      background: #f8fafc;
+      border-left: 4px solid #94a3b8;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.85em;
+      color: #64748b;
+      line-height: 1.7;
+    }
+    .article-copyright strong { color: #475569; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo"><a href="../index.html">质量<span>实验</span>室</a></div>
+    <nav>
+      <a href="../index.html">首页</a>
+      <a href="../about.html">关于</a>
+    </nav>
+  </header>
+
+  <article>
+    <div class="hero">
+      <h1>Humphrey 的 PSP 在 AI 编程时代：<br>30 年前的纪律，治今天的混乱</h1>
+      <div class="subtitle">
+        开发者觉得 AI 让自己快了 20%，实测却慢了 19%。<br>
+        这种"感觉和现实的背离"，Watts Humphrey 在 1990 年代就给出了解法——
+        用你自己的数据，而不是你的感觉，来管理你的工作。
+      </div>
+      <div class="meta">2026-10-26 · 深度方法论 · 约 20 分钟阅读</div>
+    </div>
+
+    <h2>一、先讲一个让所有 AI 编程用户不安的实验</h2>
+
+    <p>
+      2025 年 7 月，独立研究机构 METR 发表了一项随机对照实验，
+      研究对象是 <strong>16 名经验丰富的开源开发者</strong>，
+      在他们平均参与了 <strong>5 年的成熟项目</strong>上完成 <strong>246 个真实任务</strong>，
+      工具是当时最先进的 Cursor Pro + Claude 3.5/3.7 Sonnet。
+    </p>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="num red">+19%</div>
+        <div class="label">实际完成时间变化<br>（用了 AI 反而慢了 19%）</div>
+      </div>
+      <div class="stat-card">
+        <div class="num green">-20%</div>
+        <div class="label">开发者自己感觉的变化<br>（坚信 AI 让自己快了 20%）</div>
+      </div>
+      <div class="stat-card">
+        <div class="num amber">39%</div>
+        <div class="label">经济学家事前预测<br>（认为 AI 会提速 39%）</div>
+      </div>
+    </div>
+
+    <p>
+      最惊人的发现不是"AI 让人变慢"——这只是一个特定人群、特定工具、特定时间点的结果，
+      METR 自己在 2026 年 2 月也说明新一轮实验的信号更复杂。
+      真正惊人的是：<strong>主观感知和客观度量之间出现了系统性的、方向相反的偏差。</strong>
+      每个人都"觉得"自己快了，但计时器说的是另一回事。
+    </p>
+
+    <div class="quote-callout">
+      这不是个别现象。DORA 2024 报告显示：AI 采用率每提升 25%，代码评审速度、文档质量等局部指标确实在改善，但交付吞吐量下降约 1.5%、交付稳定性下降约 7.2%。
+      <strong>局部活动在加速，端到端结果未必改善。</strong>
+      <span class="src">来源：METR arXiv:2507.09089 (2025)；DORA《State of AI-Assisted Software Development》(2024)</span>
+    </div>
+
+    <p>
+      这时候你需要一个人——一个在 30 年前就遇到过同样问题的人。
+      他叫 <strong>Watts S. Humphrey</strong>，
+      卡内基梅隆大学软件工程研究所（SEI）的首位 Fellow，
+      CMM（能力成熟度模型）之父，后来被称为<strong>"软件质量之父"</strong>。
+      他在 1990 年代中期创立的 <strong>PSP（Personal Software Process，个人软件过程）</strong>，
+      核心要解决的就是一个问题：
+    </p>
+
+    <div class="dark-quote">
+      工程师对自己工作的直觉判断，几乎总是错的。
+      唯一可靠的改进起点，是你自己的、阶段化的、经过核验的数据。
+      <span class="src">——这是 PSP 全部方法论的认识论起点，详见 CMU/SEI-2000-TR-022</span>
+    </div>
+
+    <h2>二、PSP 是什么：一位管理过 4000 名工程师的人的答案</h2>
+
+    <p>
+      Humphrey 在 IBM 工作了 27 年，管理过 15 个实验室、4000 名软件人员。
+      1986 年他加入 SEI，领导开发了 CMM——但 CMM 是给<strong>组织</strong>用的，
+      回答的是"一家公司应该具备哪些过程能力"。
+      他很快发现一个缺口：<strong>组织的过程再成熟，落到具体写代码的工程师个人身上，如果他没有纪律，质量还是落不了地。</strong>
+    </p>
+
+    <p>
+      于是他做了一件极端的事：在开发模块级小程序的场景下，
+      亲自把 CMM 直到第 5 级的所有实践全部用了一遍，
+      检验这些组织级原则缩放到个人层面是否可行。
+      结论是可行——PSP 由此诞生，1995 年随《A Discipline for Software Engineering》正式出版。
+    </p>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <div class="c-num">1</div>
+        <h4>每个人都是不同的</h4>
+        <p>你必须用自己的历史数据做计划和估算。别人的数据只在你还没有数据时作初始参照。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-num">2</div>
+        <h4>个人责任</h4>
+        <p>"优质产品不是偶然产生的；工程师必须对产品质量感到个人负责。"工具变了，这一点没变。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-num">3</div>
+        <h4>三类基础度量</h4>
+        <p>时间（按阶段）、规模（代码量/任务量）、缺陷（类型/注入阶段/移除阶段）。一切分析的地基。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-num">4</div>
+        <h4>质量不是测出来的</h4>
+        <p>"要想从测试中得到高质量产品，就必须把高质量产品送进测试。"测试是最后的防线，不是主力。</p>
+      </div>
+    </div>
+
+    <p>
+      PSP 的训练路径是 <strong>7 个递进版本</strong>（PSP0 → PSP0.1 → PSP1 → PSP1.1 → PSP2 → PSP2.1 → PSP3），
+      学员要写 10 个练习程序，从"只记录时间和缺陷"开始，
+      逐级加入规模估算（PROBE 方法）、任务计划、代码评审、设计评审、设计模板、循环开发。
+      SEI 工业课程的标准投入约为 120–150 小时。
+    </p>
+
+    <p>
+      本文不打算做 PSP 教科书——那是 Humphrey 四本书的内容。
+      我要讲的是：<strong>PSP 里哪些思想，在 AI 编程时代不仅没过时，反而变成了生存必需品。</strong>
+    </p>
+
+    <h2>三、PSP 最震撼的一组数据：评审为什么碾压测试</h2>
+
+    <p>
+      Humphrey 的风格是：<strong>不讲道理，先给数据。</strong>
+      PSP 的核心质量论点建立在 298 名 SEI 工业课程学员的实测数据上
+      （共产生 2,386 个程序版本）。
+    </p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>缺陷发现阶段</th>
+            <th>发现效率（个/小时）</th>
+            <th>相对单元测试</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>代码评审（Code Review）</td>
+            <td class="highlight">6.52</td>
+            <td class="highlight">约 3 倍</td>
+          </tr>
+          <tr>
+            <td>设计评审（Design Review）</td>
+            <td>2.96</td>
+            <td>约 1.3 倍</td>
+          </tr>
+          <tr>
+            <td>单元测试（Unit Test）</td>
+            <td>2.21</td>
+            <td>1 倍（基准）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      移除同样 100 个缺陷，单元测试平均需要约 45 小时，代码评审只要约 15 小时。
+      再看注入速度：编码阶段平均每小时注入 <strong>4.20 个</strong>缺陷，
+      详细设计阶段每小时 1.76 个——<strong>编码是缺陷注入最猛的阶段。</strong>
+    </p>
+
+    <div class="dark-quote">
+      "任何已发明的测试方法都只能识别大型复杂产品中一小部分缺陷，产品越大越复杂，这个比例越小。这意味着，要想从测试中得到高质量产品，就必须把高质量产品送进测试。"
+      <div class="en">"First, no test yet devised can identify more than a fraction of the defects in a large and complex product... This means that to get a high-quality product out of testing, one must put a high-quality product into testing."</div>
+      <span class="src">——Watts Humphrey, CMU/SEI-2006-TR-017</span>
+    </div>
+
+    <p>
+      基于这些数据，PSP 给出了几个可以直接执行的量化准则：
+    </p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>指标</th>
+            <th>含义</th>
+            <th>PSP 准则</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>评审速度</strong></td>
+            <td>评审代码的快慢</td>
+            <td>快于 <strong>150–200 LOC/小时</strong> 就会漏掉大量缺陷</td>
+          </tr>
+          <tr>
+            <td><strong>过程 Yield</strong></td>
+            <td>编译前移除的缺陷占比</td>
+            <td><strong>≥ 70%</strong>（大部分缺陷应在编译前被发现）</td>
+          </tr>
+          <tr>
+            <td><strong>A/FR</strong></td>
+            <td>鉴定成本 / 故障成本（朱兰质量成本框架）</td>
+            <td><strong>≥ 2.0</strong>（花在评审上的时间应是故障返工的 2 倍）</td>
+          </tr>
+          <tr>
+            <td><strong>缺陷比率</strong></td>
+            <td>代码评审发现 / 编译发现；设计评审 / 单元测试</td>
+            <td>均应 <strong>≥ 2</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      效果呢？Humphrey 报告 PSP 训练通常能让工程师的<strong>缺陷注入率降低 40%–50%</strong>。
+      团队层面（TSP）的数据更惊人：20 个项目、13 家组织的汇总（CMU/SEI-2003-TR-014）显示，
+      产品缺陷比典型软件产品少 <strong>10–100 倍</strong>，平均质量达到 5.2 sigma，
+      生产率平均提升 78%。Teradyne 公司的测试缺陷从 20 个/KLOC 降到 1 个/KLOC；
+      Hill 空军基地的测试时间占比从 22% 降到 2.7%。
+    </p>
+
+    <h2>四、为什么 AI 时代，PSP 反而更重要了</h2>
+
+    <p>
+      有人会说：PSP 是 1990 年代的东西了，那时候代码都是手写的；
+      现在 AI 帮你写、帮你测、帮你 review，还需要这些手工纪律吗？
+    </p>
+
+    <p>
+      我的判断恰好相反：<strong>AI 让 PSP 的认识论从"良好习惯"升级成了"生存前提"。</strong>
+      理由有四个。
+    </p>
+
+    <h3>1. 速度越快，错觉越强</h3>
+
+    <p>
+      手写代码时代，你对"今天写了多少、质量如何"的感知虽然不准，但偏差有限。
+      AI 把产出速度放大了数倍之后，<strong>"写了很多"和"做成了很多"被彻底混淆了</strong>。
+      你看着屏幕上 AI 哗哗吐出代码，多巴胺告诉你"今天效率爆表"；
+      但三天后集成时的返工、联调时的 bug、上线后的故障，
+      不会计入你当时"高效"的感觉里。
+    </p>
+
+    <p>
+      METR 实验里 16 个资深开发者集体误判方向，就是这个机制。
+      Humphrey 要求逐任务记录时间，正是为了切断这种错觉——
+      <strong>计时器不分泌多巴胺。</strong>
+    </p>
+
+    <h3>2. AI 恰恰在缺陷注入最猛的阶段给你"加杠杆"</h3>
+
+    <p>
+      还记得 PSP 数据吗？编码阶段缺陷注入率 4.20 个/小时，是设计阶段的 2.4 倍。
+      AI 编程工具本质上是一个<strong>"编码阶段放大器"</strong>——
+      它极大地提升了编码这个最容易注入缺陷的阶段的吞吐量。
+    </p>
+
+    <div class="warn-box">
+      <strong>斯坦福的安全研究（ACM CCS 2023）发现：</strong>
+      使用 AI 助手的参与者在 5 个任务中的 4 个里，
+      写出不安全代码的频率更高；
+      更危险的是，<strong>他们同时更倾向于相信自己的代码是安全的</strong>——
+      缺陷增加 + 警惕性下降，双重恶化。
+      GitClear 的代码 churn 数据也显示，AI 普及后短期内被重写的代码比例接近翻倍：
+      写得快，返工也多。
+      <br><br>
+      来源：Perry et al., arXiv:2211.03622；GitClear《Coding on Copilot》(2024)
+    </div>
+
+    <p>
+      Humphrey 的质量逻辑是一道乘法题：
+      <strong>进入测试的质量 × 测试的拦截能力 = 交付质量</strong>。
+      AI 让第一个因子的方差变得极大——可能很好，也可能是看似精美的垃圾。
+      这时候"把高质量产品送进测试"的难度不是降低了，是提高了。
+    </p>
+
+    <h3>3. "评审 vs 测试"的效率差，对 AI 代码更加悬殊</h3>
+
+    <p>
+      手写代码的缺陷分布和编码者的思维路径相关，你多少能预测。
+      AI 生成代码的缺陷模式是"异化"的：未使用的导入、看似合理但边界错误的条件、
+      不存在的 API 调用（幻觉）、与项目约定不符但语法完美的实现……
+      这些缺陷<strong>编译能过、简单测试能过，但评审一眼就能看出来</strong>。
+    </p>
+
+    <p>
+      同时，很多团队在用 AI 生成测试——用有幻觉风险的代码去测有幻觉风险的代码，
+      两者还可能共享同一个模型的系统性盲点。
+      这意味着 PSP 时代"评审效率是测试 3 倍"的数据，
+      在 AI 场景下<strong>不是缩小，而是扩大</strong>：人的独立判断变得更稀缺、更值钱。
+    </p>
+
+    <h3>4. 责任链条变模糊，个人责任反而要更清晰</h3>
+
+    <p>
+      "这是 AI 写的，不是我写的"——这句话正在成为新的责任稀释剂。
+      Humphrey 对个人责任的坚持在今天听来几乎是预言：
+    </p>
+
+    <div class="dark-quote">
+      "要生产高质量产品，工程师必须对产品质量感到个人负责。优质产品不是偶然产生的；工程师必须努力做好质量工作。"
+      <div class="en">"To produce quality products, engineers must feel personally responsible for the quality of their products. Superior products are not produced by mistake; engineers must strive to do quality work."</div>
+      <span class="src">——CMU/SEI-2000-TR-022, Chapter 6</span>
+    </div>
+
+    <p>
+      AI 是工具，和编译器、IDE 一样。
+      编译器翻译错了你不会起诉编译器，你回去查自己的代码；
+      AI 生成的代码从你这里提交出去，<strong>你就是那个最终判断和拍板的人</strong>。
+      责任不会因为工具更聪明而转移，只会因为你放弃判断而落空。
+    </p>
+
+    <h2>五、实操：把 PSP 改造成"AI 时代的个人过程"（PSP-AI）</h2>
+
+    <p>
+      道理讲完了，重点是怎么做。
+      以下是我基于 PSP 原则，结合 AI 编程的实际工作流，整理的一套可落地框架。
+      它不需要你买课程、不需要考证书，<strong>从下一个任务就能开始用</strong>。
+    </p>
+
+    <h3>实践一：给时间日志加上"AI 维度"</h3>
+
+    <p>
+      PSP 的第一块基石是<strong>按阶段记录时间</strong>。
+      在 AI 时代，记录的关键不是"我工作了多久"，而是区分：
+    </p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>阶段</th>
+            <th>记录什么</th>
+            <th>为什么</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>需求理解 / 方案设计</strong></td>
+            <td>自己思考的时间（不含 AI）</td>
+            <td>这是 AI 无法替代的部分，也是质量的源头</td>
+          </tr>
+          <tr>
+            <td><strong>AI 生成 / 交互</strong></td>
+            <td>写 prompt、等生成、多轮对话的时间</td>
+            <td>看清"和 AI 周旋"本身吃掉了多少时间</td>
+          </tr>
+          <tr>
+            <td><strong>人工评审 / 修正</strong></td>
+            <td>读懂 AI 代码、改对、调整的时间</td>
+            <td>这是被"感觉高效"隐藏最深的成本</td>
+          </tr>
+          <tr>
+            <td><strong>调试 / 返工</strong></td>
+            <td>集成失败、测试不通过、回炉的时间</td>
+            <td>这就是 PSP 里的"故障成本 F"</td>
+          </tr>
+          <tr>
+            <td><strong>测试 / 验证</strong></td>
+            <td>跑测试、补测试、确认行为的时间</td>
+            <td>最后的防线</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="practice-box">
+      <h4>最小启动法（本周就能做）</h4>
+      <div class="pb-item">
+        <div class="pb-icon">1</div>
+        <div>建一张只有 5 列的表：任务名 / 阶段 / 开始 / 结束 / 备注。纸笔、备忘录、电子表格都行。</div>
+      </div>
+      <div class="pb-item">
+        <div class="pb-icon">2</div>
+        <div>连续记录 <strong>10 个真实任务</strong>（PSP 课程的练习数量），不要中途追求完美。</div>
+      </div>
+      <div class="pb-item">
+        <div class="pb-icon">3</div>
+        <div>第 10 个任务后算一次账：<strong>AI 交互时间 + 人工修正时间 ÷ 任务总时间</strong> 是多少？返工时间占多少？这个数字会让大多数人吃惊。</div>
+      </div>
+      <div class="pb-item">
+        <div class="pb-icon">4</div>
+        <div>和你的"感觉"对比一下——你会立刻理解 METR 实验里那 16 个人。</div>
+      </div>
+    </div>
+
+    <h3>实践二：给缺陷日志增加"来源"和"模式"字段</h3>
+
+    <p>
+      PSP 要求记录每个缺陷的类型、注入阶段、移除阶段、修复时间。
+      AI 时代加两个字段就够了：
+    </p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>新增字段</th>
+            <th>取值</th>
+            <th>用途</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>缺陷来源</strong></td>
+            <td>AI 直接生成 / 我修改 AI 代码引入 / 我手写 / 第三方</td>
+            <td>用数据回答"AI 到底给我引入了多少问题"</td>
+          </tr>
+          <tr>
+            <td><strong>AI 失误模式</strong></td>
+            <td>幻觉 API / 边界条件 / 忽略项目约定 / 过度设计 / 安全问题 / …</td>
+            <td>积累你的<strong>个人 AI 失误模式库</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      记录 20–30 个缺陷之后，你会看到一个清晰的分布：
+      <em>"我在用 AI 时，80% 的坑集中在 2–3 类模式上。"</em>
+      这就是朱兰的帕累托原则在个人层面的应用——<strong>关键的少数</strong>。
+      然后你只需要针对这 2–3 类模式，
+      固化成你的评审清单或提示词约束，缺陷注入率会立刻下降。
+      这正是 PSP 的 PIP（Process Improvement Proposal，过程改进提案）在 AI 时代的形态：
+      <strong>不是改流程文档，而是改你的提示词模板和评审清单。</strong>
+    </p>
+
+    <h3>实践三：把"评审速度红线"用在 AI 生成的代码上</h3>
+
+    <p>
+      PSP 的数据说：评审代码快于 150–200 LOC/小时，就会漏掉大量缺陷。
+      AI 生成代码动辄一次几百行，<strong>大多数人的实际"评审"速度是每秒滚一屏</strong>——
+      这不是评审，这是签收。
+    </p>
+
+    <div class="checklist">
+      <h4>AI 代码评审的最低动作清单（源自 PSP 评审纪律）</h4>
+      <ul>
+        <li><strong>先读再跑：</strong>在让代码运行之前，先完整读一遍 AI 生成的内容。跑通 ≠ 正确，跑通只代表"这组输入下没崩"。</li>
+        <li><strong>验证每个外部调用：</strong>AI 调用的 API、库函数、配置项，逐一确认真实存在、版本匹配、参数语义正确（幻觉高发区）。</li>
+        <li><strong>检查边界和异常：</strong>空值、空集合、并发、超时、权限、大输入——AI 对"快乐路径"过度乐观。</li>
+        <li><strong>对照项目约定：</strong>命名、分层、错误处理、日志规范——AI 会按"平均水平代码"写，而不是按你的代码库写。</li>
+        <li><strong>安全红线单列：</strong>输入校验、SQL 拼接、鉴权、密钥处理（斯坦福研究里的重灾区）。</li>
+        <li><strong>看不懂的代码不合并：</strong>PSP 的个人责任原则——你无法对自己不理解的代码负责。宁可让 AI 重写或解释，也不要黑盒签收。</li>
+        <li><strong>控制评审批量：</strong>一次让 AI 生成超过你 30 分钟能仔细评审的量，就要求它拆分。评审能力是你的瓶颈，不是 AI 的生成能力。</li>
+      </ul>
+    </div>
+
+    <h3>实践四：用 Yield 和 A/FR 给你的 AI 工作流做体检</h3>
+
+    <p>
+      PSP 的两个核心指标，在 AI 时代的内涵可以这样平移：
+    </p>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <div class="c-num">Y</div>
+        <h4>过程 Yield（AI 版）</h4>
+        <p>在代码进入测试/集成之前，被你自己的评审、静态检查、AI 交叉审查发现的缺陷占比。目标：≥ 70%。如果大部分 bug 是测试或别人帮你发现的，说明你在"签收"而不是"评审"。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-num">A</div>
+        <h4>A/FR（AI 版）</h4>
+        <p>A = 你花在评审、验证 AI 产出上的时间；F = 调试、返工、修线上问题的时间。PSP 准则 ≥ 2.0。A/FR 长期低于 1，说明你在用后期返工补贴前期的痛快。</p>
+      </div>
+    </div>
+
+    <p>
+      一个有用的<strong>交叉验证技巧</strong>：
+      让一个 AI 生成代码，让另一个 AI（或同一个会话换个角度）做评审，
+      <em>但你做最终判断</em>。不同模型的盲点不完全重合，能帮你提高 yield；
+      但绝不要让"AI 审过了"成为你不看代码的理由——
+      共享训练数据意味着它们也会共享盲点。
+    </p>
+
+    <h3>实践五：把提示词当成"设计文档"来经营</h3>
+
+    <p>
+      PSP 体系里，设计越彻底，编码越快、缺陷越少
+      （设计阶段缺陷注入率只有编码阶段的 42%）。
+      AI 编程里，<strong>提示词就是你的设计</strong>：
+      目标、上下文、约束、输入输出、验收标准、禁止事项。
+      模糊的提示词等于没有设计——而 AI 不会像同事一样反问你，
+      它会自信地填满所有你没说清的空白。
+    </p>
+
+    <div class="checklist">
+      <h4>高质量任务提示的结构（把 PSP 的设计模板前移）</h4>
+      <ul>
+        <li><strong>目标：</strong>要解决什么问题，成功的判据是什么</li>
+        <li><strong>上下文：</strong>相关文件、现有约定、不可破坏的行为</li>
+        <li><strong>约束：</strong>技术栈、性能要求、不能引入的依赖</li>
+        <li><strong>分步：</strong>复杂任务显式拆成"框架 → 逻辑 → 测试"，不要一次赌大的</li>
+        <li><strong>验收：</strong>明确测试场景和边界用例，让 AI 先给方案再写代码</li>
+        <li><strong>留痕：</strong>把验证有效的提示词沉淀成你的个人模板库——这就是你的"过程资产"</li>
+      </ul>
+    </div>
+
+    <h2>六、PSP 在 AI 时代需要修正的四个地方</h2>
+
+    <p>
+      我不是 PSP 原教旨主义者。30 年过去，它的底层认识论没变，但具体做法必须调整：
+    </p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>PSP 原假设</th>
+            <th>AI 时代的挑战</th>
+            <th>调整方向</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>以 LOC（代码行）为核心规模度量</td>
+            <td>AI 让"写了多少行"与投入、价值进一步脱钩</td>
+            <td>以<strong>任务复杂度、交付结果、行为规格</strong>为主口径，LOC 只作辅助</td>
+          </tr>
+          <tr>
+            <td>每个阶段由工程师本人执行</td>
+            <td>设计、编码、评审都是人-机混合活动</td>
+            <td>显式记录<strong>AI 参与点、采纳率、采纳决策</strong></td>
+          </tr>
+          <tr>
+            <td>零缺陷是唯一合理目标</td>
+            <td>"再生成一版"的成本极低，重写 vs 评审的权衡改变了</td>
+            <td>按风险分级：<strong>核心/安全模块坚持评审优先，低风险原型允许生成-验证快速迭代</strong></td>
+          </tr>
+          <tr>
+            <td>练习是为了内化手写技能</td>
+            <td>新手用 AI 跳过练习，度量数据还在但技能没内化</td>
+            <td>学习阶段设置<strong>"无 AI 基本功时段"</strong>，先建立判断力，再加杠杆</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      还要诚实地说：<strong>直接检验"PSP 实践者用 AI 是否效果更好"的对照研究目前基本空白。</strong>
+      2025–2026 年才出现早期尝试，比如 IISA 2026 的《Trials of Using Generative AI in PSP Education》、
+      IIAI 2025 的生成式 AI 过程改进框架论文。
+      本文的主张由 METR、Stanford、DORA、GitClear 等间接证据和 PSP 自身的一手数据共同支撑——
+      它是一个<strong>逻辑上高度自洽、但等待你亲自验证</strong>的方法论。
+      而"亲自验证"这件事本身，就是 PSP 的精神。
+    </p>
+
+    <div class="verdict-box">
+      <h3>结语：工具变了三次，认识论一次没变</h3>
+      <p>
+        Humphrey 经历过打孔卡片、汇编语言、高级语言、IDE、互联网时代，
+        直到 2010 年去世。如果他看到今天的 AI 编程，我猜他不会惊讶——
+        因为他一辈子研究的都不是某种具体工具，而是<strong>"工程师如何用数据管理自己的工作"</strong>。
+      </p>
+      <p class="key-line">
+        AI 改变的是每个阶段的速率和执行者，不是改进的底层逻辑：<br>
+        定义过程 → 度量执行 → 分析偏差 → 调整过程。
+      </p>
+      <p>
+        在一个人人都被 AI 的"产出速度"震撼、
+        各类研究结论互相矛盾、
+        连资深工程师都系统性误判自己效率的时代，
+        你能做的最理性的事，恰恰是最朴素的：
+      </p>
+      <p>
+        <strong>记录你自己的时间，追踪你自己的缺陷，计算你自己的 yield。</strong>
+        不相信宣传，不依赖感觉，不参考"别人平均提升了多少"。
+        让数据告诉你：AI 对<em>你</em>、在<em>你的项目</em>上、做<em>你这类任务</em>时，
+        到底是杠杆，还是幻觉。
+      </p>
+      <p>
+        这就是 PSP 在 AI 时代真正的遗产——
+        它教你的从来不是怎么填表，
+        而是<strong>怎么做自己工作的主人，而不是工具的附件</strong>。
+      </p>
+    </div>
+
+    <div class="references-section">
+      <h3>主要参考资料</h3>
+      <ol>
+        <li>Humphrey, W.S. <em>The Personal Software Process (PSP)</em>. CMU/SEI-2000-TR-022, 2000.（评审效率 6.52/2.96/2.21、Yield≥70%、A/FR≥2.0、评审速度 150–200 LOC/hr 等核心数据）</li>
+        <li>Humphrey, W.S. <em>The Team Software Process (TSP)</em>. CMU/SEI-2000-TR-023, 2000.（缺陷注入率降低 40%–50%、TSP 质量指南 Table 3）</li>
+        <li>Davis, N. & Mullaney, J. <em>The TSP in Practice: A Summary of Recent Results</em>. CMU/SEI-2003-TR-014, 2003.（20 个项目汇总：缺陷少 10–100 倍、5.2 sigma、生产率 +78%）</li>
+        <li>Humphrey, W.S. <em>Systems of Systems: Scaling Up the Development Process</em>. CMU/SEI-2006-TR-017, 2006.（"高质量产品进，高质量产品出"、质量三断言）</li>
+        <li>Humphrey, W.S. <em>Introduction to the Personal Software Process</em>. CMU/SEI-97-TR-001, 1997.</li>
+        <li><em>PSP Body of Knowledge, Version 2</em>. SEI, 2009.</li>
+        <li>Humphrey, W.S. <em>A Discipline for Software Engineering</em>. Addison-Wesley, 1995；<em>PSP: A Self-Improvement Process for Software Engineers</em>. Addison-Wesley, 2005.</li>
+        <li>Computer History Museum. <em>Oral History of Watts Humphrey</em>, 2009-12-17.</li>
+        <li>Becker, J., Rush, J., Barnes, E., Rein, D. <em>Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity</em>. arXiv:2507.09089, 2025；METR 实验更新说明, 2026-02-24.</li>
+        <li>Perry, N., Srivastava, M., Kumar, D., Boneh, D. <em>Do Users Write More Insecure Code with AI Assistants?</em> ACM CCS 2023, pp. 2785–2799. arXiv:2211.03622.</li>
+        <li>Peng, S. et al. <em>The Impact of AI Pair Programmer on Developer Productivity</em>. Microsoft Research / GitHub, 2022–2023.</li>
+        <li>DORA. <em>State of AI-Assisted Software Development</em>, 2024.</li>
+        <li>GitClear. <em>Coding on Copilot</em>, 2024.</li>
+        <li><em>Trials of Using Generative AI in Personal Software Process Education</em>. IISA 2026；Kusakabe et al., <em>Toward a Process Improvement Framework for Software Development Using Generative AI</em>. IIAI AAI, 2025.</li>
+      </ol>
+    </div>
+
+    <div class="article-copyright">
+      <strong>版权声明：</strong>本文为「质量实验室」原创，作者保留所有权利。
+      转载请保留完整文章及本声明，禁止修改演绎，禁止商业用途。
+      <br>
+      依据：<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a>
+    </div>
+  </article>
+
+  <footer>
+    <p>© 2026 质量实验室 · 连接过去与未来</p>
+  </footer>
+</body>
+</html>
