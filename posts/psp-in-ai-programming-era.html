@@ -147,6 +147,65 @@
       color: #475569;
     }
 
+    .nuance-box {
+      background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%);
+      border: 1px solid #c7d2fe;
+      border-radius: 12px;
+      padding: 26px 28px;
+      margin: 28px 0;
+    }
+    .nuance-box .nuance-title {
+      font-weight: 700;
+      color: #312e81;
+      font-size: 1.02em;
+      margin-bottom: 6px;
+    }
+    .nuance-box .nuance-lead {
+      font-size: 0.88em;
+      color: #4338ca;
+      line-height: 1.7;
+      margin: 0 0 16px 0;
+    }
+    .nuance-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .nuance-col {
+      background: rgba(255,255,255,0.75);
+      border-radius: 8px;
+      padding: 16px 18px;
+    }
+    .nuance-col.shrink { border-top: 3px solid #94a3b8; }
+    .nuance-col.grow { border-top: 3px solid #4f46e5; }
+    .nuance-col h5 {
+      margin: 0 0 8px 0;
+      font-size: 0.92em;
+    }
+    .nuance-col.shrink h5 { color: #475569; }
+    .nuance-col.grow h5 { color: #4338ca; }
+    .nuance-col ul {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 0.84em;
+      line-height: 1.75;
+      color: #334155;
+    }
+    .nuance-col li { margin: 4px 0; }
+    .nuance-conclusion {
+      margin-top: 16px;
+      background: #312e81;
+      color: #e0e7ff;
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 0.9em;
+      line-height: 1.75;
+    }
+    .nuance-conclusion strong { color: #fde68a; }
+    @media (max-width: 640px) {
+      .nuance-cols { grid-template-columns: 1fr; }
+    }
+
     .practice-box {
       background: #f0f9ff;
       border: 1px solid #bae6fd;
@@ -423,6 +482,40 @@
         <div class="c-num">4</div>
         <h4>质量不是测出来的</h4>
         <p>"要想从测试中得到高质量产品，就必须把高质量产品送进测试。"测试是最后的防线，不是主力。</p>
+      </div>
+    </div>
+
+    <div class="nuance-box">
+      <div class="nuance-title">辨析：AI 时代，"每个人都是不同的"这条还成立吗？</div>
+      <p class="nuance-lead">
+        一个常见的疑问是：当大家都用同一个模型写代码，产出风格、结构高度相似，个人差异是不是正在消失？
+        答案要拆成两层——<strong>执行层的差异确实在缩小，但决策层的差异反而被放大。</strong>
+      </p>
+      <div class="nuance-cols">
+        <div class="nuance-col shrink">
+          <h5>正在缩小的：执行层差异</h5>
+          <ul>
+            <li><strong>代码风格趋同：</strong>同一模型生成的命名、结构、惯用模式高度相似</li>
+            <li><strong>技能下限被抬高：</strong>"能不能写出来"不再是巨大鸿沟，新手也能产出可运行代码</li>
+            <li>经验越少收益越大（4,867 人 RCT），正是执行层差异被压缩的证据</li>
+          </ul>
+        </div>
+        <div class="nuance-col grow">
+          <h5>正在放大的：决策层差异</h5>
+          <ul>
+            <li><strong>采纳决策：</strong>分野不是"装没装 AI"，是你在什么时候拒绝它——判断力人人不同</li>
+            <li><strong>输入质量：</strong>模糊一句话 vs 结构化约束（目标/上下文/边界/验收），产出差一个数量级</li>
+            <li><strong>品味与眼光：</strong>多个方案中选哪个、看出"看似对实则错"，是经验和风险嗅觉的函数</li>
+            <li>AI 是杠杆：杠杆不压缩输入端差异，它放大它</li>
+          </ul>
+        </div>
+      </div>
+      <div class="nuance-conclusion">
+        <strong>对 PSP 原则的修正：</strong>"代码层的个人差异"在变小 → 继续只靠个人 LOC 数据估算的理由减弱；
+        但"判断层的个人差异"在变大 → 用自己的 Yield、A/FR、AI 失误模式数据改进的理由更强。
+        而且多了一个新维度：<strong>你与 AI 的协作方式不同</strong>——采纳率、提示风格、人机分工，
+        这些数据仍然只能靠自己积累，没有"平均值"可用。
+        AI 抹平了"手"的差异，放大了"脑"的差异；PSP 的重心，应从度量"我的手"，转向度量"我的判断 + 我和 AI 的协作"。
       </div>
     </div>
 
