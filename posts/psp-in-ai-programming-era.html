@@ -356,11 +356,11 @@
     <div class="stat-row">
       <div class="stat-card">
         <div class="num green">+26%</div>
-        <div class="label">完成任务量提升<br>（3场RCT · 4,867名开发者）</div>
+        <div class="label">完成任务量提升<br>（Management Science, 2026 · 3场RCT · 4,867人）</div>
       </div>
       <div class="stat-card">
         <div class="num green">+33.7%</div>
-        <div class="label">任务吞吐量<br>（Faros AI · 22,000名开发者）</div>
+        <div class="label">任务吞吐量<br>（Faros AI, 2026 · 22,000名开发者）</div>
       </div>
       <div class="stat-card">
         <div class="num amber">1.4–2x</div>
@@ -386,7 +386,7 @@
       </div>
       <div class="stat-card">
         <div class="num red">+91%</div>
-        <div class="label">PR 评审时间<br>（任务 +21%，交付时间未缩短）</div>
+        <div class="label">PR 评审时间<br>（CACM, 2026 · 任务 +21%，交付时间未缩短）</div>
       </div>
       <div class="stat-card">
         <div class="num red">−7.2%</div>
@@ -497,7 +497,7 @@
           <ul>
             <li><strong>代码风格趋同：</strong>同一模型生成的命名、结构、惯用模式高度相似</li>
             <li><strong>技能下限被抬高：</strong>"能不能写出来"不再是巨大鸿沟，新手也能产出可运行代码</li>
-            <li>经验越少收益越大（4,867 人 RCT），正是执行层差异被压缩的证据</li>
+            <li>经验越少收益越大（2026 年 Management Science，4,867 人 RCT），正是执行层差异被压缩的证据</li>
           </ul>
         </div>
         <div class="nuance-col grow">
@@ -535,8 +535,15 @@
 
     <p>
       Humphrey 的风格是：<strong>不讲道理，先给数据。</strong>
-      PSP 的核心质量论点建立在 298 名 SEI 工业课程学员的实测数据上
-      （共产生 2,386 个程序版本）。
+      PSP 的核心质量论点建立在 <strong>298 名 SEI 工业课程学员的实测数据上
+      （数据采集于 1990 年代，共产生 2,386 个程序版本，
+      汇总发表于 CMU/SEI-2000-TR-022）</strong>。
+    </p>
+    <p style="font-size:0.82em; color:#94a3b8; margin-top:-8px;">
+      ⚠️ 这些数字反映的是 1990 年代手写代码时代的课堂数据。
+      语言、工具、测试框架与今天差异很大，具体数值不宜直接外推到 2026 年；
+      本文引用它们，主要是说明"评审比测试更早、更高效"这一相对关系，
+      而非把绝对数字当作当下基准。
     </p>
 
     <div class="table-wrap">
@@ -569,7 +576,8 @@
     </div>
 
     <p>
-      移除同样 100 个缺陷，单元测试平均需要约 45 小时，代码评审只要约 15 小时。
+      按 1990 年代这组数据推算：移除同样 100 个缺陷，
+      单元测试平均需要约 45 小时，代码评审只要约 15 小时。
       再看注入速度：编码阶段平均每小时注入 <strong>4.20 个</strong>缺陷，
       详细设计阶段每小时 1.76 个——<strong>编码是缺陷注入最猛的阶段。</strong>
     </p>
@@ -581,7 +589,8 @@
     </div>
 
     <p>
-      基于这些数据，PSP 给出了几个可以直接执行的量化准则：
+      基于这些 1990 年代的数据，PSP 给出了几个可以直接执行的量化准则
+      （出自 2000 年 TR-022 报告）：
     </p>
 
     <div class="table-wrap">
@@ -619,11 +628,19 @@
     </div>
 
     <p>
-      效果呢？Humphrey 报告 PSP 训练通常能让工程师的<strong>缺陷注入率降低 40%–50%</strong>。
-      团队层面（TSP）的数据更惊人：20 个项目、13 家组织的汇总（CMU/SEI-2003-TR-014）显示，
+      效果呢？Humphrey 报告 PSP 训练通常能让工程师的<strong>缺陷注入率降低 40%–50%</strong>
+      （2000 年 TSP 报告数据）。
+      团队层面（TSP）的数据更惊人：2003 年对 20 个项目、13 家组织的汇总
+      （CMU/SEI-2003-TR-014）显示，
       产品缺陷比典型软件产品少 <strong>10–100 倍</strong>，平均质量达到 5.2 sigma，
-      生产率平均提升 78%。Teradyne 公司的测试缺陷从 20 个/KLOC 降到 1 个/KLOC；
-      Hill 空军基地的测试时间占比从 22% 降到 2.7%。
+      生产率平均提升 78%。
+      Teradyne 公司（1999 年数据）的测试缺陷从 20 个/KLOC 降到 1 个/KLOC；
+      Hill 空军基地（2000 年数据）的测试时间占比从 22% 降到 2.7%。
+    </p>
+    <p style="font-size:0.82em; color:#94a3b8; margin-top:-8px;">
+      ⚠️ 同样，这些组织级案例都来自 1999–2003 年，
+      彼时的缺陷基线（典型产品约 7.5 个缺陷/KLOC）与今天不可直接比较。
+      它们证明的是过程改进的量级潜力，具体倍数请结合当下基线理解。
     </p>
 
     <h2>四、为什么 AI 时代，PSP 反而更重要了</h2>
@@ -658,7 +675,7 @@
     <h3>2. AI 恰恰在缺陷注入最猛的阶段给你"加杠杆"</h3>
 
     <p>
-      还记得 PSP 数据吗？编码阶段缺陷注入率 4.20 个/小时，是设计阶段的 2.4 倍。
+      还记得 1990 年代的 PSP 数据吗？编码阶段缺陷注入率 4.20 个/小时，是设计阶段的 2.4 倍。
       AI 编程工具本质上是一个<strong>"编码阶段放大器"</strong>——
       它极大地提升了编码这个最容易注入缺陷的阶段的吞吐量。
     </p>
@@ -673,6 +690,10 @@
       写得快，返工也多。
       <br><br>
       来源：Perry et al., arXiv:2211.03622；GitClear《Coding on Copilot》(2024)
+      <br>
+      ⚠️ 注意：斯坦福 2023 年实验使用的是早期 codex-davinci-002 模型，
+      模型安全能力此后已有提升；该研究今天主要用来说明
+      "过度自信效应"这一行为风险，而非当前不安全代码的绝对比例。
     </div>
 
     <p>
