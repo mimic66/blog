@@ -374,7 +374,10 @@ body > footer {
   body > article h2,
   body > article h3 { max-width: none; }
   body > article > .hero,
-  body > article > .debate-hero { padding: 28px 20px !important; }
+  body > article > .debate-hero,
+  .post-content > .hero,
+  .post-content > .debate-hero,
+  .post-content > .post-hero { padding: 28px 20px !important; }
 }
 
 .about-page {

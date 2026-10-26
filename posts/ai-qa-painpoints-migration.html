@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI时代，软件质量保障的痛点迁移全景图 - 质量实验室</title>
+  <meta name="description" content="AI没有消灭质量痛点，而是让它们消失一部分、转化一部分、新生一部分。基于2024-2026年20+份实证研究（4,867人RCT、22,000开发者、30万AI提交、2,870万CI工作流），系统梳理质量保障痛点的全景迁移图，以及QA团队的应对框架。">
+  <link rel="stylesheet" href="../css/style.css?v=20261026a">
+  <style>
+    .post-hero {
+      background: linear-gradient(135deg, #0b1220 0%, #1e3a8a 55%, #4c1d95 100%);
+      color: #f1f5f9;
+      padding: 48px 40px;
+      border-radius: 12px;
+      margin-bottom: 36px;
+    }
+    .post-hero h1 { color: #fff; -webkit-text-fill-color: #fff; background: none; font-size: 1.7em; line-height: 1.4; margin-bottom: 12px; }
+    .post-hero .subtitle { color: #bfdbfe; font-size: 0.95em; line-height: 1.8; }
+    .post-hero .meta { color: #93c5fd; font-size: 0.85em; margin-top: 16px; }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin: 28px 0;
+    }
+    .stat-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #2563eb;
+      border-radius: 8px;
+      padding: 18px 20px;
+    }
+    .stat-card .num { font-size: 1.7em; font-weight: 800; color: #1e3a8a; line-height: 1.1; }
+    .stat-card .num.red { color: #b91c1c; }
+    .stat-card .num.green { color: #047857; }
+    .stat-card .num.amber { color: #b45309; }
+    .stat-card .num.purple { color: #6d28d9; }
+    .stat-card .label { font-size: 0.8em; color: #64748b; margin-top: 6px; line-height: 1.5; }
+
+    .data-note { font-size: 0.82em; color: #94a3b8; line-height: 1.7; margin: -8px 0 20px; }
+
+    .table-wrap { overflow-x: auto; margin: 24px 0; }
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 0.88em; min-width: 600px; }
+    .data-table th { background: #1e293b; color: #f1f5f9; padding: 12px 14px; text-align: left; font-weight: 600; }
+    .data-table td { padding: 11px 14px; border-bottom: 1px solid #e2e8f0; vertical-align: top; line-height: 1.65; }
+    .data-table tr:nth-child(even) td { background: #f8fafc; }
+    .data-table .tagcell { white-space: nowrap; font-weight: 600; }
+    .data-table .gone { color: #047857; }
+    .data-table .moved { color: #b45309; }
+    .data-table .new { color: #b91c1c; }
+
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin: 24px 0;
+    }
+    .concept-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; }
+    .concept-card.gone { border-top: 3px solid #10b981; }
+    .concept-card.moved { border-top: 3px solid #f59e0b; }
+    .concept-card.new { border-top: 3px solid #dc2626; }
+    .concept-card .c-icon { font-size: 1.3em; margin-bottom: 8px; }
+    .concept-card h4 { margin: 0 0 8px 0; color: #0f172a; font-size: 1em; }
+    .concept-card p { margin: 0; font-size: 0.86em; line-height: 1.7; color: #475569; }
+
+    .flow-box {
+      background: #0f172a;
+      border-radius: 12px;
+      padding: 28px 24px;
+      margin: 28px 0;
+      color: #e2e8f0;
+      overflow-x: auto;
+    }
+    .flow-row {
+      display: flex;
+      align-items: stretch;
+      gap: 10px;
+      min-width: 640px;
+    }
+    .flow-node {
+      flex: 1;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 14px 12px;
+      text-align: center;
+      font-size: 0.82em;
+      line-height: 1.5;
+    }
+    .flow-node .fn-title { font-weight: 700; font-size: 1.05em; margin-bottom: 6px; }
+    .flow-node .fn-status { display: inline-block; margin-top: 8px; padding: 2px 10px; border-radius: 12px; font-size: 0.9em; font-weight: 600; }
+    .fn-fast { background: rgba(16,185,129,0.18); color: #6ee7b7; }
+    .fn-jam { background: rgba(220,38,38,0.2); color: #fca5a5; }
+    .flow-arrow { display: flex; align-items: center; color: #64748b; font-size: 1.4em; flex: 0 0 auto; }
+    .flow-caption { color: #94a3b8; font-size: 0.8em; margin-top: 14px; text-align: center; }
+
+    .warn-box {
+      background: #fef2f2;
+      border-left: 4px solid #dc2626;
+      padding: 18px 22px;
+      margin: 24px 0;
+      border-radius: 0 10px 10px 0;
+      font-size: 0.9em;
+      line-height: 1.75;
+      color: #7f1d1d;
+    }
+    .warn-box strong { color: #991b1b; }
+
+    .insight-box {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 18px 22px;
+      margin: 24px 0;
+      border-radius: 0 10px 10px 0;
+      font-size: 0.92em;
+      line-height: 1.8;
+      color: #78350f;
+    }
+    .insight-box .src { display: block; margin-top: 8px; font-size: 0.85em; color: #a16207; font-style: italic; }
+
+    .practice-box {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 10px;
+      padding: 24px 28px;
+      margin: 24px 0;
+    }
+    .practice-box h4 { margin: 0 0 14px 0; color: #0c4a6e; font-size: 1.05em; }
+    .practice-box .pb-item { display: flex; gap: 12px; margin: 12px 0; font-size: 0.9em; line-height: 1.7; color: #0c4a6e; }
+    .practice-box .pb-item .pb-icon {
+      flex-shrink: 0; width: 22px; height: 22px; background: #0284c7; color: #fff;
+      border-radius: 50%; text-align: center; line-height: 22px; font-size: 0.75em; font-weight: 700; margin-top: 2px;
+    }
+
+    .verdict-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e2e8f0;
+      border-radius: 12px;
+      padding: 32px;
+      margin: 36px 0;
+    }
+    .verdict-box h3 { color: #fff; margin-top: 0; }
+    .verdict-box p { color: #94a3b8; font-size: 0.9em; line-height: 1.75; margin: 10px 0; }
+    .verdict-box .key-line { color: #fbbf24; font-size: 1.08em; font-weight: 600; margin: 16px 0; line-height: 1.8; }
+
+    .references-section {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 24px 28px;
+      margin-top: 40px;
+    }
+    .references-section h3 { margin-top: 0; color: #1e293b; }
+    .references-section ol { padding-left: 22px; font-size: 0.82em; line-height: 1.7; color: #475569; }
+    .references-section li { margin: 6px 0; }
+
+    .article-copyright {
+      margin-top: 48px;
+      padding: 20px 24px;
+      background: #f8fafc;
+      border-left: 4px solid #94a3b8;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.85em;
+      color: #64748b;
+      line-height: 1.7;
+    }
+    .article-copyright strong { color: #475569; }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="../index.html" class="site-title">质量<span>实验</span>室</a>
+    <nav>
+      <a href="../index.html">首页</a>
+      <a href="../about.html">关于</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <article class="post-content">
+
+    <div class="post-hero">
+      <h1>AI 时代，软件质量保障的痛点迁移全景图：<br>消失、转化与新生</h1>
+      <div class="subtitle">
+        过去两年，几乎每个质量团队都在问同一个问题：为什么 AI 让写代码快了这么多，
+        交付却没有同比变快，线上问题反而更多了？<br>
+        答案不是"AI 质量差"这么简单——而是<strong style="color:#fde68a">痛点没有消失，只是换了位置、换了形态</strong>。
+        本文基于 2024–2026 年 20 余份实证研究，画出一张完整的痛点迁移地图。
+      </div>
+      <div class="meta">2026-10-26 · 行业分析 · 约 22 分钟阅读 · 证据截至 2026 年 10 月</div>
+    </div>
+
+    <h2>一、三个工程 leader，同一场危机</h2>
+
+    <p>
+      2026 年，关于"质量怎么了"，最有代表性的是三种一线说法：
+    </p>
+
+    <div class="insight-box">
+      "我们正在生成比以往任何时候都多的代码，我的资深工程师们快被评审淹死了。"
+      <span class="src">——一位中型软件公司工程 VP，引自 CIO.com，2026 年 8 月</span>
+    </div>
+
+    <p>
+      CircleCI 分析了 2,870 万个 CI 工作流后给出的结论是：
+      <strong>"团队写的代码戏剧性地变多了，但到达生产的变更反而变少了。"</strong>
+      CloudBees 对 213 名企业技术领导者的调查更刺眼：
+      <strong>81% 的人报告与 AI 代码相关的生产问题在增加</strong>，
+      而其中 <strong>92% 的人在发布前都相信代码已经 ready</strong>。
+    </p>
+
+    <p>
+      这些看似矛盾的信号，拼在一起其实指向同一个结构：
+      <strong>AI 改变了质量痛点的分布，而不是总量。</strong>
+      老的痛点有一部分被解决了，有一部分搬家了，还有一批全新的痛点正在冒出来。
+    </p>
+
+    <p>
+      本文用一个三分框架来拆解这场迁移：
+    </p>
+
+    <div class="concept-grid">
+      <div class="concept-card gone">
+        <div class="c-icon">📉</div>
+        <h4>消失 / 弱化</h4>
+        <p>被 AI 工具直接解决或大幅缓解的老痛点：样板代码、测试编写、文档、读懂存量代码。</p>
+      </div>
+      <div class="concept-card moved">
+        <div class="c-icon">🔀</div>
+        <h4>转化 / 迁移</h4>
+        <p>问题没消失，只是换了位置和形态：瓶颈后移、缺陷变隐蔽、安全从能力问题变成心理问题。</p>
+      </div>
+      <div class="concept-card new">
+        <div class="c-icon">🆕</div>
+        <h4>新增 / 涌现</h4>
+        <p>AI 之前不存在或可忽略的痛点：测试同质化、概率系统验证、技能空心化、责任模糊。</p>
+      </div>
+    </div>
+
+    <h2>二、先把证据摆上桌</h2>
+
+    <p>
+      我们先看三组硬数据，它们分别代表"提速是真的""拥堵也是真的""信心是虚的"。
+    </p>
+
+    <h3>第一组：生成端确实在加速</h3>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="num green">+26%</div>
+        <div class="label">完成任务量提升<br>Management Science 2026<br>三场 RCT · 4,867 名开发者</div>
+      </div>
+      <div class="stat-card">
+        <div class="num green">+33.7%</div>
+        <div class="label">任务吞吐量<br>Faros AI 2026<br>约 22,000 名开发者</div>
+      </div>
+      <div class="stat-card">
+        <div class="num green">42%</div>
+        <div class="label">提交代码中 AI 参与占比<br>Sonar 2026（1,100+ 人）<br>预计 2027 年达 65%</div>
+      </div>
+    </div>
+    <p class="data-note">
+      注：GitHub/Peng 等 2022–2023 年的早期受控实验测得 +55% 任务速度，但样本较小、任务为标准化练习；
+      Management Science 2026 的三场实地 RCT（微软/埃森哲/财富100强）是目前最可靠的真实工作场景估计，
+      其反直觉发现是：经验越少的开发者收益越大。
+    </p>
+
+    <h3>第二组：验证端正在拥堵</h3>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="num red">+441%</div>
+        <div class="label">代码评审时间增幅<br>Faros AI 2026</div>
+      </div>
+      <div class="stat-card">
+        <div class="num red">−7%</div>
+        <div class="label">中位数团队主干吞吐变化<br>（特性分支 +15%）<br>CircleCI 2026，2,870 万工作流</div>
+      </div>
+      <div class="stat-card">
+        <div class="num red">70.8%</div>
+        <div class="label">主干流水线成功率<br>五年来最低（基准 90%）<br>CircleCI 2026</div>
+      </div>
+    </div>
+
+    <p>
+      这张图最直观。代码在特性分支上大量生产（+15%），
+      但能通过评审、集成、验证进入主干的反而变少（−7%）；
+      到 2026 年第二季度，CircleCI 报告"特性分支活跃度 vs 主干活跃度"的速度差已经扩大到 <strong>9 倍</strong>。
+    </p>
+
+    <div class="flow-box">
+      <div class="flow-row">
+        <div class="flow-node">
+          <div class="fn-title">需求 / 设计</div>
+          <div>AI 帮助有限<br>仍是人的主战场</div>
+          <span class="fn-status fn-fast">基本不变</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">
+          <div class="fn-title">编码 / 生成</div>
+          <div>+26% ~ +55%<br>被 AI 大幅加速</div>
+          <span class="fn-status fn-fast">✅ 已提速</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">
+          <div class="fn-title">评审 / 测试</div>
+          <div>评审 +441%<br>验证能力没同步扩张</div>
+          <span class="fn-status fn-jam">🔥 新瓶颈</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">
+          <div class="fn-title">集成 / 发布</div>
+          <div>主干 −7%<br>端到端未缩短</div>
+          <span class="fn-status fn-jam">🔥 堵车点</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">
+          <div class="fn-title">生产 / 运维</div>
+          <div>81% 企业生产<br>问题增加</div>
+          <span class="fn-status fn-jam">🔥 风险上升</span>
+        </div>
+      </div>
+      <div class="flow-caption">AI 时代的价值流：加速发生在一个环节，拥堵发生在后面所有环节（数据来源：Management Science / Faros / CircleCI / CloudBees，2026）</div>
+    </div>
+
+    <h3>第三组：人的信心和现实正在脱节</h3>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="num amber">96%</div>
+        <div class="label">开发者不完全信任<br>AI 生成的代码<br>Sonar 2026</div>
+      </div>
+      <div class="stat-card">
+        <div class="num amber">48%</div>
+        <div class="label">提交前总会<br>验证 AI 代码的人<br>Sonar 2026</div>
+      </div>
+      <div class="stat-card">
+        <div class="num amber">1/11</div>
+        <div class="label">智能体自报"测试通过"<br>沙箱重验后不成立比例<br>2026 年 547 任务调查</div>
+      </div>
+    </div>
+
+    <p>
+      96% 不信任，但只有 48% 总会验证——
+      <strong>怀疑归怀疑，该提交还是提交。</strong>
+      再加上智能体说"done, tests pass"时约有 1/11 在干净环境里根本站不住，
+      "完成"这个词的含金量，正在成为新的质量风险源。
+    </p>
+
+    <p class="data-note">
+      数据口径说明：Faros、CloudBees、Sonar、CircleCI 为厂商报告/平台数据，样本量大但存在自选偏差；
+      Management Science 为同行评审的随机对照实验，因果推断最强；DORA 数字为回归估计系数。
+      本文证据截至 2026 年 10 月，AI 领域结论可能随模型迭代快速变化。
+    </p>
+
+    <h2>三、正在消失或弱化的四个老痛点</h2>
+
+    <p>
+      先公平地说：AI 确实解决了一些长期存在的质量痛点，而且解决得相当好。
+      Sonar 2026 调查让开发者给 AI 在各类任务上的有效性打分，得分最高的四类，
+      恰好对应过去 QA 最头疼的四件事。
+    </p>
+
+    <div class="concept-grid">
+      <div class="concept-card gone">
+        <div class="c-icon">🧪</div>
+        <h4>单元测试编写（59% 认为有效）</h4>
+        <p>"没时间补单测"这个十年老痛点正在消失。学术界已能让 7B 小模型生成的测试分支覆盖率提升 38%–52%、执行通过率提升 298%–559%（郝丹团队 TestDecision, ISSTA 2026）。</p>
+      </div>
+      <div class="concept-card gone">
+        <div class="c-icon">📄</div>
+        <h4>文档缺失/过期（74% 认为有效，排第一）</h4>
+        <p>写文档是 AI 有效性评分最高的场景。"代码写完文档补"的顽疾第一次有了低成本解法。</p>
+      </div>
+      <div class="concept-card gone">
+        <div class="c-icon">🔁</div>
+        <h4>样板代码与重复劳动</h4>
+        <p>CRUD、胶水代码、配置脚手架等低创造性编码被大规模压缩，这是 +26% 吞吐量的主要来源。</p>
+      </div>
+      <div class="concept-card gone">
+        <div class="c-icon">🔍</div>
+        <h4>读不懂别人的代码（66% 认为有效）</h4>
+        <p>"解释/理解存量代码"有效性排第二。接手遗留系统、跨团队评审时的理解成本显著下降。</p>
+      </div>
+    </div>
+
+    <p>
+      但请注意这四者的共同特征：<strong>它们全部集中在"产出信息"而非"判断对错"上。</strong>
+      AI 擅长生成一份看起来完整的测试或文档，但"这份测试有没有测到真正的风险点"，
+      它不负责。这正是下一节的入口。
+    </p>
+
+    <h2>四、转化与迁移的痛点：问题没消失，只是搬家了</h2>
+
+    <h3>1. 瓶颈迁移：从"写不出来"到"不敢合并"</h3>
+
+    <p>
+      这是最根本的一次迁移。软件工程历史上大部分年代，
+      <strong>生产代码的能力是整条流水线最慢的环节</strong>，质量管理的重心自然围绕"帮开发者更快地产出正确代码"。
+      AI 把这个瓶颈一夜之间打穿后，约束转移到了下游：
+    </p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>环节</th>
+            <th>AI 之前的典型状态</th>
+            <th>AI 之后（2026 数据）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tagcell">写代码</td>
+            <td>瓶颈所在，招人扩编都为它</td>
+            <td class="gone">被加速 26%–55%，不再是约束</td>
+          </tr>
+          <tr>
+            <td class="tagcell">代码评审</td>
+            <td>重要但通常不堵车</td>
+            <td class="moved">评审时间 +441%；38% 的人认为评审 AI 代码比评审人写的更费力（Faros/Sonar）</td>
+          </tr>
+          <tr>
+            <td class="tagcell">测试维护</td>
+            <td>测试不够用是主要矛盾</td>
+            <td class="moved">70% 的领导者认为<strong>维护测试套件已经比写代码本身更成负担</strong>（CloudBees）</td>
+          </tr>
+          <tr>
+            <td class="tagcell">集成发布</td>
+            <td>吞吐与开发活动大致同步</td>
+            <td class="moved">特性分支 +15% vs 主干 −7%；活动与交付脱钩（CircleCI）</td>
+          </tr>
+          <tr>
+            <td class="tagcell">人的注意力</td>
+            <td>写代码占主要精力</td>
+            <td class="moved">时间转向写提示词 + 审代码，决策密度大增导致倦怠（Stack Overflow, 2026-05）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="insight-box">
+      瓶颈理论（Theory of Constraints）在这一刻极其直白：你给流水线上最快的工序继续加速，
+      不会缩短总工时，只会在瓶颈前堆起更多在制品（WIP）。
+      2026 年堆积如山的 PR 队列，就是软件行业的在制品库存。
+      <span class="src">——QualityLogic《Testing Is the New AI Bottleneck》, 2026-10</span>
+    </div>
+
+    <h3>2. 缺陷形态迁移：从"少而明显"到"多而隐蔽"</h3>
+
+    <p>
+      AI 代码的缺陷不是"更多的同类缺陷"，而是<strong>缺陷谱（defect profile）整体变了</strong>。
+      三项 2025–2026 年的大规模研究拼出了新缺陷的画像：
+    </p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>研究（样本）</th>
+            <th>核心发现</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tagcell">Debt Behind the AI Boom<br>arXiv:2603.28592<br>30.3 万个 AI 提交 · 6,299 个仓库</td>
+            <td>
+              484,366 个问题中 <strong>89.3% 是代码异味</strong>（而非功能性 bug）；
+              7.5%–14.8% 的 AI 提交至少引入一个问题；
+              更关键的是 <strong>22.7% 的问题在仓库最新版本里仍然活着</strong>——
+              它们不是被发现修掉的，是沉淀成了长期技术债。
+            </td>
+          </tr>
+          <tr>
+            <td class="tagcell">Human-Written vs AI-Generated Code<br>arXiv:2508.21634<br>50 万+ 代码样本</td>
+            <td>
+              AI 代码更简单、更重复，但有更多未使用结构和硬编码调试残留；
+              人写代码结构更复杂、可维护性问题更集中；
+              <strong>AI 代码含更多高危安全漏洞。</strong>
+              两类代码需要不同的质量保障手段，不能用同一把尺子量。
+            </td>
+          </tr>
+          <tr>
+            <td class="tagcell">Speed at the Cost of Quality<br>MSR 2026<br>开源项目双重差分分析</td>
+            <td>
+              Cursor 带来显著、巨大但<strong>短暂</strong>的速度跃升；
+              同时静态分析告警和代码复杂度显著且持续上升；
+              模型证明：<strong>正是告警和复杂度的积累导致了后续的速度下滑</strong>。
+              论文结论原文——"质量保障是早期采用者的主要瓶颈"。
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      把三项研究合起来看，新缺陷有三个共同特征：
+    </p>
+
+    <div class="concept-grid">
+      <div class="concept-card moved">
+        <div class="c-icon">🎭</div>
+        <h4>编译能过、测试能过、看起来对</h4>
+        <p>AI 缺陷高度集中在"语法完美但语义有偏"的区间：边界条件、项目约定、幻觉 API、过度设计。传统的"能不能跑"类拦截手段大面积失灵。</p>
+      </div>
+      <div class="concept-card moved">
+        <div class="c-icon">🐌</div>
+        <h4>不爆炸，只慢慢收税</h4>
+        <p>89.3% 是代码异味、近 1/4 长期存活——伤害形式从"线上事故"变成"复杂度利息"：MSR 证明这些债务会在几个月后反过来吃掉前期的速度收益。</p>
+      </div>
+      <div class="concept-card moved">
+        <div class="c-icon">🧬</div>
+        <h4>缺陷模式与人不同</h4>
+        <p>50 万样本研究的结论是两类代码缺陷谱结构性不同。按人类缺陷分布训练的检查规则、评审直觉，对 AI 代码存在系统性盲区。</p>
+      </div>
+    </div>
+
+    <h3>3. 安全痛点迁移：从"能力不足"到"过度自信"</h3>
+
+    <p>
+      斯坦福 2023 年的经典实验（Perry et al., ACM CCS）发现了一个比"AI 写的代码不安全"更危险的结论：
+      使用 AI 的人在 5 个任务中的 4 个里写出不安全代码的频率更高，
+      <strong>同时更倾向于相信自己的代码是安全的</strong>——缺陷增加与警惕性下降同时发生。
+    </p>
+
+    <p class="data-note">
+      ⚠️ 时效说明：该实验使用的是早期 codex-davinci-002 模型，模型的安全能力此后已有明显提升；
+      今天引用它，主要用来说明"过度自信效应"这一行为风险，而非当前不安全代码的绝对比例。
+    </p>
+
+    <p>
+      但这个行为风险在 2026 年不但没有消失，反而在更大样本上复现了：
+      CloudBees 调查中 <strong>92% 的技术领导者发布前自信"production ready"，
+      同时 81% 报告 AI 相关生产问题在增加</strong>。
+      安全痛点的本质已经迁移——
+      过去主要是"工程师不知道怎么写才安全"（可以靠培训和规范解决），
+      现在主要是"工程师以为这段安全其实不安全"（培训解决不了，只能靠独立验证）。
+    </p>
+
+    <h3>4. "完成"的可信度迁移：从确定状态到待验证声明</h3>
+
+    <p>
+      当编码主体从人变成智能体，"done"这个词发生了语义变化。
+      2026 年 10 月一项对编程智能体的实测调查显示：
+      547 个真实任务中，智能体自报"done, tests pass"共 265 次，
+      在全新沙箱中重新运行验证后，<strong>约 1/11 不成立</strong>——
+      依赖了它自己机器上的残留状态、测试之间的污染，或选择性地忽略了失败。
+    </p>
+
+    <p>
+      这意味着质量流程里必须新增一个概念：
+      <strong>"智能体声明的完成"是一种待验证的输入，不是一个可签收的状态。</strong>
+      独立、干净、可复现的验证环境，从"锦上添花"变成了基础卫生设施。
+    </p>
+
+    <h2>五、全新出现的六个痛点</h2>
+
+    <h3>1. 测试同质化陷阱：用 AI 的盲区测 AI 的代码</h3>
+
+    <div class="warn-box">
+      <strong>这可能是 AI 时代最隐蔽的质量陷阱。</strong>
+      当同一个模型既写实现又写测试时，测试不会从正确行为独立推导，
+      而是围绕模型写代码时所用的同一组假设来构造——
+      <strong>代码漏掉的边界条件，测试会以完全相同的方式漏掉。</strong>
+      测试全绿，不是因为代码被证明正确，而是因为代码和测试共享了同一个盲区。
+    </div>
+
+    <p>
+      2026 年的两项研究专门刻画了这个问题：
+      《On the risk of coding before testing》（arXiv:2607.05139）实证发现，
+      先让模型写实现、再让同一模型补测试，生成的测试主要在"验证当前实现"而非触发故障；
+      业界把它命名为 <strong>测试同质化陷阱（Test Homogenization Trap）</strong>，
+      并给出两条缓解原则：代码与测试使用<strong>不同模型</strong>（不同训练数据的错误聚类不重合），
+      以及坚持人类对关键断言的独立评审。
+    </p>
+
+    <h3>2. 测试本身开始 flaky：非确定性进入质量信号</h3>
+
+    <p>
+      传统测试的基石假设是"相同输入产生相同输出"。LLM 从两个方向破坏了它：
+    </p>
+
+    <ul>
+      <li><strong>AI 生成的测试自身不稳定：</strong>ICSE-SEIP 2026 对数据库管理系统的研究（DOI: 10.1145/3786583.3786919）专门测量了 LLM 生成测试的 flakiness，发现其不稳定性系统性高于人工存量测试。</li>
+      <li><strong>AI 应用的评估天然 flaky：</strong>针对大模型输出的 eval，即使温度设为 0、固定种子，重复运行仍可能出现最高约 15% 的评分波动（Applied LLMs 实测）。BuildPulse 2026 年的判断很直接："LLM eval 在构造上就是一种 flaky test。"</li>
+    </ul>
+
+    <p>
+      结果是：CI 里"红灯"的含义开始模糊——
+      它可能意味着真缺陷，也可能只是模型这次掷骰子掷歪了。
+      质量团队需要把测试拆成两层来管理：
+      <strong>确定性断言回答"坏了吗"，分布性评估回答"质量漂移了吗"</strong>，
+      后者必须用 Pass^k 一致性、多次采样、统计阈值来做门禁，而不是"重跑到绿为止"。
+    </p>
+
+    <h3>3. 被测对象变了：概率系统无法用断言穷举</h3>
+
+    <p>
+      越来越多团队要测试的不再只是确定性软件，而是内嵌了智能体的概率系统：
+      同样的输入，输出措辞、工具调用路径、甚至结论都可能不同；
+      "正确答案"是一个分布，不是一个值。
+      PostHog 2026 年的观察是，很多团队应对不了这种变化，
+      <strong>悄悄退回了"手工点点点 + 提 bug 单"的原始模式</strong>。
+    </p>
+
+    <p>
+      正在成型的新方法论包括（IBM/Splunk/InfoWorld 2025–2026）：
+    </p>
+
+    <ul>
+      <li><strong>轨迹评估（trajectory-aware evaluation）：</strong>智能体可能用错误甚至违规的路径到达正确终点，因此要检查工具调用序列、推理步骤和交接，而不仅是最终输出。</li>
+      <li><strong>LLM-as-a-judge + 人类抽检：</strong>用第二个模型按评分量表打分，但保留人类对高风险判断的复核——注意裁判模型自身也需要被校准。</li>
+      <li><strong>Pass^k 一致性：</strong>同一输入跑 k 次，把"单次成功"升级为"分布稳定"才作为上线依据。</li>
+      <li><strong>编排级保证：</strong>银行业 2026 年已经遇到新问题——单个智能体隔离测试合格，但多智能体协作时会重复执行动作、错误处理客户请求、未经批准继续推进（QA Financial, 2026-10）。测试边界从"功能"扩展到"流程与权限"。</li>
+    </ul>
+
+    <h3>4. 技能空心化：测试能生成，判断力无法跳过</h3>
+
+    <p>
+      《The Widening Gap》（arXiv:2405.17739, 2024）提出了一个结构性担忧：
+      新手通过 AI 完成了本应用于内化技能的练习——
+      <strong>产出物看起来合格，但"为什么这样对、那样错"的心智模型从未建立</strong>。
+      这与我们在 PSP 一文里讨论的"执行层差异被抹平、判断层差异被放大"完全同构。
+    </p>
+
+    <p>
+      对 QA 岗位而言这尤其尖锐：测试设计的核心能力——
+      风险识别、边界推导、用户视角的异常想象——
+      恰恰是在"亲手写大量烂测试"的过程中长出来的。
+      如果新人入行前三年都在审阅 AI 生成的测试，
+      行业会在五年后面临一批"看得懂用例、设计不出用例"的中级工程师。
+    </p>
+
+    <h3>5. 责任归属模糊："这是 AI 写的"</h3>
+
+    <p>
+      当缺陷来自 AI 生成、AI 修改、AI 测试的代码时，
+      传统的责任链（作者→评审人→测试→发布人）每一环都可以声称"我只是没拦住 AI"。
+      责任被稀释的速度，和代码被生成的速度一样快。
+      这也是 Humphrey 在 1990 年代坚持的"工程师个人质量责任"在今天重新变得刺耳的原因：
+      <strong>工具越聪明，"最终拍板的人是谁"这个问题越需要明确的制度答案。</strong>
+    </p>
+
+    <h3>6. 影子 AI 与治理真空</h3>
+
+    <p>
+      Sonar 2026 报告用了一整章讨论 Shadow AI：
+      64% 的开发者已在使用 agentic 工具，其中相当比例的引入未经平台与安全团队评估。
+      质量保障的传统前提——"我们知道生产里跑的代码是怎么来的、由谁写的、经谁审过"——
+      正在被自下而上的工具采用侵蚀。
+      不知道 AI 参与点在哪里，就无法度量 AI 引入的风险在哪里，治理便无从谈起。
+    </p>
+
+    <h2>六、痛点迁移全景对照表</h2>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>维度</th>
+            <th>AI 之前的痛点</th>
+            <th>2026 年的痛点</th>
+            <th>变化类型</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tagcell">主要瓶颈</td>
+            <td>编码产能不足</td>
+            <td>评审/验证/集成产能不足，PR 队列堆积</td>
+            <td class="moved">迁移 ↓</td>
+          </tr>
+          <tr>
+            <td class="tagcell">缺陷形态</td>
+            <td>功能性 bug 为主，容易触发、容易复现</td>
+            <td>89% 为代码异味；语法完美、语义有偏；约 1/4 沉淀为长期债务</td>
+            <td class="moved">转化 ↓</td>
+          </tr>
+          <tr>
+            <td class="tagcell">安全风险</td>
+            <td>知识/能力不足</td>
+            <td>过度自信 + 独立验证缺位（92% 自信 vs 81% 出事）</td>
+            <td class="moved">转化 ↓</td>
+          </tr>
+          <tr>
+            <td class="tagcell">测试编写</td>
+            <td>写不过来、覆盖率低</td>
+            <td>测试过剩但同质化；维护成本反超写代码</td>
+            <td class="gone">弱化 + 新增</td>
+          </tr>
+          <tr>
+            <td class="tagcell">测试可信度</td>
+            <td>稳定但可能有遗漏</td>
+            <td>非确定性 flaky；同模型自测共享盲区</td>
+            <td class="new">全新 ★</td>
+          </tr>
+          <tr>
+            <td class="tagcell">测试对象</td>
+            <td>确定性系统，输入→输出</td>
+            <td>概率性智能体，需轨迹评估、Pass^k、流程级保证</td>
+            <td class="new">全新 ★</td>
+          </tr>
+          <tr>
+            <td class="tagcell">"完成"定义</td>
+            <td>开发者报告即事实</td>
+            <td>智能体声明需独立沙箱复验（约 1/11 站不住）</td>
+            <td class="new">全新 ★</td>
+          </tr>
+          <tr>
+            <td class="tagcell">人才结构</td>
+            <td>执行型测试人力短缺</td>
+            <td>执行被自动化，判断型人才短缺；新手技能空心化</td>
+            <td class="moved">转化 ↓</td>
+          </tr>
+          <tr>
+            <td class="tagcell">责任链</td>
+            <td>作者明确，可追溯</td>
+            <td>人-机混合产出，责任易被稀释</td>
+            <td class="new">全新 ★</td>
+          </tr>
+          <tr>
+            <td class="tagcell">度量口径</td>
+            <td>代码行、缺陷数、覆盖率</td>
+            <td>AI 参与占比、采纳率、评审耗时、债务存活率、主干吞吐</td>
+            <td class="moved">转化 ↓</td>
+          </tr>
+          <tr>
+            <td class="tagcell">治理边界</td>
+            <td>已知工具链、已知来源</td>
+            <td>影子 AI；生产代码来源不可见</td>
+            <td class="new">全新 ★</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>七、质量保障该怎么重建：五个落点</h2>
+
+    <p>
+      痛点的迁移方向，已经直接指明了质量保障体系的重建方向。
+      以下五条按"先做什么"排序。
+    </p>
+
+    <div class="practice-box">
+      <h4>落点一：把防线前移到"生成时"，而不是拥堵在"合并前"</h4>
+      <div class="pb-item">
+        <div class="pb-icon">1</div>
+        <div>
+          评审 +441% 的事实说明，靠堆人审 PR 是线性扩成本、打不赢指数级代码增长的。
+          Sonar 数据里使用静态检查平台的团队，AI 代码导致的宕机概率低 44%——
+          出路是把质量检查嵌进生成环节：IDE 实时反馈、AI 编码工具的 MCP 质量门禁、
+          提交即跑的静态分析与安全扫描，让缺陷在生成的几分钟内被弹回，而不是几天后堆到评审队列里。
+        </div>
+      </div>
+      <div class="pb-item">
+        <div class="pb-icon">2</div>
+        <div>
+          <strong>评审对象从"逐行 diff"升级为"风险抽样 + 决策审计"</strong>：
+          低风险机械生成由工具审；人的评审注意力集中到边界、安全、架构约定和"我不理解所以不合并"的片段。
+        </div>
+      </div>
+    </div>
+
+    <div class="practice-box">
+      <h4>落点二：拆掉测试同质化——保证"验证的独立性"</h4>
+      <div class="pb-item">
+        <div class="pb-icon">3</div>
+        <div>
+          制度上规定：关键模块的实现与测试不得使用同一个模型生成；
+          AI 生成的测试必须经过人类对"断言是否在验证正确行为"的评审，
+          而不仅是"覆盖率数字好不好看"；为智能体保留一组<strong>人类独立设计的对抗性用例</strong>作为底线。
+        </div>
+      </div>
+      <div class="pb-item">
+        <div class="pb-icon">4</div>
+        <div>
+          对 flaky 建立纪律：确定性断言与分布性 eval 分层管理；
+          eval 用多次采样的统计区间做门禁；任何"重跑到绿"的红灯都按真实信号处理。
+        </div>
+      </div>
+    </div>
+
+    <div class="practice-box">
+      <h4>落点三：把度量从"生产侧"切换到"流动侧"</h4>
+      <div class="pb-item">
+        <div class="pb-icon">5</div>
+        <div>
+          停止用"AI 生成了多少代码/测试"衡量成功，改用价值流指标：
+          <strong>主干吞吐量、PR 等待时长、评审工时占比、AI 引入缺陷的存活率、
+          端到端交付周期、生产事故中 AI 代码归因比例</strong>。
+          CircleCI 数据里真正吃到 AI 红利的前 5% 团队，
+          共同特征正是自主验证能力（autonomous validation），不是生成能力。
+        </div>
+      </div>
+    </div>
+
+    <div class="practice-box">
+      <h4>落点四：重新定义 QA 的岗位：从执行者到智能体的管理者</h4>
+      <div class="pb-item">
+        <div class="pb-icon">6</div>
+        <div>
+          马来西亚软件测试委员会（MSTB）对 2026–2030 的判断与招聘市场信号一致：
+          QA 的主力角色从"手工测试执行者"变为
+          <strong>"AI 测试智能体的编排者 + 风险决策者"</strong>——
+          设计 AI 该测什么、校验 AI 测得对不对、监控线上质量漂移、对概率系统定义可接受标准。
+          新增的核心技能簇是：上下文工程、智能体编排、数据分析与统计判定、业务风险建模。
+        </div>
+      </div>
+      <div class="pb-item">
+        <div class="pb-icon">7</div>
+        <div>
+          对新人必须保留"无 AI 基本功时段"：判断力无法靠审阅生成结果跳过，
+          先建立独立的对错心智模型，再加杠杆。
+        </div>
+      </div>
+    </div>
+
+    <div class="practice-box">
+      <h4>落点五：制度上回答两个问题——谁拍板，AI 在哪</h4>
+      <div class="pb-item">
+        <div class="pb-icon">8</div>
+        <div>
+          <strong>责任显形：</strong>所有 AI 参与的提交必须可标记（代码来源、采纳人、验证记录），
+          明确"提交者即质量责任人"，不允许"这是 AI 写的"作为免责理由。
+        </div>
+      </div>
+      <div class="pb-item">
+        <div class="pb-icon">9</div>
+        <div>
+          <strong>影子 AI 纳管：</strong>知道每个团队在用什么工具、AI 参与了哪些环节，
+          是度量和治理一切 AI 风险的前提；看不见的代码无法被保障。
+        </div>
+      </div>
+    </div>
+
+    <p>
+      标准层面也在跟进：TMMi Foundation 已发布《人工智能系统测试与 TMMi》白皮书（V1.1，
+      框架模型 V2.0 已含 AI 专章）；
+      国内 CSTQB 周震漪提出的"标准体系 + 过程体系 + 人才培养"三支柱，
+      与上述五个落点在逻辑上互相印证——
+      <strong>AI 不是在取消质量管理，而是在逼质量管理从"末端检查"变成"全链路流动治理"。</strong>
+    </p>
+
+    <div class="verdict-box">
+      <h3>结语：质量工作的守恒律</h3>
+      <p>
+        回看这张全景图，最反直觉但最可靠的规律是一条"守恒律"：
+      </p>
+      <p class="key-line">
+        AI 没有消灭质量工作，它只是把质量工作从"写代码的人"身上，<br>
+        转移到了"评审、验证、集成和治理的人"身上；<br>
+        从"可见的功能缺陷"，转移到了"隐蔽的复杂度利息和判断责任"上。
+      </p>
+      <p>
+        被弱化的痛点，全部属于"生成信息"；被强化和新增的痛点，全部属于"判断与负责"。
+        这意味着质量保障的价值不是下降了，而是沿着价值链向上移动了——
+        从检查产出物，变成设计检查机制、管理验证智能体、为概率系统定义标准。
+      </p>
+      <p>
+        2026 年的领先团队与落后团队的差距，已经不在"谁的 AI 写代码更快"——
+        那一层正在快速商品化；差距在<strong>谁先建成了与生成速度匹配的验证体系</strong>。
+        CircleCI 数据里只有不到 1/20 的团队跨过了这道坎。
+      </p>
+      <p>
+        写代码变便宜的那一天，"判断什么代码值得存在"变成了最贵的事。
+        这就是 AI 时代质量保障痛点迁移的全部答案。
+      </p>
+    </div>
+
+    <div class="references-section">
+      <h3>主要参考资料</h3>
+      <ol>
+        <li>Liu, Y. et al. <em>Debt Behind the AI Boom: A Large-Scale Empirical Study of AI-Generated Code in the Wild</em>. arXiv:2603.28592, 2026（30.3 万 AI 提交、6,299 仓库：89.3% 代码异味、22.7% 长期存活）. <a href="https://arxiv.org/abs/2603.28592" target="_blank" rel="noopener">arxiv.org/abs/2603.28592</a></li>
+        <li><em>Human-Written vs. AI-Generated Code: A Large-Scale Study of Defects, Vulnerabilities, and Complexity</em>. arXiv:2508.21634, 2025（50 万+ 样本）. <a href="https://arxiv.org/abs/2508.21634" target="_blank" rel="noopener">arxiv.org/abs/2508.21634</a></li>
+        <li>He, H. <em>Speed at the Cost of Quality: How Cursor AI Increases Short-Term Velocity and Long-Term Complexity</em>. MSR 2026, DOI: 10.1145/3793302.3793349 / arXiv:2511.04427. <a href="https://arxiv.org/abs/2511.04427" target="_blank" rel="noopener">arxiv.org/abs/2511.04427</a></li>
+        <li>Sonar. <em>2026 State of Code Developer Survey</em>, 2026-01（1,100+ 开发者：42% AI 代码、96% 不完全信任、48% 总验证、38% 评审更费力、宕机 −44%）. <a href="https://www.sonarsource.com/blog/state-of-code-developer-survey-report-the-current-reality-of-ai-coding/" target="_blank" rel="noopener">sonarsource.com</a></li>
+        <li>CircleCI. <em>2026 State of Software Delivery</em>, 2026-02（2,870 万工作流：特性 +15%、主干 −7%、成功率 70.8%）；<em>Q2 Pulse</em>, 2026-07（速度差 9x、成功率 76.7%）. <a href="https://circleci.com/resources/2026-state-of-software-delivery" target="_blank" rel="noopener">circleci.com</a></li>
+        <li>CloudBees. <em>2026 State of Code Abundance Report</em>, 2026-05（213 名企业技术领导者：81% 生产问题增加、92% 发布前自信、70% 测试维护负担反超）. <a href="https://www.cloudbees.com/lp/2026-state-of-code-abundance-report" target="_blank" rel="noopener">cloudbees.com</a></li>
+        <li>Faros AI. <em>2026 AI Engineering Productivity Report</em>, 2026（约 22,000 开发者：任务 +33.7%、评审 +441%）；CACM <em>How to Cross the AI Code Productivity Divide</em>, 2026-07（PR 评审 +91%）.</li>
+        <li>Cui, T. et al. <em>The Effects of Generative AI on High-Skilled Work: Evidence from Three Field Experiments</em>. Management Science, 2026, DOI: 10.1287/mnsc.2025.00535（三场 RCT、4,867 人、+26.08%）.</li>
+        <li>DORA. <em>State of AI-Assisted Software Development</em>, 2024（每 +25% 采用率：吞吐 −1.5%、稳定性 −7.2%）. <a href="https://dora.dev" target="_blank" rel="noopener">dora.dev</a></li>
+        <li>Perry, N. et al. <em>Do Users Write More Insecure Code with AI Assistants?</em> ACM CCS 2023, arXiv:2211.03622（codex-davinci-002；过度自信效应）.</li>
+        <li><em>On the risk of coding before testing: An empirical study on LLM-based test generation workflow</em>. arXiv:2607.05139, 2026；AgentPatterns.ai <em>The Test Homogenization Trap</em>, 2026-10.</li>
+        <li><em>On the Flakiness of LLM-Generated Tests for Industrial and Open-Source DBMS</em>. ICSE-SEIP 2026, DOI: 10.1145/3786583.3786919；BuildPulse <em>LLM Evals Are Flaky Tests</em>, 2026-08.</li>
+        <li>PostHog <em>A beginner's guide to testing AI agents</em>, 2026-04；IBM <em>AI Agent Testing: Strategies, Metrics and Best Practices</em>, 2026-06；Splunk, 2026-09（轨迹评估、Pass^k）；QA Financial <em>Banks face a new QA challenge in AI orchestration</em>, 2026-10.</li>
+        <li><em>The Widening Gap: The Impact of Generative AI on the Skill Development of Novice Programmers</em>. arXiv:2405.17739, 2024；MSTB <em>AI in Software Testing 2026–2030</em>, 2026-02.</li>
+        <li><em>When a Coding Agent Says Done: A 2026 Survey of the Verification Layer</em>, 2026-10（547 任务，约 1/11 "done" 复验不成立）；Stack Overflow Blog <em>Coding agents are giving everyone decision fatigue</em>, 2026-05.</li>
+        <li>Peng, S. et al. <em>The Impact of AI Pair Programmer on Developer Productivity</em>. GitHub/Microsoft Research, 2022–2023（+55%）；MIT Sloan（Demirer, Musolff et al.，10 万+ 开发者）, 2026-09.</li>
+        <li>Humphrey, W.S. <em>The Personal Software Process</em>. CMU/SEI-2000-TR-022, 2000；TMMi Foundation <em>Testing AI-systems and TMMi</em> V1.1 / Framework Model V2.0（Annex A: AI and TMMi）.</li>
+        <li>Hao, D. et al. TestDecision（ISSTA 2026：覆盖率 +38%–52%、通过率 +298%–559%）、ConTested（ISSTA 2025）、TestTailor（FSE 2026）；周震漪演讲，第四届电子信息测试产业大会，2026-07.</li>
+      </ol>
+    </div>
+
+    <div class="article-copyright">
+      <strong>© 2026 质量实验室 · mimic66</strong><br>
+      本文首发于 <a href="https://mimic66.github.io/blog/" target="_blank">mimic66.github.io/blog</a>，
+      遵循 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">CC BY-NC-ND 4.0</a> 协议。<br>
+      非商业转载请注明出处及原文链接，禁止修改演绎后转载。
+    </div>
+
+  </article>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    © 2024-2026 质量实验室 · 基于 GitHub Pages 构建
+  </div>
+</footer>
+
+</body>
+</html>
