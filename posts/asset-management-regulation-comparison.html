@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>国内外资产管理行业监管政策深度对比：统一规则、功能监管与全球趋同 - 质量实验室</title>
+  <meta name="description" content="系统梳理中国（资管新规、理财、公募、私募、信托、保险资管）与美国、欧盟、英国及 IOSCO/FSB 的资产管理监管框架，对比立法逻辑、监管架构与六大共同趋势。基于2018-2026年真实法规与官方文件。">
+  <link rel="stylesheet" href="../css/style.css?v=20261026a">
+  <style>
+    .post-hero {
+      background: linear-gradient(135deg, #0b1220 0%, #1e3a8a 55%, #0f766e 100%);
+      color: #f1f5f9;
+      padding: 48px 40px;
+      border-radius: 12px;
+      margin-bottom: 36px;
+    }
+    .post-hero h1 { color: #fff; -webkit-text-fill-color: #fff; background: none; font-size: 1.7em; line-height: 1.4; margin-bottom: 12px; }
+    .post-hero .subtitle { color: #cffafe; font-size: 0.95em; line-height: 1.8; }
+    .post-hero .meta { color: #93c5fd; font-size: 0.85em; margin-top: 16px; }
+
+    .data-note { font-size: 0.82em; color: #94a3b8; line-height: 1.7; margin: 4px 0 20px; }
+
+    .table-wrap { overflow-x: auto; margin: 24px 0; }
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 0.88em; min-width: 620px; }
+    .data-table th { background: #1e293b; color: #f1f5f9; padding: 12px 14px; text-align: left; font-weight: 600; }
+    .data-table td { padding: 11px 14px; border-bottom: 1px solid #e2e8f0; vertical-align: top; line-height: 1.65; }
+    .data-table tr:nth-child(even) td { background: #f8fafc; }
+    .data-table .tagcell { white-space: nowrap; font-weight: 600; }
+    .data-table .cn { color: #b91c1c; }
+    .data-table .us { color: #1e40af; }
+    .data-table .eu { color: #0f766e; }
+    .data-table .uk { color: #6d28d9; }
+
+    .region-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin: 26px 0;
+    }
+    .region-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px 24px; }
+    .region-card.cn { border-top: 4px solid #dc2626; }
+    .region-card.us { border-top: 4px solid #2563eb; }
+    .region-card.eu { border-top: 4px solid #0d9488; }
+    .region-card.uk { border-top: 4px solid #7c3aed; }
+    .region-card h4 { margin: 0 0 10px 0; font-size: 1.05em; color: #0f172a; }
+    .region-card .r-sub { font-size: 0.8em; color: #94a3b8; margin-bottom: 10px; }
+    .region-card ul { margin: 0; padding-left: 18px; font-size: 0.85em; line-height: 1.75; color: #334155; }
+    .region-card li { margin: 5px 0; }
+
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin: 24px 0;
+    }
+    .concept-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; border-top: 3px solid #6366f1; }
+    .concept-card .c-icon { font-size: 1.3em; margin-bottom: 8px; }
+    .concept-card h4 { margin: 0 0 8px 0; color: #0f172a; font-size: 1em; }
+    .concept-card p { margin: 0; font-size: 0.85em; line-height: 1.7; color: #475569; }
+
+    .timeline-box {
+      background: #0f172a;
+      border-radius: 12px;
+      padding: 28px 26px;
+      margin: 28px 0;
+      overflow-x: auto;
+    }
+    .tl-track { display: flex; gap: 0; min-width: 720px; position: relative; }
+    .tl-track::before {
+      content: ""; position: absolute; top: 34px; left: 10px; right: 10px;
+      height: 2px; background: rgba(255,255,255,0.2);
+    }
+    .tl-item { flex: 1; text-align: center; position: relative; padding: 0 6px; }
+    .tl-item .tl-year {
+      display: inline-block; background: #1e293b; border: 1px solid rgba(255,255,255,0.25);
+      color: #fbbf24; font-size: 0.78em; font-weight: 700; padding: 3px 10px; border-radius: 14px;
+      position: relative; z-index: 1;
+    }
+    .tl-item .tl-text { margin-top: 18px; font-size: 0.76em; color: #cbd5e1; line-height: 1.6; }
+
+    .insight-box {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 18px 22px;
+      margin: 24px 0;
+      border-radius: 0 10px 10px 0;
+      font-size: 0.92em;
+      line-height: 1.8;
+      color: #78350f;
+    }
+    .insight-box .src { display: block; margin-top: 8px; font-size: 0.85em; color: #a16207; font-style: italic; }
+
+    .warn-box {
+      background: #fef2f2;
+      border-left: 4px solid #dc2626;
+      padding: 18px 22px;
+      margin: 24px 0;
+      border-radius: 0 10px 10px 0;
+      font-size: 0.9em;
+      line-height: 1.75;
+      color: #7f1d1d;
+    }
+
+    .verdict-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e2e8f0;
+      border-radius: 12px;
+      padding: 32px;
+      margin: 36px 0;
+    }
+    .verdict-box h3 { color: #fff; margin-top: 0; }
+    .verdict-box p { color: #94a3b8; font-size: 0.9em; line-height: 1.75; margin: 10px 0; }
+    .verdict-box .key-line { color: #fbbf24; font-size: 1.06em; font-weight: 600; margin: 16px 0; line-height: 1.8; }
+
+    .references-section {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 24px 28px;
+      margin-top: 40px;
+    }
+    .references-section h3 { margin-top: 0; color: #1e293b; }
+    .references-section ol { padding-left: 22px; font-size: 0.82em; line-height: 1.7; color: #475569; }
+    .references-section li { margin: 6px 0; }
+
+    .article-copyright {
+      margin-top: 48px;
+      padding: 20px 24px;
+      background: #f8fafc;
+      border-left: 4px solid #94a3b8;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.85em;
+      color: #64748b;
+      line-height: 1.7;
+    }
+    .article-copyright strong { color: #475569; }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="../index.html" class="site-title">质量<span>实验</span>室</a>
+    <nav>
+      <a href="../index.html">首页</a>
+      <a href="../about.html">关于</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <article class="post-content">
+
+    <div class="post-hero">
+      <h1>国内外资产管理行业监管政策深度对比：<br>统一规则、功能监管与全球趋同</h1>
+      <div class="subtitle">
+        资产管理是全球金融体系中最大的"非银"板块：截至 2024 年底，全球非银金融中介规模已达
+        <strong style="color:#fde68a">256.8 万亿美元、占全部金融资产 51%</strong>（FSB，2025-12）。
+        2018 年中国"资管新规"与 2008 年危机后全球改革，在同一时期把资管监管推向了一个共同方向：
+        统一规则、穿透监管、回归信义义务与流动性风险管理。本文系统对比中国与美、欧、英及国际标准。
+      </div>
+      <div class="meta">2026-10-26 · 金融监管 · 约 24 分钟阅读 · 法规截至 2026 年 10 月</div>
+    </div>
+
+    <h2>一、为什么要在今天对比资管监管</h2>
+
+    <p>
+      资产管理行业过去十年经历了两次方向一致的监管重构。
+      一次是<strong>2008 年全球金融危机</strong>之后：监管者发现系统性风险不只来自银行，
+      货币市场基金挤兑、基金流动性错配、非银杠杆同样可以引爆市场——
+      2020 年 3 月新冠冲击中，美联储不得不为货币基金、债券市场设立应急工具，再次印证这一点。
+      另一次是<strong>中国 2018 年"资管新规"</strong>：
+      银行理财、信托、券商资管、基金子公司在多年"通道+刚兑+嵌套"后积累了大量影子银行风险，
+      监管以一份跨行业的统一规则启动全面整改。
+    </p>
+
+    <p>
+      两场改革历史背景不同，最终却收敛到高度相似的监管理念上。本文回答四个问题：
+    </p>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <div class="c-icon">🇨🇳</div>
+        <h4>中国如何监管</h4>
+        <p>资管新规如何统一银行理财、信托、券商、基金、保险资管，以及 2023 年机构改革后的新架构。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">🌍</div>
+        <h4>海外如何监管</h4>
+        <p>美国 1940 年法案体系、欧盟 UCITS/AIFMD 双轨、英国 FCA 行为监管。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">⚖️</div>
+        <h4>中外有何异同</h4>
+        <p>立法逻辑、监管目标、刚兑与净值化、投资者结构、监管架构的系统对比。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">🔭</div>
+        <h4>未来走向哪里</h4>
+        <p>流动性工具、ESG 标签、AI 治理、长钱长投与监管周期回摆六大趋势。</p>
+      </div>
+    </div>
+
+    <h2>二、中国：以"资管新规"为轴心的统一监管</h2>
+
+    <h3>2.1 资管新规：跨行业的总纲领</h3>
+
+    <p>
+      2018 年 4 月 27 日，中国人民银行、银保监会、证监会、国家外汇管理局联合发布
+      《关于规范金融机构资产管理业务的指导意见》（<strong>"资管新规"，银发〔2018〕106 号</strong>）。
+      这是中国第一份<strong>跨机构类型、按业务本质统一规范</strong>资管业务的顶层文件，
+      其确立的规则随后通过各行业细则落地：
+    </p>
+
+    <div class="region-grid">
+      <div class="region-card cn">
+        <h4>破刚兑、净值化</h4>
+        <div class="r-sub">重塑产品的法律与会计本质</div>
+        <ul>
+          <li>资管业务定性为<strong>表外业务</strong>，金融机构不得承诺保本保收益，兑付困难时不得垫资</li>
+          <li>产品实行净值化管理，委托人自担风险、"卖者尽责、买者自负"</li>
+          <li>金融资产坚持公允价值计量</li>
+        </ul>
+      </div>
+      <div class="region-card cn">
+        <h4>去嵌套、限通道、限非标</h4>
+        <div class="r-sub">拆解影子银行结构</div>
+        <ul>
+          <li>消除多层嵌套，抑制通道业务，规范资金池</li>
+          <li>规范非标债权投资，限制期限错配</li>
+          <li>对分级产品、杠杆比例设限</li>
+        </ul>
+      </div>
+      <div class="region-card cn">
+        <h4>独立托管 + 统一统计</h4>
+        <div class="r-sub">建立可穿透的基础设施</div>
+        <ul>
+          <li>资管产品实行第三方独立托管（法规另有规定除外）</li>
+          <li>资管业务与自营、产品与产品之间有效隔离</li>
+          <li>央行负责资管产品<strong>统一编码和综合统计</strong>（第25条），机构报送募集/资产负债/终止信息</li>
+        </ul>
+      </div>
+    </div>
+    <p class="data-note">
+      注：过渡期原设至 2020 年底，后经安排延长至 2021 年底（延长通知的正式文号建议回查人民银行文件）。
+      以上"净值化、去嵌套"等要点为业内公认的新规内容，具体条款号请以官方 PDF 为准。
+    </p>
+
+    <h3>2.2 各细分行业的配套规则</h3>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>板块</th>
+            <th>核心法规（年份）</th>
+            <th>关键内容</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tagcell cn">银行理财<br>理财公司</td>
+            <td>
+              《商业银行理财业务监督管理办法》（理财新规，2018）；
+              《商业银行理财子公司管理办法》（2018）；
+              《理财公司理财产品销售管理暂行办法》（银保监会令2021年第4号）；
+              《理财公司理财产品流动性风险管理办法》（2021年第14号令，2022-05 施行）；
+              《商业银行理财子公司净资本管理办法（试行）》（2019年第5号令）；
+              《关于规范现金管理类理财产品管理有关事项的通知》（银保监发〔2021〕20号）
+            </td>
+            <td>
+              理财业务从银行母体剥离至理财公司；销售专区双录、禁止变相宣传预期收益率；
+              流动性风险主体责任；净资本不低于 5 亿元、净资产 40%、风险资本 100%；
+              现金管理类产品对标货基（397 天以内、摊余成本+影子定价）
+            </td>
+          </tr>
+          <tr>
+            <td class="tagcell cn">公募基金</td>
+            <td>
+              《证券投资基金法》（2003 通过，2012 修订，2013-06 施行）；
+              公募基金费率改革（证监会，2023-07）；
+              《推动公募基金高质量发展行动方案》（证监发〔2025〕21号，2025-05）；
+              《促进资本市场指数化投资高质量发展行动方案》（证监会，2025-01）；
+              《公开募集证券投资基金投资顾问业务管理规定》（2023 征求意见，正式办法尚未出台）
+            </td>
+            <td>
+              主动权益类管理费上限降至 1.2%、托管费 0.2%；
+              从"重规模"转向"重投资者回报"、强化信义义务；
+              做优宽基 ETF、股票 ETF 快速注册（5 个工作日）；
+              基金投顾试点转常规持续推进
+            </td>
+          </tr>
+          <tr>
+            <td class="tagcell cn">私募基金</td>
+            <td>
+              《私募投资基金监督管理条例》（国务院令第762号，2023-07 公布、2023-09-01 施行）；
+              《私募投资基金登记备案办法》（中基协发〔2023〕5号，2023-05 施行）
+            </td>
+            <td>
+              私募首部行政法规；非公开募集、合格投资者；
+              境外机构不得直接向境内投资者募集（国家另有规定除外）；
+              登记备案全面收紧，构建"1+N+X"规则体系
+            </td>
+          </tr>
+          <tr>
+            <td class="tagcell cn">信托</td>
+            <td>
+              《关于规范信托公司信托业务分类的通知》（银保监规〔2023〕1号）；
+              《信托公司管理办法（2025修订）》（金融监管总局令2025年第8号，2026-01 施行）；
+              信托业顶层意见（国办函〔2025〕14号）；
+              《资产管理信托管理办法》（2025-10 征求意见，正式稿待出台）
+            </td>
+            <td>
+              信托业务三分类：资产服务信托、资产管理信托、公益慈善信托（25 个品种）；
+              资管信托定性为私募资管、适用资管新规；回归受托人本源，
+              穿透式监管、恢复与处置计划
+            </td>
+          </tr>
+          <tr>
+            <td class="tagcell cn">保险资管<br>保险资金</td>
+            <td>
+              《保险资产管理产品管理暂行办法》（银保监会令2020年第5号）；
+              《关于调整保险资金权益类资产监管比例有关事项的通知》（金规〔2025〕12号）；
+              国有商业保险公司长周期考核通知（财金〔2025〕62号）
+            </td>
+            <td>
+              保险资管产品向合格投资者非公开发行、组合类非标占比 ≤35%；
+              权益资产比例按偿付能力分档 10%–50%；
+              险资考核改为"当年+3年+5年"长周期，引导长期股票投资
+            </td>
+          </tr>
+          <tr>
+            <td class="tagcell cn">券商/基金/<br>期货私募资管</td>
+            <td>
+              《证券公司大集合资产管理业务适用资管新规操作指引》（2018）；
+              《证券期货经营机构私募资产管理计划运作管理规定》（证监会公告2018年31号，
+              2023年2号修订）
+            </td>
+            <td>
+              大集合产品按公募基金规则管理、突破 200 人限制；
+              私募资管统一适用合格投资者与穿透合并计算杠杆
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>2.3 2023 年机构改革：新监管架构</h3>
+
+    <p>
+      2023 年 3 月《党和国家机构改革方案》重塑了金融监管顶层：
+    </p>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <div class="c-icon">🏛️</div>
+        <h4>中央金融委员会</h4>
+        <p>负责金融稳定和发展顶层设计、统筹协调，不再保留国务院金融稳定发展委员会。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">🚩</div>
+        <h4>中央金融工作委员会</h4>
+        <p>统一领导金融系统党的工作，与中央金融委办公室合署办公。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">🛡️</div>
+        <h4>国家金融监督管理总局</h4>
+        <p>统一负责除证券业之外的金融业监管，强化机构、行为、功能、穿透式、持续监管。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">📈</div>
+        <h4>中国证监会升级</h4>
+        <p>由国务院直属事业单位调整为国务院直属机构，划入企业债券发行审核职责。</p>
+      </div>
+    </div>
+
+    <p>
+      资本市场层面，2024 年 4 月新"国九条"（国发〔2024〕10号）确立"强监管、防风险"主线；
+      2024 年 9 月中央金融办、证监会发布《关于推动中长期资金入市的指导意见》，
+      围绕"长钱更多、长钱更长、回报更优"培育长期投资生态；
+      2026 年 9 月《银行保险机构资产管理产品信息披露管理办法》施行，
+      统一理财、信托、保险资管信披，形成"1+3"体系。
+      《金融稳定法》则仍在立法进程中（2024 年二审，截至 2026 年 10 月尚未见通过施行的官方证据）。
+    </p>
+
+    <h2>三、美国：1940 年法案 + SEC 规则体系</h2>
+
+    <div class="region-grid">
+      <div class="region-card us">
+        <h4>两大基础法律（1940）</h4>
+        <div class="r-sub">产品端 + 管理人端</div>
+        <ul>
+          <li><strong>《投资公司法》（Investment Company Act of 1940）</strong>：规范共同基金、ETF、封闭式基金、货基，核心是基金注册、独立董事、关联交易限制、杠杆与披露</li>
+          <li><strong>《投资顾问法》（Investment Advisers Act of 1940）</strong>：§203 注册、§206 反欺诈与信义义务；AUM 超 1 亿美元一般在 SEC 注册</li>
+        </ul>
+      </div>
+      <div class="region-card us">
+        <h4>基金流动性与 ETF</h4>
+        <div class="r-sub">规则 22e-4 与 6c-11</div>
+        <ul>
+          <li><strong>Rule 22e-4</strong>（2016 通过、2018 生效）：流动性管理计划、资产四级分类、高度流动资产最低比例，允许 swing pricing</li>
+          <li><strong>ETF Rule 6c-11</strong>（2019）：符合条件的 ETF 无需逐案申请豁免令，要求每日持仓透明、披露价差；杠杆/反向/非透明 ETF 不适用</li>
+        </ul>
+      </div>
+      <div class="region-card us">
+        <h4>货币基金两轮改革</h4>
+        <div class="r-sub">2014 与 2023</div>
+        <ul>
+          <li><strong>2014 改革</strong>：机构优质/市政货基浮动净值；流动性费用（最高 2%）与赎回闸门（gate）</li>
+          <li><strong>2023 改革</strong>：日流动资产下限提至 25%、周流动资产 50%；废除 gate；单日净赎回超 5% 须收流动性费用（替代 swing pricing，纽约联储视其近似部分摆动定价）</li>
+        </ul>
+      </div>
+      <div class="region-card us">
+        <h4>零售行为标准</h4>
+        <div class="r-sub">Reg BI 与 Marketing Rule</div>
+        <ul>
+          <li><strong>Regulation Best Interest（2019 通过、2020-06 合规）</strong>：经纪商向零售客户推荐须以客户最佳利益行事，不能仅靠披露免责，含披露/注意/冲突/合规四项义务，配套 Form CRS</li>
+          <li><strong>Marketing Rule</strong>（2020 通过、2022-11 合规）：业绩广告须 gross 与 net 同时展示、禁止 cherry-picking，推荐代言须披露与监督</li>
+        </ul>
+      </div>
+      <div class="region-card us">
+        <h4>私募基金规则及其司法逆转</h4>
+        <div class="r-sub">Private Fund Adviser Rule（2023）</div>
+        <ul>
+          <li>SEC 2023-08 以 3-2 通过：季度对账单、年度审计、限制费用分摊与非平等待遇</li>
+          <li><strong>2024-06 第五巡回法院在 National Association of Private Fund Managers v. SEC 案中整体撤销</strong>：认定 §211(h) 只适用于零售客户；SEC 2024-09 决定不上诉，随后从 CFR 移除</li>
+        </ul>
+      </div>
+      <div class="region-card us">
+        <h4>网络安全与 AI：部分生效、部分撤回</h4>
+        <div class="r-sub">规则随政治周期回摆</div>
+        <ul>
+          <li>上市公司网络安全规则（2023）：重大事件 4 个工作日内 Form 8-K 披露——已生效</li>
+          <li>Reg S-P 修订（2024）：客户信息保护，合规日 2025-12 / 2026-06</li>
+          <li>投顾/基金专项网络规则与 PDA（AI 利益冲突）提案<strong>于 2025-06-12 被 SEC 正式撤回</strong></li>
+          <li>DOL 2024 退休计划受托人规则经诉讼后<strong>于 2026 年被撤销</strong>，恢复 1975 年五要素测试</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>四、欧盟：UCITS 与 AIFMD 的"双轨 + 护照"</h2>
+
+    <div class="region-grid">
+      <div class="region-card eu">
+        <h4>UCITS：零售基金护照</h4>
+        <div class="r-sub">2009/65/EC 及 UCITS V</div>
+        <ul>
+          <li>现行基础为 Directive 2009/65/EC（UCITS IV recast），面向零售、跨境护照，5/10/40 分散投资规则，KIID 关键投资者信息文件</li>
+          <li><strong>UCITS V</strong>（2014/91/EU，2016 转化生效）：统一存管人职责与资产损失责任、薪酬政策、行政处罚</li>
+        </ul>
+      </div>
+      <div class="region-card eu">
+        <h4>AIFMD：另类基金管理人</h4>
+        <div class="r-sub">2011/61/EU → AIFMD II</div>
+        <ul>
+          <li>2011 年通过、2013 年适用：覆盖对冲、PE、地产、基础设施，管理人护照、委托规则（不得为空壳 letter-box）、杠杆报告、存管人</li>
+          <li><strong>AIFMD II（Directive (EU) 2024/927，2024-03 通过）</strong>：新增贷款发起基金制度（5% 风险留存、禁止 originate-to-distribute）、强化委托监管与流动性管理工具（swing pricing/gate）；成员国转化期限 2026-04，旧基金过渡至 2029 年</li>
+        </ul>
+      </div>
+      <div class="region-card eu">
+        <h4>MiFID II / MiFIR</h4>
+        <div class="r-sub">投资者保护与市场结构</div>
+        <ul>
+          <li>2018 年适用：产品治理、投资者保护、诱导（佣金）规则、交易透明度</li>
+          <li><strong>MiFIR 修订（(EU) 2024/791）</strong>：建立统一行情磁带（consolidated tape）、禁止订单流付款（PFOF）</li>
+        </ul>
+      </div>
+      <div class="region-card eu">
+        <h4>ESG / 可持续金融</h4>
+        <div class="r-sub">SFDR、分类法与标签化重构</div>
+        <ul>
+          <li><strong>SFDR（2019/2088）</strong>：Article 8（浅绿）、Article 9（深绿）；Level 2 细则 2023 年适用，市场将其异化为准标签</li>
+          <li>2025-11 欧委会提出修订 SFDR、PRIIPs 的提案（拟废除现行 Level 2）；ESG 评级监管（(EU) 2024/3005）约 2026-07 适用</li>
+        </ul>
+      </div>
+      <div class="region-card eu">
+        <h4>零售投资战略（RIS）</h4>
+        <div class="r-sub">2023 提案，2025 末达成协议</div>
+        <ul>
+          <li>目标：物有所值（value for money）、降成本、反洗绿；原提案含全面禁止佣金诱导</li>
+          <li><strong>2025-12-18 政治协议</strong>：未全面禁佣金，改为强化诱导规则（须证明切实利益、成本单独披露），KID 未来机器可读</li>
+        </ul>
+      </div>
+      <div class="region-card eu">
+        <h4>ELTIF 2.0</h4>
+        <div class="r-sub">长期投资基金</div>
+        <ul>
+          <li>(EU) 2023/606，2024-01 适用：扩大合格资产、提高借款限额、取消 10 万欧元零售门槛、增加赎回窗口；改革后注册量显著上升（2023 年已达约 95 只）</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>五、英国：脱欧后的 FCA 行为监管</h2>
+
+    <div class="region-grid">
+      <div class="region-card uk">
+        <h4>FCA 手册与 UK UCITS</h4>
+        <div class="r-sub">COLL 规则本土化</div>
+        <ul>
+          <li>FCA 依据 FSMA 2000 制定 Handbook，<strong>COLL</strong> 规范授权基金（AUT、ICVC、ACS）；脱欧后通过 2019 年退出条例将 UCITS 本土化为 "UK UCITS"</li>
+          <li>推行 Smarter Regulatory Framework，以本土手册替代保留的欧盟指令；审慎层面由 PRA 分工</li>
+        </ul>
+      </div>
+      <div class="region-card uk">
+        <h4>SM&CR：个人问责</h4>
+        <div class="r-sub">2016 银行 → 2019 全行业</div>
+        <ul>
+          <li>高级经理事前审批并签职责声明、企业认证关键岗位、行为准则三层结构</li>
+          <li>2019-12 扩展至全部 FCA 受监管公司（含资管）；2026 年 FCA/PRA 就精简改革开展咨询（保留个人问责）</li>
+        </ul>
+      </div>
+      <div class="region-card uk">
+        <h4>SDR：四标签 + 反洗绿</h4>
+        <div class="r-sub">PS23/16</div>
+        <ul>
+          <li>走"标签+披露"路线：四个投资标签（可持续聚焦、影响力、可持续改善者、可持续混合目标），通用门槛为至少 70% 资产按可持续目标投资</li>
+          <li>反洗绿规则 2024-05 生效（适用所有 FCA 公司）；标签 2024-07 起可使用，命名与营销规则 2024-12 生效</li>
+        </ul>
+      </div>
+      <div class="region-card uk">
+        <h4>Consumer Duty</h4>
+        <div class="r-sub">PS22/9，零售结果导向</div>
+        <ul>
+          <li>新消费者原则（为零售客户交付良好结果）+ 四项结果：产品服务、价格价值、消费者理解、消费者支持</li>
+          <li>2023-07 对在售产品生效、2024-07 扩展至封闭产品；FCA 持续审查董事会级报告</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>六、国际标准：IOSCO 与 FSB 管什么</h2>
+
+    <p>
+      IOSCO（国际证监会组织）和 FSB（金融稳定理事会）不直接执法，但它们制定的标准通过各成员国
+      转化为本国规则，是跨境监管趋同的真正来源：
+    </p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>议题</th>
+            <th>关键文件（年份）</th>
+            <th>核心主张</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tagcell">基金流动性</td>
+            <td>IOSCO《集合投资计划流动性风险管理建议》（FR01/2018）；《反稀释流动性工具指引》（FR15/2023）；FSB《修订后的开放式基金流动性错配政策建议》（2023-12）</td>
+            <td>治理、组合流动性评估、压力测试；swing pricing/闸门/侧袋等工具可得可用；让赎回者承担流动性成本，消除"抢先赎回"优势</td>
+          </tr>
+          <tr>
+            <td class="tagcell">货币基金</td>
+            <td>FSB《增强货币市场基金韧性的政策建议》（2021-10）</td>
+            <td>让赎回者承担成本、吸收信用损失、消除阈值悬崖效应，减少对央行干预的依赖</td>
+          </tr>
+          <tr>
+            <td class="tagcell">NBFI 杠杆</td>
+            <td>FSB《NBFI 杠杆的金融稳定影响》（2023-09）；杠杆咨询（2024-12）；最终建议（2025-07）</td>
+            <td>聚焦对冲基金、美债基差交易与合成杠杆；提升数据监测、遏制系统性杠杆、加强跨境合作</td>
+          </tr>
+          <tr>
+            <td class="tagcell">加密资产</td>
+            <td>IOSCO《加密与数字资产市场政策建议》（FR11/2023，18 条）；DeFi 报告（FR14/2023）</td>
+            <td>客户资产保护、利益冲突、市场操纵；"相同活动、相同监管"原则</td>
+          </tr>
+          <tr>
+            <td class="tagcell">AI</td>
+            <td>IOSCO《中介机构与资管机构对 AI/ML 的使用》（2021）；《资本市场中的 AI》咨询（CR/01/2025，2025-03）；《AI 监督工具箱》最终报告（2026-05）；FSB《AI 的金融稳定影响》（2024-11）、负责任 AI 良好实践咨询（2026-06）</td>
+            <td>治理与问责、开发测试监测全流程控制、偏差与规模化伤害风险；从原则走向监督工具</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      FSB 每年发布的 NBFI 监测报告提供了最宏观的量化坐标：
+      <strong>2024 年全球 NBFI 规模增长 9.4%、达 256.8 万亿美元，占全球金融资产 51%，
+      增速约为银行业（4.7%）的两倍</strong>（FSB，2025-12-16）。
+      2025 年 FSB 明确表示，2020 年后的 NBFI 政策要素已基本完成，工作重心从政策制定转向实施与影响评估。
+    </p>
+
+    <h2>七、中外监管的系统对比</h2>
+
+    <p>
+      把四个法域放在同一张表里，差异和共性同样清晰：
+    </p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>维度</th>
+            <th>中国</th>
+            <th>美国</th>
+            <th>欧盟</th>
+            <th>英国</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tagcell">立法模式</td>
+            <td class="cn">顶层统一规则（资管新规）+ 分业细则；部委联合规章为主</td>
+            <td class="us">基础法律（1940 两法）+ SEC 行政规则；规则可被司法推翻</td>
+            <td class="eu">指令（成员国转化）+ 条例（直接适用）双轨</td>
+            <td class="uk">FSMA 授权下 FCA 手册规则（脱欧后自主化）</td>
+          </tr>
+          <tr>
+            <td class="tagcell">监管架构</td>
+            <td class="cn">中央金融委统筹；金融监管总局 + 证监会分业，2023 后强化功能/穿透监管</td>
+            <td class="us">SEC（证券/基金）+ DOL（退休账户）+ CFTC（衍生品）；联邦与州双层</td>
+            <td class="eu">欧委会/ESMA + 成员国主管机构</td>
+            <td class="uk">FCA（行为）+ PRA（审慎）双峰</td>
+          </tr>
+          <tr>
+            <td class="tagcell">核心矛盾</td>
+            <td class="cn">影子银行、刚兑、通道嵌套 → 防系统性风险</td>
+            <td class="us">信息披露 + 信义义务 + 投资者保护；司法与政治周期制约</td>
+            <td class="eu">跨境护照 + 投资者保护 + 可持续转型</td>
+            <td class="uk">脱欧后竞争力与零售结果并重</td>
+          </tr>
+          <tr>
+            <td class="tagcell">刚兑/净值</td>
+            <td class="cn">资管新规强制打破刚兑、全面净值化（2021 底过渡完成）</td>
+            <td class="us">公募本就净值化；货基 2014/2023 改革处理"稳定净值"预期</td>
+            <td class="eu">基金历来净值化，无刚兑传统</td>
+            <td class="uk">同欧盟</td>
+          </tr>
+          <tr>
+            <td class="tagcell">投资者结构</td>
+            <td class="cn">零售占比高、散户主导，强调适当性与销售双录；正引中长期资金入市</td>
+            <td class="us">401(k) 等机构/养老金主导，零售通过退休计划间接持有</td>
+            <td class="eu">零售与机构并存，UCITS 以零售保护见长</td>
+            <td class="uk">机构占比高，Consumer Duty 强化零售结果</td>
+          </tr>
+          <tr>
+            <td class="tagcell">流动性工具</td>
+            <td class="cn">理财/现金管理类设流动性规则，工具运用仍谨慎</td>
+            <td class="us">2023 货基：强制流动性费用、废除 gate</td>
+            <td class="eu">AIFMD II 统一 swing pricing/gate 等 LMT</td>
+            <td class="uk">FCA 允许摆动定价等成熟工具</td>
+          </tr>
+          <tr>
+            <td class="tagcell">ESG</td>
+            <td class="cn">起步中，绿色金融与信披规则建设推进</td>
+            <td class="us">Gensler 时代 ESG 规则多数 2025 撤回</td>
+            <td class="eu">全球最系统（SFDR/分类法），2025 转向简化重构</td>
+            <td class="uk">四标签 + 全行业反洗绿（比欧盟更结果导向）</td>
+          </tr>
+          <tr>
+            <td class="tagcell">监管周期</td>
+            <td class="cn">2018 以来持续收紧、定型，政策连续性强</td>
+            <td class="us">强周期波动：2025 一次撤回 14 项规则，2026 撤销 DOL 受托人规则</td>
+            <td class="eu">持续推进但以"简化/竞争力"为导向</td>
+            <td class="uk">渐进改革，2026 适度松绑</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="insight-box">
+      最根本的结构差异在于改革的<strong>出发点</strong>：中国 2018 年监管重构针对的是"类存款"的刚兑预期和
+      影子银行信用扩张，本质是<strong>宏观信用风险治理</strong>；美欧 2008 年后的改革针对的是
+      "信息不对称下的代理人失灵"和市场挤兑，本质是<strong>投资者保护与市场韧性</strong>。
+      但走到 2026 年，两套逻辑已经明显合流——中国补上净值化、信义义务与信披，
+      西方补上流动性工具、非银杠杆与系统性风险监测。
+    </div>
+
+    <h2>八、六大共同趋势（2025–2026）</h2>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <div class="c-icon">💧</div>
+        <h4>1. 流动性管理工具全面化</h4>
+        <p>swing pricing、反稀释费、闸门、侧袋成为标配；共同逻辑是把流动性成本还给赎回者、消除 first-mover advantage。美国 2023 弃 gate 改强制费用，欧盟 AIFMD II 统一工具。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">🏷️</div>
+        <h4>2. ESG 从披露走向标签与问责</h4>
+        <p>欧盟 SFDR 向正式标签体系重构、英国四标签设 70% 资产门槛、ESG 评级独立监管；反洗绿从事后追责变成事前准入。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">🤖</div>
+        <h4>3. AI 与网络安全治理分化</h4>
+        <p>IOSCO 2026 监督工具箱、FSB 负责任 AI 实践持续推进；美国在 2025 政治周期撤回 AI/网络专项规则，更多依靠既有信义义务与执法。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">🧓</div>
+        <h4>4. 长钱长投与费率下行</h4>
+        <p>中国险资长周期考核、中长期资金入市、公募费率降至 1.2%；欧盟推"物有所值"、美国 ETF/被动化持续压费——零售费用与短期主义同时被治理。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">🌐</div>
+        <h4>5. NBFI 宏观审慎化</h4>
+        <p>非银已占金融资产半壁江山。货基、OEF、保证金、杠杆四条线改革基本收官，2025 起进入实施评估，数据缺口（尤其合成杠杆）成为重点。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">🔄</div>
+        <h4>6. 政治周期带来的监管回摆</h4>
+        <p>2025–2026 美国大规模撤回 Gensler 时代规则，欧盟以"简化和竞争力"（Draghi 报告导向）继续推进——跨区域监管套利与等效性争议上升，跨境机构需同时适配多套节奏。</p>
+      </div>
+    </div>
+
+    <div class="timeline-box">
+      <div class="tl-track">
+        <div class="tl-item">
+          <div class="tl-year">2008</div>
+          <div class="tl-text">全球金融危机，非银风险进入监管中心</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2010</div>
+          <div class="tl-text">美国 Dodd-Frank；欧盟 AIFMD 通过</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2014</div>
+          <div class="tl-text">美国货基改革；UCITS V、MiFID II</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2018</div>
+          <div class="tl-text">中国资管新规；市场大跌后风险出清</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2020</div>
+          <div class="tl-text">新冠冲击，央行再度干预货基/债市</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2023</div>
+          <div class="tl-text">中国机构改革；美货基二轮改革；ELTIF 2.0；私募条例</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2024</div>
+          <div class="tl-text">AIFMD II；新国九条；长钱入市；私募规则被美法院撤销</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2025</div>
+          <div class="tl-text">公募高质量发展方案；美撤回14项规则；FSB杠杆建议；RIS 政治协议</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2026</div>
+          <div class="tl-text">信托新规施行；IOSCO AI 工具箱；资管信披 1+3</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="verdict-box">
+      <h3>结语：从"谁的规则"到"规则趋同"</h3>
+      <p>
+        回看 2018–2026 这八年，资管监管最重要的事实不是"中国在收紧、西方在放松"这种表层叙事，
+        而是三条结构性的趋同：
+      </p>
+      <p class="key-line">
+        一、按业务本质而非机构标签监管（功能监管 + 穿透监管）；<br>
+        二、把信义义务和投资者真实回报置于规模之前；<br>
+        三、把非银板块的流动性与杠杆纳入宏观审慎视野。
+      </p>
+      <p>
+        差异依然真实存在：中国以行政主导的统一规则实现快速、连续的风险出清，
+        优势是执行力强、路径明确，挑战是规则与市场的动态适配；
+        美欧以法律授权和司法/政治制衡运行，优势是规则弹性和权力约束，
+        代价是周期波动、反复甚至互相撤销。
+        对跨境经营的资管机构而言，真正的合规能力不再是"读懂某一国规则"，
+        而是<strong>在多套节奏之间识别那部分正在全球趋同的底线</strong>。
+      </p>
+      <p>
+        最后一个值得记住的判断：资管监管的每一次重大重构，都发生在一次市场救助之后。
+        当监管的目标从"防止下一次救助"逐步内化为日常的流动性、信披与杠杆纪律，
+        这个行业才算真正完成了它的成年礼。
+      </p>
+    </div>
+
+    <div class="references-section">
+      <h3>主要参考资料</h3>
+      <ol>
+        <li>中国人民银行、银保监会、证监会、外汇局.《关于规范金融机构资产管理业务的指导意见》（银发〔2018〕106号）, 2018. <a href="https://www.pbc.gov.cn/tiaofasi/144941/3581332/3730258/2018122911045489901.pdf" target="_blank" rel="noopener">pbc.gov.cn PDF</a>；公报文本 <a href="https://www.gov.cn/gongbao/content/2018/content_5323101.htm" target="_blank" rel="noopener">gov.cn</a>.</li>
+        <li>银保监会.《理财公司理财产品销售管理暂行办法》（2021年第4号令）;《理财公司理财产品流动性风险管理办法》（2021年第14号令）；《商业银行理财子公司净资本管理办法（试行）》（2019年第5号令）；《关于规范现金管理类理财产品管理有关事项的通知》（银保监发〔2021〕20号）.</li>
+        <li>全国人大常委会.《中华人民共和国证券投资基金法》（2003通过，2012修订）, <a href="https://www.gov.cn/flfg/2012-12/28/content_2305569.htm" target="_blank" rel="noopener">gov.cn</a>.</li>
+        <li>中国证监会.公募基金费率改革工作安排, 2023-07；《推动公募基金高质量发展行动方案》（证监发〔2025〕21号）, 2025-05；《促进资本市场指数化投资高质量发展行动方案》, 2025-01；《公开募集证券投资基金投资顾问业务管理规定（征求意见稿）》, 2023-06.</li>
+        <li>国务院.《私募投资基金监督管理条例》（国务院令第762号）, 2023-09-01施行, <a href="https://www.gov.cn/gongbao/2023/issue_10586/202307/content_6892998.html" target="_blank" rel="noopener">gov.cn</a>；中基协《私募投资基金登记备案办法》（中基协发〔2023〕5号）.</li>
+        <li>银保监会.《关于规范信托公司信托业务分类的通知》（银保监规〔2023〕1号）；金融监管总局《信托公司管理办法（2025修订）》（2025年第8号令，2026-01施行）；《资产管理信托管理办法（征求意见稿）》, 2025-10；国办函〔2025〕14号.</li>
+        <li>银保监会.《保险资产管理产品管理暂行办法》（2020年第5号令）；金融监管总局《关于调整保险资金权益类资产监管比例有关事项的通知》（金规〔2025〕12号）；财政部财金〔2025〕62号长周期考核通知.</li>
+        <li>证监会.《证券公司大集合资产管理业务适用资管新规操作指引》, 2018；《证券期货经营机构私募资产管理计划运作管理规定》（证监会公告2018年31号，2023年2号修订）.</li>
+        <li>中共中央、国务院.《党和国家机构改革方案》, 2023-03, <a href="http://www.scio.gov.cn/zdgz/jj/202309/t20230913_769112.html" target="_blank" rel="noopener">scio.gov.cn</a>.</li>
+        <li>国务院.《关于加强监管防范风险推动资本市场高质量发展的若干意见》（新"国九条"，国发〔2024〕10号）；中央金融办、证监会《关于推动中长期资金入市的指导意见》, 2024-09；金融监管总局《银行保险机构资产管理产品信息披露管理办法》, 2026-09施行.</li>
+        <li>SEC. Investment Company Act of 1940; Investment Advisers Act of 1940；Rule 22e-4（2016）；ETF Rule 6c-11（2019, 84 FR 57162）；Money Market Fund Reforms 2014（33-9616）与 2023（33-11211）；Regulation Best Interest（34-86031，2020合规）；Marketing Rule（IA-5653，2022合规）；Private Fund Adviser Rule（IA-6383, 2023）及撤回公告（IA-6773, 2024）；2025-06 Notice of Withdrawal（33-11377）；上市公司网络安全规则（33-11216）；Reg S-P 修订（34-100155）. <a href="https://www.sec.gov" target="_blank" rel="noopener">sec.gov</a>.</li>
+        <li>National Association of Private Fund Managers v. SEC, No. 23-60471（5th Cir., 2024-06-05）；DOL Retirement Security Rule（2024）及撤销（91 FR 13503，2026）. <a href="https://www.dol.gov" target="_blank" rel="noopener">dol.gov</a>.</li>
+        <li>欧盟. UCITS Directive 2009/65/EC；UCITS V 2014/91/EU；AIFMD 2011/61/EU；AIFMD II Directive (EU) 2024/927；MiFID II 2014/65/EU；MiFIR (EU) 600/2014 及修订 (EU) 2024/791；SFDR (EU) 2019/2088 及 Level 2 (EU) 2022/1288；PRIIPs (EU) 1286/2014；ELTIF (EU) 2015/760 与 ELTIF 2.0 (EU) 2023/606；ESG Ratings Regulation (EU) 2024/3005；欧委会 SFDR 修订提案 COM(2025) 841. <a href="https://eur-lex.europa.eu" target="_blank" rel="noopener">eur-lex.europa.eu</a>.</li>
+        <li>FCA. Handbook COLL；PS22/9 Consumer Duty；PS23/16 SDR and investment labels；SM&CR 规则；反洗绿规则 ESG 4.3（2024-05生效）; CP26/37（2026）. <a href="https://www.fca.org.uk" target="_blank" rel="noopener">fca.org.uk</a>.</li>
+        <li>IOSCO. FR01/2018 Liquidity Risk Recommendations；FR15/2023 Anti-dilution LMT Guidance；FR11/2023 Crypto Recommendations（18条）；FR14/2023 DeFi；AI/ML Report 2021；CR/01/2025 AI in Capital Markets；Supervisory Toolkit for AI（2026-05）. <a href="https://www.iosco.org" target="_blank" rel="noopener">iosco.org</a>.</li>
+        <li>FSB. Policy Proposals for MMF Resilience（2021）；Revised Policy Recommendations on Liquidity Mismatch in OEF（2023-12）；Leverage in NBFI（2023-09，建议2025-07）；Global Monitoring Report on NBFI（2025-12）；Financial Stability Implications of AI（2024-11）. <a href="https://www.fsb.org" target="_blank" rel="noopener">fsb.org</a>.</li>
+      </ol>
+    </div>
+
+    <div class="article-copyright">
+      <strong>© 2026 质量实验室 · mimic66</strong><br>
+      本文首发于 <a href="https://mimic66.github.io/blog/" target="_blank">mimic66.github.io/blog</a>，
+      遵循 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">CC BY-NC-ND 4.0</a> 协议。<br>
+      非商业转载请注明出处及原文链接，禁止修改演绎后转载。
+    </div>
+
+  </article>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    © 2024-2026 质量实验室 · 基于 GitHub Pages 构建
+  </div>
+</footer>
+
+</body>
+</html>
