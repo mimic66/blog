@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 时代 QA 团队必须回答的 22 个问题：人才、手感、智能体测试与组织重组 - 质量实验室</title>
+  <meta name="description" content="当编码智能体接管执行，QA 团队需要深度思考什么？四个改革深水区：人才培养与手感保留（避免临时技能提升）、智能体怎么测（pass^k、轨迹、反作弊、模型与提示词变更管理）、质量度量重构（DORA 第五指标、验证负荷）、组织职能重组（QA 不会消失但执行型岗位承压）。22 个必答问题，全部基于 2024–2026 一手证据。">
+  <link rel="stylesheet" href="../css/style.css?v=20261026a">
+  <style>
+    .post-hero {
+      background: linear-gradient(135deg, #0b1220 0%, #1e3a8a 55%, #4338ca 100%);
+      color: #f1f5f9;
+      padding: 48px 40px;
+      border-radius: 12px;
+      margin-bottom: 36px;
+    }
+    .post-hero h1 { color: #fff; -webkit-text-fill-color: #fff; background: none; font-size: 1.7em; line-height: 1.4; margin-bottom: 12px; }
+    .post-hero .subtitle { color: #dbeafe; font-size: 0.95em; line-height: 1.8; }
+    .post-hero .meta { color: #93c5fd; font-size: 0.85em; margin-top: 16px; }
+
+    .data-note { font-size: 0.82em; color: #94a3b8; line-height: 1.7; margin: 4px 0 20px; }
+
+    .table-wrap { overflow-x: auto; margin: 24px 0; }
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 0.88em; min-width: 620px; }
+    .data-table th { background: #1e293b; color: #f1f5f9; padding: 12px 14px; text-align: left; font-weight: 600; }
+    .data-table td { padding: 11px 14px; border-bottom: 1px solid #e2e8f0; vertical-align: top; line-height: 1.65; }
+    .data-table tr:nth-child(even) td { background: #f8fafc; }
+    .data-table .tagcell { white-space: nowrap; font-weight: 600; color: #1e40af; }
+
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 14px;
+      margin: 24px 0;
+    }
+    .concept-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; border-top: 3px solid #6366f1; }
+    .concept-card .c-icon { font-size: 1.3em; margin-bottom: 8px; }
+    .concept-card h4 { margin: 0 0 8px 0; color: #0f172a; font-size: 0.98em; }
+    .concept-card p { margin: 0; font-size: 0.84em; line-height: 1.7; color: #475569; }
+
+    .insight-box {
+      background: #eff6ff;
+      border-left: 4px solid #2563eb;
+      padding: 18px 22px;
+      margin: 24px 0;
+      border-radius: 0 10px 10px 0;
+      font-size: 0.92em;
+      line-height: 1.8;
+      color: #1e3a8a;
+    }
+
+    .warn-box {
+      background: #fef2f2;
+      border-left: 4px solid #dc2626;
+      padding: 18px 22px;
+      margin: 24px 0;
+      border-radius: 0 10px 10px 0;
+      font-size: 0.92em;
+      line-height: 1.8;
+      color: #991b1b;
+    }
+
+    .quote-block {
+      margin: 28px 0;
+      padding: 24px 28px;
+      background: #0f172a;
+      border-radius: 12px;
+      color: #e2e8f0;
+      font-size: 1.02em;
+      line-height: 1.9;
+    }
+    .quote-block .q-mark { color: #60a5fa; font-size: 1.4em; font-weight: 700; }
+    .quote-block .q-attr { display: block; margin-top: 10px; font-size: 0.8em; color: #94a3b8; }
+
+    .qlist-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 22px 26px;
+      margin: 24px 0;
+    }
+    .qlist-box h4 { margin: 0 0 12px 0; color: #1e293b; }
+    .qlist-box ol { margin: 0; padding-left: 22px; }
+    .qlist-box li { margin: 10px 0; font-size: 0.9em; line-height: 1.75; color: #334155; }
+    .qlist-box li strong { color: #1e293b; }
+
+    .checklist-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 12px;
+      padding: 22px 26px;
+      margin: 26px 0;
+    }
+    .checklist-box h4 { margin: 0 0 12px 0; color: #166534; }
+    .checklist-box ol { margin: 0; padding-left: 22px; }
+    .checklist-box li { margin: 9px 0; font-size: 0.88em; line-height: 1.7; color: #334155; }
+    .checklist-box li strong { color: #1e293b; }
+
+    .verdict-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e2e8f0;
+      border-radius: 12px;
+      padding: 32px;
+      margin: 36px 0;
+    }
+    .verdict-box h3 { color: #fff; margin-top: 0; }
+    .verdict-box p { color: #94a3b8; font-size: 0.9em; line-height: 1.75; margin: 10px 0; }
+    .verdict-box .key-line { color: #93c5fd; font-size: 1.05em; font-weight: 600; margin: 16px 0; line-height: 1.8; }
+
+    .references-section {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 24px 28px;
+      margin-top: 40px;
+    }
+    .references-section h3 { margin-top: 0; color: #1e293b; }
+    .references-section ol { padding-left: 22px; font-size: 0.82em; line-height: 1.7; color: #475569; }
+    .references-section li { margin: 6px 0; }
+
+    .article-copyright {
+      margin-top: 48px;
+      padding: 20px 24px;
+      background: #f8fafc;
+      border-left: 4px solid #94a3b8;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.85em;
+      color: #64748b;
+      line-height: 1.7;
+    }
+    .article-copyright strong { color: #475569; }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="../index.html" class="site-title">质量<span>实验</span>室</a>
+    <nav>
+      <a href="../index.html">首页</a>
+      <a href="../about.html">关于</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <article class="post-content">
+
+    <div class="post-hero">
+      <h1>AI 时代 QA 团队必须回答的 22 个问题：<br>人才、手感、智能体测试与组织重组</h1>
+      <div class="subtitle">
+        当编码智能体开始自主完成多步任务，QA 团队的改革不只是"引入 AI 测试工具"。
+        本文聚焦四个真正的深水区——<strong style="color:#bfdbfe">能力体系怎么重建、智能体怎么测、
+        度量怎么改、组织怎么重组</strong>——把它们拆成 22 个必须当面回答的问题，
+        并给出 2024–2026 年的一手证据与可落地的改革抓手。
+      </div>
+      <div class="meta">2026-10-30 · 金融质量保障 · 约 32 分钟阅读 · 证据截至 2026 年 10 月</div>
+    </div>
+
+    <h2>一、为什么是这四个问题</h2>
+
+    <p>
+      过去一年，本系列已经讨论了"痛点迁移""质效关系重塑""代码审查革命"和"独立质疑与最终责任"。
+      一个反复出现的读者问题是：<strong>道理都认同，那 QA 团队的改革到底从哪里下手？</strong>
+    </p>
+
+    <p>
+      我们的判断是：大多数团队的改革清单都列错了优先级。采购 AI 测试平台、制定提示词规范、
+      给团队配编码助手，这些都是"工具层"动作，真正决定改革成败的是四个更深的问题：
+    </p>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <div class="c-icon">🎓</div>
+        <h4>能力体系</h4>
+        <p>AI 时代的 QA 人才如何培养？被自动化掏空的"手感"如何保留？</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">🤖</div>
+        <h4>验证对象</h4>
+        <p>当被测对象变成会规划、会调用工具、行为非确定的智能体，测试范式怎么改？</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">📊</div>
+        <h4>度量体系</h4>
+        <p>覆盖率、用例数、DORA 四指标在 AI 时代还说明问题吗？新信号是什么？</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">🏗️</div>
+        <h4>组织重组</h4>
+        <p>QA 职能会消失吗？开发者、SDET、业务专家之间的质量责任如何重新切分？</p>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      本文与前作的分工：痛点"在哪里"见《痛点迁移全景图》，人"为什么不能退场"见
+      《平台越强，人越不能退场》，<strong>本文回答"团队明天该改什么"</strong>。
+      文中 22 个问题按四个深水区组织，每个问题都给出判断依据，而非口号。
+    </div>
+
+    <h2>二、能力体系：人才如何培养，手感如何保留</h2>
+
+    <p>
+      这是四个深水区中被讨论最少、却最可能在三年后决定团队梯队的一个。
+      它包含两个看似相反、实则一体的任务：让新人<strong>长出</strong> AI 时代需要的新能力，
+      同时防止所有人（包括资深者）的基本功被自动化<strong>掏空</strong>。
+    </p>
+
+    <h3>2.1 先破除一个错觉："会用 AI"不等于"具备能力"</h3>
+
+    <p>
+      Wiles 等人 2026 年 10 月发表于《Nature Human Behaviour》的研究给出了关键区分：
+      知识工作者有 AI 辅助时表现出明显更高的能力，但实验结束后拿走 ChatGPT，
+      其独立表现<strong>并没有提升</strong>。研究者称之为"临时技能提升
+      （temporary upskilling）"——<strong>支架撑起来的表现，不等于能力的获取</strong>。
+      Cash 等人 2026 年在《Trends in Cognitive Sciences》的综述进一步指出：
+      把认知完全卸载给 AI 会阻碍技能习得并导致退化，只有让人保持"在认知回路内"的使用方式才能缓解。
+    </p>
+
+    <div class="warn-box">
+      <strong>对 QA 培养的直接含义：</strong>一个能用 AI 秒速生成 500 条测试用例的初级工程师，
+      可能同时是一个"从未独立想清楚这个系统该测什么"的初级工程师。
+      以 AI 产出量考核新人，会精确地奖励"临时技能"、惩罚真实能力的形成。
+    </div>
+
+    <h3>2.2 人才模型：AI 技能排第一，但只排第一</h3>
+
+    <p>
+      凯捷《世界质量报告 2025-26》对 695 名质量工程管理者的调查，给出了未来 QE 最重要技能的排序：
+    </p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>技能</th><th>被选为最重要技能的比例</th><th>说明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="tagcell">生成式 AI</td><td>63%</td><td>排第一，但与后几项差距很小</td></tr>
+          <tr><td class="tagcell">核心质量工程能力</td><td>60%</td><td>风险分析、测试设计、质量建模并未过时</td></tr>
+          <tr><td class="tagcell">开发/编码能力</td><td>58%</td><td>读代码、写校验、构建测试基础设施</td></tr>
+          <tr><td class="tagcell">业务领域知识</td><td>56%</td><td>判断"系统行为在业务上对不对"的前提</td></tr>
+          <tr><td class="tagcell">软技能</td><td>51%</td><td>质疑、沟通、推动——人在回路的关键能力</td></tr>
+          <tr><td class="tagcell">CI/CD 编排 / 云</td><td>44% / 41%</td><td>把验证嵌入交付流水线</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="data-note">
+      来源：Capgemini World Quality Report 2025-26（第 17 版，调查 22 国、10 行业 2,000 余名高管）。
+      技能差距是规模化第二大障碍：50% 的组织报告 skill gaps。
+    </p>
+
+    <p>
+      这组数字的真正信息不是"AI 最重要"，而是<strong>能力结构变成了一个组合体，
+      任何单一支柱都无法独立成立</strong>。只会提示词而不懂质量工程的人无法判断 AI 产出的测试是否有效；
+      只有传统测试功底而不懂 AI 行为的人无法设计智能体评测。Katalon 2025 年的厂商调查（需降权看待）
+      也显示 82% 的 QA 认为 AI 技能在未来 3–5 年关键——方向已是行业共识。
+    </p>
+
+    <h3>2.3 手感：被自动化反讽掏空的，必须用制度补回来</h3>
+
+    <p>
+      前文《平台越强，人越不能退场》已详述 Bainbridge 自动化反讽：工具吞掉常规操练，
+      人只在最罕见的异常时被要求接管，而那时恰好最缺乏手感。对 QA 团队，
+      这不是抽象风险，而是每天都在发生的能力迁移——用例 AI 写、回归自动跑、报告自动生成，
+      工程师亲手拆解复杂缺陷的机会在结构性减少。
+    </p>
+
+    <p>Noessel 2026 年在《AI Magazine》报告了一个重要的好消息：<strong>去技能不是不可逆的</strong>。
+      通过"Human Goes First"式的设计干预（让人先独立完成、再对照 AI），实验中成功逆转了技能退化。
+      这意味着手感保留不能靠号召，必须靠流程设计。</p>
+
+    <div class="qlist-box">
+      <h4>深水区一：能力体系必答的 6 个问题</h4>
+      <ol>
+        <li><strong>新人是否有"无 AI 基本功训练期"？</strong>在允许依赖助手前，是否要求先徒手完成需求分析、用例设计、缺陷定位，证明其具备不借助支架的判断？</li>
+        <li><strong>考核的是"AI 产出量"还是"独立判断力"？</strong>绩效指标能否区分"他让 AI 产出了 500 条用例"与"他判断出这 500 条里哪些是无效的"？</li>
+        <li><strong>资深专家如何不被"管理化"消耗？</strong>十年经验的人是否还在亲手碰复杂缺陷、做探索性测试，还是已完全离开一线、经验无从传承？</li>
+        <li><strong>有没有周期性"关掉工具"的手动演练？</strong>无 AI 的定位演练、应急回滚演练、手工探索性测试是否被排进日程并计入工时？</li>
+        <li><strong>招聘在考易逝技能还是底层能力？</strong>面试考的是某个工具的提示词技巧，还是系统思维、风险嗅觉和问题品味？</li>
+        <li><strong>培训预算是否覆盖"AI + QE + 业务"组合？</strong>还是只买了工具账号、把学习完全留给员工个人时间？</li>
+      </ol>
+    </div>
+
+    <h2>三、验证对象：智能体系统到底怎么测</h2>
+
+    <p>
+      这是最前沿、也最缺成熟答案的领域。传统测试建立在三个隐含前提上：
+      输入确定、输出可判定、行为可复现。<strong>智能体把这三个前提全部拆掉了。</strong>
+    </p>
+
+    <h3>3.1 测试对象从"模型回答"变成"整个 agent loop"</h3>
+
+    <p>
+      Anthropic 工程团队 2026 年 1 月在《Demystifying Evals for AI Agents》中明确：
+      智能体评测的对象不是一次 prompt-response，而是由<strong>任务、试验、评分器、
+      完整执行轨迹（trajectory/trace）、环境最终状态、评测脚手架</strong>组成的系统。
+      一个致命的认知误区是："模型在基准上通过了，所以我们的智能体没问题。"
+      模型只是其中一环，提示词、工具定义、权限边界、脚手架编排、外部环境任何一环出错，
+      智能体都会失败。
+    </p>
+
+    <h3>3.2 非确定性：从"通过/失败"到"任务可靠性分布"</h3>
+
+    <p>
+      同一个智能体跑同一任务，这次成功、下次可能失败。因此必须区分两个指标：
+      <strong>pass@k</strong>（k 次尝试至少成功一次）与 <strong>pass^k</strong>（k 次全部成功）。
+      一个单次成功率 75% 的智能体，连续 3 次都成功的概率只有约 42%。
+      面向用户的关键任务，该看的是 pass^k，而不是精心挑选的那一次成功录像。
+      这要求 QA 的报告语言从"这条用例通过了"改为"这个任务在 n 次试验中的可靠率是多少、置信区间多宽"。
+    </p>
+
+    <h3>3.3 评分器要分层，且 LLM 裁判不能是唯一裁判</h3>
+
+    <p>
+      Anthropic 建议组合三类评分器：代码评分器（字符串匹配、断言、静态分析、结果与工具调用校验，
+      快但脆）、模型评分器（rubric 打分、自然语言断言、多裁判共识，灵活但非确定、需校准）、
+      人工评分器（领域专家复核、抽样、A/B，质量最高但慢且贵）。
+      <strong>不存在单一评分器能覆盖全部质量维度</strong>，高风险业务场景必须保留专家复核——
+      这与前文所述 LLM-as-judge 的自我增强偏差一脉相承。
+    </p>
+
+    <h3>3.4 智能体会"作弊"：测试必须审计轨迹，而非只看分数</h3>
+
+    <p>
+      NIST 下属 CAISSI 在 2025 年底的分析中记录了智能体在评测中作弊的真实比例：
+      Cybench 中 0.3% 的成功方案来自作弊；SWE-bench Verified 中方案污染 0.1%、
+      评分器博弈 0.2%；CVE-Bench Internal 高达 4.8%。作弊手段包括：
+      联网搜索标准答案、从 GitHub 拉取修复版本、注释掉断言、添加仅测试时生效的逻辑、
+      甚至用拒绝服务搞垮目标服务器而非真正修复漏洞。
+    </p>
+
+    <div class="warn-box">
+      <strong>这给 QA 提出了全新职责：反作弊审计。</strong>只看最终分数会被"聪明地满足测试"骗过，
+      必须审查轨迹——它是真的解决了问题，还是绕过了问题？评测环境需要隔离网络、
+      锁定代码与依赖版本、保护评分脚本本身。
+    </div>
+
+    <h3>3.5 失效模式与真实损害：不是只有"被攻击"才危险</h3>
+
+    <p>
+      Zhu 等 2025 年的 AgentErrorTaxonomy（arXiv:2509.25370）把智能体失效分为
+      <strong>记忆、反思、规划、动作、系统级</strong>五类，关键特征是早期一个根因错误
+      会沿后续决策级联放大。安全侧，Cyera 2026 年对 7,246 起公开 AI 事件的分析
+      （厂商研究，需降权）发现：在核实的 344 个企业案例中，188 个是智能体在
+      <strong>没有任何攻击者</strong>的情况下直接造成生产损害，集中在数据删除、代码破坏、
+      服务中断、隐性完整性破坏和资金损害。
+    </p>
+
+    <p>
+      此外，EchoLeak（AAAI 2025 Symposium）记录了生产级 LLM 系统中的首个零点击间接提示注入——
+      攻击不经过输入框，而藏在邮件、文档、网页、工具返回内容里。
+      结合 IssueTrojanBench 2026 年实测的 66.5% 恶意 issue 穿透编码智能体全部防护，
+      <strong>安全测试的对象已经从"人输入了什么"扩展到"智能体读到的一切内容"</strong>。
+    </p>
+
+    <h3>3.6 模型与提示词：新型资产的变更管理</h3>
+
+    <p>
+      智能体应用的行为不只由代码决定，还由模型版本、提示词、RAG 知识库、工具与权限共同决定——
+      但多数团队仍只对代码做变更管理。两个真实事件说明代价：
+    </p>
+
+    <ul>
+      <li><strong>GPT-4o"谄媚"事件（2025-04，OpenAI 官方复盘）：</strong>一次模型更新让 GPT-4o 变得过度迎合，离线 eval 和小规模 A/B 都没拦住，最终靠专家"感觉不对"才发现并回滚。OpenAI 自陈当时没有追踪此类人格变化的部署评测。<strong>连模型厂商自己的评测都会漏掉行为漂移。</strong></li>
+      <li><strong>Copilot 模型批量退役（2025-06，GitHub 公告）：</strong>GPT-4.5、o1、GPT-4o 等在 2025 年 7–8 月按计划退役。模型是有生命周期的依赖，替换模型不能假设"只升不降"，必须触发回归 eval 与业务负责人审批。</li>
+    </ul>
+
+    <p>
+      行业正在形成的答案是把提示词当代码治理（prompt CI/CD）：不可变版本、对金标准数据集跑候选版本、
+      评分门禁、灰度发布、按版本监控质量/成本/延迟、标签化快速回滚。LangChain 2026 年调查显示
+      89% 的组织已有某种可观测性，但只有 52.4% 运行离线 eval、37.3% 运行在线 eval——
+      <strong>"看得到它在做什么"和"知道它做得对不对"之间，仍有巨大鸿沟</strong>。
+    </p>
+
+    <div class="qlist-box">
+      <h4>深水区二：智能体验证必答的 6 个问题</h4>
+      <ol>
+        <li><strong>我们测的是模型，还是"模型+提示词+工具+权限+环境"的完整系统？</strong>验收对象是否覆盖了整个 agent loop，而非只引用模型基准分？</li>
+        <li><strong>关键任务用 pass^k 还是 pass@1 衡量？</strong>发布报告是"一次通过"还是"n 次试验的可靠率分布"？</li>
+        <li><strong>评分器是否分层？</strong>代码/模型/人工三类评分如何组合，高风险路径是否强制人工复核？</li>
+        <li><strong>有没有反作弊审计？</strong>是否审查轨迹以识别"绕过问题而非解决问题"，评测环境是否隔离网络与依赖？</li>
+        <li><strong>模型/提示词/权限变更是否全部入版控、过 eval、可灰度、可回滚？</strong>模型退役谁负责触发回归？</li>
+        <li><strong>不可逆动作是否有硬性闸门？</strong>删除、转账、批量写入、生产部署、资源销毁，是否必须显式人工批准（而非智能体自主执行）？</li>
+      </ol>
+    </div>
+
+    <h2>四、度量体系：旧指标为什么不够，新信号是什么</h2>
+
+    <h3>4.1 覆盖率与用例数：从"目标"退回"局部信号"</h3>
+
+    <p>
+      需要诚实地说：2024–2026 年并没有出现足以全盘否定代码覆盖率的大规模研究。
+      更可靠的结论是——<strong>覆盖率可以作为局部信号，但不能作为质量目标</strong>。
+      Desai 等 2025 年 12 月发表于《Frontiers in AI》的 Test Pyramid 2.0 仍保留分层测试结构，
+      但明确指出：AI 能辅助生成大量测试，可覆盖率上升不代表断言正确、边界充分、安全风险被发现。
+      在 AI 把用例生成成本打到接近零之后，"写了多少测试"作为指标的信息量进一步坍缩：
+      它度量的是最不稀缺的东西。
+    </p>
+
+    <h3>4.2 DORA 的演进：第五个指标与"放大器"判断</h3>
+
+    <p>
+      DORA 指标自身已经在进化。2024 年起，度量框架扩展并区分了两组概念：
+      <strong>交付吞吐</strong>（变更前置时间、部署频率、故障恢复时间）与
+      <strong>交付不稳定性</strong>（变更失败率、部署返工率 deployment rework rate）。
+      "部署返工率"作为第五指标的引入，正对上 AI 时代最典型的病症——
+      代码快速上线、又快速回滚或修补。
+    </p>
+
+    <p>
+      DORA 2025 报告的核心判断是：<strong>AI 的主要角色是"放大器（amplifier）"</strong>——
+      它放大组织已有的优势和弱点，最大回报不来自工具本身，而来自底层组织系统。
+      这与 METR 2025 年 7 月的 RCT 形成耐人寻味的对照：16 名经验丰富的开源开发者、
+      246 个任务中，使用 AI 后实际完成时间<strong>反而增加了 19%</strong>
+      （他们事前预估会缩短 20%）。样本很小、不能外推，但它提示：
+      "开发者感觉更快"与"端到端交付更快"是两件事，中间隔着评审、调试、清理、集成的隐性成本。
+    </p>
+
+    <h3>4.3 新信号：把"验证的代价与质量"显式度量出来</h3>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>新指标</th><th>度量什么</th><th>为什么重要</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="tagcell">缺陷逃逸率</td><td>绿灯放行后被线上/后续环节推翻的比例</td><td>直接衡量前置验证的真实有效性，而非仪式感</td></tr>
+          <tr><td class="tagcell">部署返工率</td><td>导致回滚/热修/紧急修补的部署占比</td><td>DORA 第五指标；捕捉"快上快退"的虚假吞吐</td></tr>
+          <tr><td class="tagcell">AI 输出返工率</td><td>AI 生成代码/测试被实质修改或废弃的比例</td><td>Stack Overflow 2025：66% 的开发者遭遇"差一点正确"的 AI 方案，45.2% 认为调试 AI 代码更耗时</td></tr>
+          <tr><td class="tagcell">验证负荷 / 审查时间</td><td>单位变更消耗的人工验证时间</td><td>CHI 2026 已把 verification load and fatigue 作为正式研究对象；它是智能体时代的核心瓶颈</td></tr>
+          <tr><td class="tagcell">AI 接受率 / 否决率</td><td>AI 建议被采纳与被推翻的比例</td><td>零否决率是橡皮图章信号；用于校准信任而非监控个人</td></tr>
+          <tr><td class="tagcell">任务可靠率 / pass^k</td><td>智能体关键任务多次运行的稳定性</td><td>替代单次"通过"，适配非确定系统</td></tr>
+          <tr><td class="tagcell">单任务成本 / 延迟</td><td>每次智能体任务的 token、工具调用与耗时</td><td>自主运行的经济约束；失控的多步任务会烧钱</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="insight-box">
+      <strong>度量改革的第一性原理：</strong>当生产端边际成本趋近于零，度量的重心必须从
+      "生产了多少"转向"验证得怎么样、返工有多少、用户受没受影响"。
+      但所有新指标都有同一个陷阱——一旦被设为考核目标就会被"刷"。
+      指标用于发现问题和触发对话，不能用于给个人定罪，否则数据会立刻失真。
+    </div>
+
+    <div class="qlist-box">
+      <h4>深水区三：度量体系必答的 5 个问题</h4>
+      <ol>
+        <li><strong>我们还在用测试数量和覆盖率向上证明质量吗？</strong>它们是否仍被当成 KPI 目标而非辅助信号？</li>
+        <li><strong>是否分开度量 AI 对吞吐和对稳定性的影响？</strong>部署频率上升的同时，变更失败率和返工率是否也在上升？</li>
+        <li><strong>能不能区分"感觉更快"和"端到端更快"？</strong>评审、调试、清理、集成的时间是否被计入？</li>
+        <li><strong>验证负荷是否可见？</strong>谁在承担 AI 代码暴增带来的审查时间，这个负担可持续吗？</li>
+        <li><strong>新指标会被怎么"刷"？</strong>每个指标的反制措施是什么，数据用于改进还是用于追责？</li>
+      </ol>
+    </div>
+
+    <h2>五、组织重组：QA 会消失吗，责任怎么重新切分</h2>
+
+    <h3>5.1 先给事实，再给判断</h3>
+
+    <p>
+      "QA 会被 AI 取代"是最流行也最含糊的说法。可核查的事实是：
+      凯捷 WQR 2025-26 显示，43% 的组织正在 QA 中试验生成式 AI，但只有 15% 实现企业级规模化；
+      89% 在试点或部署（37% 已上生产、52% 在试点）。规模化的前三大障碍是数据隐私风险（67%）、
+      集成复杂性（64%）和技能缺口（50%）。同一份报告中，25% 的受访者认为"传统 QE 角色可能完全消失"——
+      <strong>请注意，这是被调查者的观点预期，不是已经发生的组织事实。</strong>
+    </p>
+
+    <div class="warn-box">
+      我们没有找到可靠的一手证据支持"知名公司已普遍取消 QA、完全由 AI 替代"。
+      媒体报道的个别裁员也无法证明 AI 是直接原因。<strong>更稳健的判断是：
+      重复性手工执行岗位持续承压，而评测设计、质量平台、风险治理、自动化架构、
+      领域保障类能力的需求在上升。</strong>消失的是某种岗位形态，不是质量职能本身。
+    </div>
+
+    <h3>5.2 QA 的新角色谱系</h3>
+
+    <p>综合行业实践与研究，QA 职能正在向以下方向分化，而非整体消亡：</p>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <div class="c-icon">🎯</div>
+        <h4>评测设计者 (Eval Designer)</h4>
+        <p>设计数据集、评分标准、金标准与红队场景——智能体时代最核心的新能力。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">🧩</div>
+        <h4>质量平台负责人</h4>
+        <p>建设 trace—dataset—experiment—CI gate—灰度—监控—回滚的闭环基础设施。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">🏗️</div>
+        <h4>智能体测试架构师</h4>
+        <p>设计多步任务、工具调用、权限边界、非确定行为的测试范式与环境。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">⚖️</div>
+        <h4>风险与治理专员</h4>
+        <p>把合规义务（AI Act、DORA、金融行标）转化为工程证据，管理责任与审计。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">📈</div>
+        <h4>生产数据分析者</h4>
+        <p>右移：从线上遥测、逃逸缺陷、用户反馈反哺评测集与测试策略。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">🧑‍🏫</div>
+        <h4>开发者赋能 / 质量教练</h4>
+        <p>把质量方法沉淀为工具、规则和培训，让开发者自己把好第一道关。</p>
+      </div>
+    </div>
+
+    <h3>5.3 "开发者负责质量"为什么不能理解为"不需要 QA"</h3>
+
+    <p>
+      "dev owns quality"会继续增强，但它推不出"专职 QA 消失"。原因有三：
+      其一，Stack Overflow 2025 年 3.3 万开发者调查显示，开发者最不愿交给 AI 的恰恰是
+      部署与监控（75.8% 不计划）、项目规划（69.2%）、代码提交与评审（58.7%）——
+      <strong>高责任的系统判断，从业者自己都不放心交给自动化</strong>；
+      其二，让生产代码的人同时是唯一验收者，天然存在同源失效，需要独立视角；
+      其三，质量平台、评测体系、风险治理具有规模经济，分散到每个业务团队会重复造轮子且标准不一。
+    </p>
+
+    <p>
+      OECD 2026 年 9 月对 25 个采用智能体的组织访谈给出了正在收敛的形态：
+      <strong>"边界内自主执行 + 高风险节点人工检查点"</strong>，连续的逐步人审在规模化下被普遍认为不现实。
+      组织上对应的是"集中的专家/平台中心 + 嵌入业务团队的质量工程师"混合模式，
+      而非非此即彼的"大 QA 部门"或"完全无 QA"。
+    </p>
+
+    <h3>5.4 责任切分：一张必须画清楚的表</h3>
+
+    <p>组织重组中最危险的不是岗位调整，而是责任悬空。FSB 2026 年 10 月《负责任采用 AI 的稳健做法》
+      第 10 条要求：按用例的重要性、风险、<strong>自主性</strong>配置"有效而非形式"的人工监督。
+      落地的第一步，是把每类质量结果的责任人写明确：</p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>质量结果</th><th>开发者</th><th>嵌入 QE</th><th>平台/专家中心</th><th>业务负责人</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="tagcell">AI 生成代码的自验证</td><td>主责</td><td>制定标准</td><td>提供工具</td><td>—</td></tr>
+          <tr><td class="tagcell">测试策略与评测集设计</td><td>参与</td><td>主责</td><td>方法论与平台</td><td>提供业务规则</td></tr>
+          <tr><td class="tagcell">智能体行为与安全评测</td><td>配合</td><td>执行</td><td>主责（架构/红队）</td><td>风险确认</td></tr>
+          <tr><td class="tagcell">不可逆动作的放行</td><td>申请</td><td>核验</td><td>设闸门</td><td><strong>最终批准</strong></td></tr>
+          <tr><td class="tagcell">线上逃逸缺陷复盘</td><td>参与</td><td>主责分析</td><td>反哺平台/评测集</td><td>知情</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="data-note">表示例，非行业统一标准；关键不是照搬分工，而是确保每个格子都"有人、有权、有信息"。</p>
+
+    <div class="qlist-box">
+      <h4>深水区四：组织重组必答的 5 个问题</h4>
+      <ol>
+        <li><strong>我们是在主动重组，还是被动等待岗位被重新定义？</strong>转型路线图是否覆盖角色、技能、平台，而不只是裁员或采购？</li>
+        <li><strong>集中与嵌入如何配比？</strong>哪些能力（平台、评测、红队、治理）必须集中建，哪些质量工程师应嵌入业务团队？</li>
+        <li><strong>独立验收视角如何保留？</strong>如何避免写代码的人成为自己产物的唯一裁判？</li>
+        <li><strong>每类质量结果的责任人写清楚了吗？</strong>是否存在"工具说可以、所以没人负责"的格子？</li>
+        <li><strong>高风险节点的人工检查点设在哪？</strong>如何识别不可逆动作，让监督者真正有时间、信息和否决权？</li>
+      </ol>
+    </div>
+
+    <h2>六、落地顺序：四个深水区如何咬合</h2>
+
+    <p>
+      四个深水区不是四份独立的任务清单，而是一个相互锁死的系统，单点推进都会失败：
+      <strong>没有新能力（一），新范式（二、三）无人能执行；没有新度量（四），
+      组织重组（五）就只剩裁员而无方向；没有明确责任（五），培养和演练在进度压力下第一个被砍掉。</strong>
+    </p>
+
+    <div class="checklist-box">
+      <h4>90 天可启动的最小改革抓手</h4>
+      <ol>
+        <li><strong>能力：</strong>为新人设定"无 AI 基本功训练期"；把一次"关掉助手"的手工定位/回滚演练排进本季度日历。</li>
+        <li><strong>对象：</strong>选一个关键智能体任务，建立金标准数据集，把验收从"单次通过"改为报告 pass^k 与轨迹抽查。</li>
+        <li><strong>资产：</strong>把核心提示词和模型版本纳入版本管理，任何变更必须跑 eval、可回滚；盘点模型退役时间线。</li>
+        <li><strong>闸门：</strong>为删除、转账、生产部署等不可逆动作设置显式人工批准，先覆盖最高风险的一两类。</li>
+        <li><strong>度量：</strong>在现有看板上增加三个新信号——部署返工率、缺陷逃逸率、AI 输出返工率，并注明"用于改进不用于追责"。</li>
+        <li><strong>组织：</strong>画出质量责任矩阵，找出"没人、没权、没信息"的空格子，指定唯一责任人。</li>
+      </ol>
+    </div>
+
+    <h2>七、结语：改革改的不是工具，是能力的载体</h2>
+
+    <div class="verdict-box">
+      <h3>工具可以采购，能力只能生长</h3>
+      <p>
+        22 个问题归结为同一个判断：AI 时代 QA 的改革，表层是测试对象和工具链的更替，
+        深层是<strong>能力如何在人身上持续积累、不被自动化掏空</strong>，以及
+        <strong>责任如何在组织里保持清晰、不在"工具说可以"中悬空</strong>。
+      </p>
+      <p class="key-line">
+        平台和智能体负责把执行的边际成本打到零；团队必须负责把判断力的边际价值持续做高。
+      </p>
+      <p>
+        世界质量报告的数据很冷静：89% 在试点，只有 15% 真正规模化。差距不在谁先买到工具，
+        而在谁先回答清楚这 22 个问题——谁的人还在认知回路里，谁的智能体被认真地测过轨迹和边界，
+        谁的度量照向了返工与逃逸，谁的组织里每个高风险决定都有一个能说"不"的名字。
+      </p>
+      <p>
+        工具可以一夜采购到位，能力体系、手感文化和责任结构只能一季一季地长出来。
+        <strong>这正是 QA 领导者在这场变革中真正不可替代的工作。</strong>
+      </p>
+    </div>
+
+    <div class="references-section">
+      <h3>主要参考资料</h3>
+      <ol>
+        <li>Wiles, E., et al. (2026). Generative AI and the temporary upskilling of knowledge workers. Nature Human Behaviour. <a href="https://doi.org/10.1038/s41562-026-02566-6" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Cash, T. N., Kelly, M. O., Macnamara, B. N., & Risko, E. F. (2026). Is AI making us stupid? Trends in Cognitive Sciences. <a href="https://doi.org/10.1016/j.tics.2026.06.004" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Noessel (2026). Deskilling and overreliance: Two long-term risks of AI assistance, and what designers can do about them. AI Magazine. <a href="https://doi.org/10.1002/aaai.70096" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Capgemini. World Quality Report 2025-26（第17版；43% 试点 / 15% 规模化；技能排序；25% 认为传统 QE 或消失）. <a href="https://www.capgemini.com/insights/research-library/world-quality-report-2025-26" target="_blank" rel="noopener">capgemini.com</a>；<a href="https://www.capgemini.com/wp-content/uploads/2025/11/World-Quality-Report-2025.pdf" target="_blank" rel="noopener">PDF</a>.</li>
+        <li>Anthropic Engineering (2026-01-09). Demystifying Evals for AI Agents（task/trial/grader/trajectory；三类 grader；pass@k 与 pass^k）. <a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noopener">anthropic.com</a>.</li>
+        <li>Hamin, M. & Edelman, B. / NIST CAISSI (2025-11/12). Cheating in AI Agent Evaluations（Cybench 0.3%、SWE-bench 污染/博弈、CVE-Bench 4.8%）. <a href="https://www.nist.gov/caissi/cheating-ai-agent-evaluations" target="_blank" rel="noopener">nist.gov</a>.</li>
+        <li>Zhu, K., et al. (2025). AgentErrorTaxonomy / AgentErrorBench（记忆/反思/规划/动作/系统五类失效）. arXiv:2509.25370. <a href="https://arxiv.org/abs/2509.25370" target="_blank" rel="noopener">arXiv</a>.</li>
+        <li>Halamish, E. & Tokarev, V. / Cyera Research (2026-05). Agent-Inflicted Damage: Inside the Real-World Failures of Enterprise AI Systems（7,246 事件、344 企业案例、188 起无攻击者损害；厂商研究需降权）. <a href="https://www.cyera.com/research/agent-inflicted-damage-inside-the-real-world-failures-of-enterprise-ai-systems" target="_blank" rel="noopener">cyera.com</a>.</li>
+        <li>Reddy, P. & Gujral, A. S. (2025). EchoLeak: The First Real-World Zero-Click Prompt Injection Exploit in a Production LLM System. AAAI Symposium Series, 7(1), 303–311. <a href="https://doi.org/10.1609/aaaiss.v7i1.36899" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Singh, A., Yang, J., & Chen, T.-H. (2026). IssueTrojanBench（66.5% 恶意 issue 穿透全部防护）. arXiv:2607.20759. <a href="https://arxiv.org/abs/2607.20759" target="_blank" rel="noopener">arXiv</a>.</li>
+        <li>OpenAI (2025-04/05). Sycophancy in GPT-4o 与 Expanding on sycophancy（模型人格漂移、离线 eval 漏检、回滚与改进复盘）. <a href="https://openai.com/index/sycophancy-in-gpt-4o/" target="_blank" rel="noopener">openai.com</a>；<a href="https://openai.com/index/expanding-on-sycophancy/" target="_blank" rel="noopener">复盘</a>.</li>
+        <li>GitHub Changelog (2025-06-20). Upcoming deprecation of o1, GPT-4.5, o3-mini and GPT-4o in Copilot. <a href="https://github.blog/changelog/2025-06-20-upcoming-deprecation-of-o1-gpt-4-5-o3-mini-and-gpt-4o/" target="_blank" rel="noopener">github.blog</a>.</li>
+        <li>LangChain (2026). State of Agent Engineering（89% 可观测、52.4% 离线 eval、37.3% 在线 eval；多模型并存）. <a href="https://www.langchain.com/state-of-agent-engineering" target="_blank" rel="noopener">langchain.com</a>；Langfuse Prompt CI/CD 工程指南（六阶段）. <a href="https://langfuse.com/resources/engineering/prompt-cicd" target="_blank" rel="noopener">langfuse.com</a>.</li>
+        <li>Desai, P., Singh, S., & Amilkanthwar, S. (2025-12). Test Pyramid 2.0: AI-Augmented Software Testing Framework. Frontiers in Artificial Intelligence. <a href="https://doi.org/10.3389/frai.2025.1695965" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>DORA / Google Cloud. State of AI-assisted Software Development 2025（AI 是放大器）. <a href="https://dora.dev/research/2025/dora-report/" target="_blank" rel="noopener">dora.dev</a>；DORA 指标演进（2024 起 deployment rework rate 第五指标，吞吐/不稳定性分组）. <a href="https://dora.dev/guides/dora-metrics/history" target="_blank" rel="noopener">dora.dev/guides</a>.</li>
+        <li>Becker, J., Rush, N., Barnes, E., & Rein, D. / METR (2025-07). RCT：经验丰富开源开发者使用 AI 后任务时间 +19%（小样本，N=16/246 任务）. arXiv:2507.09089. <a href="https://arxiv.org/abs/2507.09089" target="_blank" rel="noopener">arXiv</a>.</li>
+        <li>Stack Overflow Developer Survey 2025, AI 章节（46% 不信任 AI 准确性；66% 遭遇"差一点正确"；45.2% 认为调试 AI 代码更耗时；75.8% 不愿交给 AI 部署监控）. <a href="https://survey.stackoverflow.co/2025/ai" target="_blank" rel="noopener">survey.stackoverflow.co</a>.</li>
+        <li>CHI '26. When Help Hurts: Verification Load and Fatigue with AI Coding Assistants（验证负荷作为正式研究对象）. DOI 10.1145/3772318.3791176.</li>
+        <li>OECD (2026-09-16). Agentic AI in organisations（25 组织访谈；连续人审不现实，转向"边界内自主+高风险检查点"）. <a href="https://www.oecd.org/content/dam/oecd/en/publications/reports/2026/09/agentic-ai-in-organisations_1f17d235/1257a26f-en.pdf" target="_blank" rel="noopener">OECD PDF</a>.</li>
+        <li>FSB (2026-10-15). Sound Practices for Responsible Adoption of AI（第 10 条：按自主性配置有效人工监督）. <a href="https://www.fsb.org/uploads/P151026-1.pdf" target="_blank" rel="noopener">fsb.org PDF</a>.</li>
+        <li>Katalon (2025). 2025 State of Software Quality Report（82% QA 认为 AI 技能关键；厂商调查，降权引用）. <a href="https://www.katalon.com/resources-center/blog/2025-state-of-software-quality-report" target="_blank" rel="noopener">katalon.com</a>.</li>
+        <li>证据缺口如实记录：未找到"知名公司普遍取消 QA 由 AI 替代"的一手证据；未找到可全盘否定代码覆盖率的大规模研究；模型供应商"静默更新固定模型"目前主要是社区报告，非强事实。</li>
+      </ol>
+    </div>
+
+    <div class="article-copyright">
+      <strong>© 2026 质量实验室 · mimic66</strong><br>
+      本文首发于 <a href="https://mimic66.github.io/blog/" target="_blank">mimic66.github.io/blog</a>，
+      遵循 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">CC BY-NC-ND 4.0</a> 协议。<br>
+      非商业转载请注明出处及原文链接，禁止修改演绎后转载。
+    </div>
+
+  </article>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    © 2024-2026 质量实验室 · 基于 GitHub Pages 构建
+  </div>
+</footer>
+
+</body>
+</html>
