@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>平台越强，人越不能退场：软件质量保障中的独立质疑与最终责任 - 质量实验室</title>
+  <meta name="description" content="测试全绿、扫描无告警、AI审查通过，为什么反而更需要人独立质疑？系统梳理自动化偏见、自动化反讽、绿灯崇拜、同源失效与人在回路橡皮图章化的证据链，以及让质疑真正有效的七条工程实践。结论：工具负责证明，人负责质疑证明本身并承担最终责任。">
+  <link rel="stylesheet" href="../css/style.css?v=20261026a">
+  <style>
+    .post-hero {
+      background: linear-gradient(135deg, #0b1220 0%, #1e3a8a 55%, #4338ca 100%);
+      color: #f1f5f9;
+      padding: 48px 40px;
+      border-radius: 12px;
+      margin-bottom: 36px;
+    }
+    .post-hero h1 { color: #fff; -webkit-text-fill-color: #fff; background: none; font-size: 1.7em; line-height: 1.4; margin-bottom: 12px; }
+    .post-hero .subtitle { color: #dbeafe; font-size: 0.95em; line-height: 1.8; }
+    .post-hero .meta { color: #93c5fd; font-size: 0.85em; margin-top: 16px; }
+
+    .data-note { font-size: 0.82em; color: #94a3b8; line-height: 1.7; margin: 4px 0 20px; }
+
+    .table-wrap { overflow-x: auto; margin: 24px 0; }
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 0.88em; min-width: 620px; }
+    .data-table th { background: #1e293b; color: #f1f5f9; padding: 12px 14px; text-align: left; font-weight: 600; }
+    .data-table td { padding: 11px 14px; border-bottom: 1px solid #e2e8f0; vertical-align: top; line-height: 1.65; }
+    .data-table tr:nth-child(even) td { background: #f8fafc; }
+    .data-table .tagcell { white-space: nowrap; font-weight: 600; color: #1e40af; }
+
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 14px;
+      margin: 24px 0;
+    }
+    .concept-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; border-top: 3px solid #6366f1; }
+    .concept-card .c-icon { font-size: 1.3em; margin-bottom: 8px; }
+    .concept-card h4 { margin: 0 0 8px 0; color: #0f172a; font-size: 0.98em; }
+    .concept-card p { margin: 0; font-size: 0.84em; line-height: 1.7; color: #475569; }
+    .concept-card .src { display: block; margin-top: 8px; font-size: 0.78em; color: #6366f1; }
+
+    .insight-box {
+      background: #eff6ff;
+      border-left: 4px solid #2563eb;
+      padding: 18px 22px;
+      margin: 24px 0;
+      border-radius: 0 10px 10px 0;
+      font-size: 0.92em;
+      line-height: 1.8;
+      color: #1e3a8a;
+    }
+
+    .warn-box {
+      background: #fef2f2;
+      border-left: 4px solid #dc2626;
+      padding: 18px 22px;
+      margin: 24px 0;
+      border-radius: 0 10px 10px 0;
+      font-size: 0.92em;
+      line-height: 1.8;
+      color: #991b1b;
+    }
+
+    .quote-block {
+      margin: 28px 0;
+      padding: 24px 28px;
+      background: #0f172a;
+      border-radius: 12px;
+      color: #e2e8f0;
+      font-size: 1.02em;
+      line-height: 1.9;
+    }
+    .quote-block .q-mark { color: #60a5fa; font-size: 1.4em; font-weight: 700; }
+    .quote-block .q-attr { display: block; margin-top: 10px; font-size: 0.8em; color: #94a3b8; }
+
+    .checklist-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 12px;
+      padding: 22px 26px;
+      margin: 26px 0;
+    }
+    .checklist-box h4 { margin: 0 0 12px 0; color: #166534; }
+    .checklist-box ol { margin: 0; padding-left: 22px; }
+    .checklist-box li { margin: 9px 0; font-size: 0.88em; line-height: 1.7; color: #334155; }
+    .checklist-box li strong { color: #1e293b; }
+
+    .verdict-box {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e2e8f0;
+      border-radius: 12px;
+      padding: 32px;
+      margin: 36px 0;
+    }
+    .verdict-box h3 { color: #fff; margin-top: 0; }
+    .verdict-box p { color: #94a3b8; font-size: 0.9em; line-height: 1.75; margin: 10px 0; }
+    .verdict-box .key-line { color: #93c5fd; font-size: 1.05em; font-weight: 600; margin: 16px 0; line-height: 1.8; }
+
+    .references-section {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 24px 28px;
+      margin-top: 40px;
+    }
+    .references-section h3 { margin-top: 0; color: #1e293b; }
+    .references-section ol { padding-left: 22px; font-size: 0.82em; line-height: 1.7; color: #475569; }
+    .references-section li { margin: 6px 0; }
+
+    .article-copyright {
+      margin-top: 48px;
+      padding: 20px 24px;
+      background: #f8fafc;
+      border-left: 4px solid #94a3b8;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.85em;
+      color: #64748b;
+      line-height: 1.7;
+    }
+    .article-copyright strong { color: #475569; }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="../index.html" class="site-title">质量<span>实验</span>室</a>
+    <nav>
+      <a href="../index.html">首页</a>
+      <a href="../about.html">关于</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <article class="post-content">
+
+    <div class="post-hero">
+      <h1>平台越强，人越不能退场：<br>软件质量保障中的独立质疑与最终责任</h1>
+      <div class="subtitle">
+        测试全绿、扫描无告警、AI 审查通过——当"证明系统没问题"的能力越来越强，
+        人为什么反而更需要独立质疑？本文从自动化偏见、自动化反讽、绿灯崇拜、同源失效
+        四条证据链出发，回答一个问题：在工具持续吞掉执行层的时代，质量专业还剩下什么是不可替代的。
+      </div>
+      <div class="meta">2026-10-30 · 金融质量保障 · 约 25 分钟阅读 · 文献截至 2026 年 10 月</div>
+    </div>
+
+    <h2>一、起点：一句来自金融风险管理的教训</h2>
+
+    <p>
+      在研究贝莱德阿拉丁系统时，有一句话贯穿了它三十多年的历史，也贯穿了围绕它的全部争议：
+    </p>
+
+    <div class="quote-block">
+      <span class="q-mark">"</span>
+      平台可以越来越强，但独立质疑它、并为最终判断负责的，必须是人。
+      <span class="q-attr">—— 质量实验室，《贝莱德阿拉丁深度解剖》结语</span>
+    </div>
+
+    <p>
+      这句话不是道德宣示，而是用事故换来的工程结论。2008 年金融危机中，
+      纽约联储把 Maiden Lane 系列天量问题资产交给 BlackRock 管理，
+      不是因为它有一台不会犯错的机器，而是因为它有一套<strong>建立在模型之上、
+      却始终保留人工独立判断</strong>的风险能力。模型负责计算，人负责质疑计算的前提，
+      并在判断错误时承担后果。
+    </p>
+
+    <p>
+      把这句话平移到软件质量保障，结构完全一致：
+    </p>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <div class="c-icon">🧮</div>
+        <h4>工具负责"证明"</h4>
+        <p>跑测试、扫漏洞、算覆盖率、生成用例、AI 审查代码——系统产出"看起来可信"的结论。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">🔍</div>
+        <h4>人负责"质疑证明本身"</h4>
+        <p>该测什么、漏掉了什么、这个结论的前提成立吗、谁和谁共享同一个盲区——这些工具不会自问。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">✍️</div>
+        <h4>人为最终判断负责</h4>
+        <p>能不能放行、要不要带风险上线、事故谁承担。这件事在法律和组织意义上都无法外包给系统。</p>
+      </div>
+    </div>
+
+    <p>
+      下面四节，我们逐一看证据：人为什么会停止质疑、自动化怎样反咬一口、
+      绿灯为什么是弱信号、"人在回路"又如何在流程上沦为橡皮图章。
+    </p>
+
+    <h2>二、自动化偏见：人为什么会主动停止质疑</h2>
+
+    <p>
+      第一种失效不需要任何系统 bug。人在面对自动化建议时，会<strong>系统性地、
+      可重复地</strong>放弃独立检验。人因工程学给它起的名字叫<strong>自动化偏见
+      （Automation Bias）</strong>。
+    </p>
+
+    <h3>2.1 从驾驶舱开始的实验证据</h3>
+
+    <p>
+      Mosier、Skitka 等人 1998 年在《国际航空心理学杂志》发表的经典座舱实验表明：
+      机组会因为自动化提示而犯下本可避免的错误；<strong>即使眼前存在与自动化建议
+      相矛盾的证据，错误建议仍然被采纳</strong>。人并没有把自动化当作一个需要核验的
+      中性信息源，而是把它的输出当作一条"启发式捷径"——机器说可以，那就可以。
+    </p>
+
+    <p>
+      2004 年，MIT 的 Cummings 在 AIAA 发表综述，把这一现象推广到时间紧迫的
+      高风险决策场景：在压力下，决策者对智能系统错误建议的顺从更加明显，
+      而单纯依靠训练和界面提示并不能可靠消除它。
+    </p>
+
+    <div class="insight-box">
+      <strong>迁移到软件质量：</strong>当静态扫描显示"无高危告警"、AI 代码助手给出一段
+      "看起来完整"的实现、CI 上一排绿勾出现时，工程师大脑里发生的事情，
+      和 1998 年驾驶舱里机组看到错误自动提示时发生的事情，是同一种认知机制——
+      <strong>把"系统没有反对"误读为"系统已经验证过"</strong>。
+    </div>
+
+    <h3>2.2 人甚至会"偏好"算法</h3>
+
+    <p>
+      Logg、Minson 与 Moore 2019 年发表在《组织行为与人类决策过程》上的实验发现：
+      在估算类任务中，人们对算法判断的信任常常<strong>高于</strong>对他人判断的信任，
+      即便算法并不更优。这被称为"算法赏识（Algorithm Appreciation）"。
+      它解释了一个反直觉现象：越是年轻、越习惯 AI 工具的工程师，越容易把
+      "AI 生成的"等同于"更专业的"。
+    </p>
+
+    <p>
+      信任光谱的另一端同样存在。Dietvorst 等人 2015 年发现，人一旦见过算法出错，
+      又会过度惩罚它、宁愿采用更差的人工判断（"算法厌恶"）。
+      <strong>问题的本质从来不是"该不该信工具"，而是信任能否与工具的真实能力校准。</strong>
+      这一点我们在第五节还会回来。
+    </p>
+
+    <h3>2.3 医疗领域的硬证据：错误的 AI 会把专家拉低</h3>
+
+    <p>
+      2020 年《自然·医学》上 Tschandl 等人的皮肤癌识别研究给出了最令人不安的结果：
+      AI 建议正确时，人机协作的表现确实更好；<strong>但当 AI 给出错误建议时，
+      专家的最终判断会低于其独立判断的水平</strong>——专家被错误的自动化"带偏"了。
+      专家尚且如此，普通工程师面对代码助手时没有理由免疫。
+    </p>
+
+    <h2>三、自动化的反讽：工具越强，人在关键时刻越接不住</h2>
+
+    <p>
+      如果说自动化偏见是"人太信机器"，那么 Bainbridge 1983 年发表在《Automatica》上的
+      经典论文《自动化的反讽》揭示了一个更隐蔽的陷阱：
+    </p>
+
+    <div class="quote-block">
+      <span class="q-mark">"</span>
+      自动化把简单、常规的工作都接管了，最后留给人的，恰恰是最难、最罕见的异常处理；
+      而人因为长期不操作，已经丧失了处理它的手感——却恰好在系统失效的最坏时刻，
+      被要求瞬间接管。
+      <span class="q-attr">—— Bainbridge, L. (1983), Ironies of Automation, Automatica, 19(6)</span>
+    </div>
+
+    <h3>3.1 Out-of-the-loop：情境意识的断裂</h3>
+
+    <p>
+      Endsley 与 Kiris 1995 年用实验证实了这一反讽的机制：高等级自动化使人
+      "脱离回路（out of the loop）"，当异常发生需要接管时，人的<strong>情境意识
+      已经断裂</strong>——不知道系统之前做了什么、当前处于什么状态、为什么会这样，
+      因此无法及时形成正确响应。他们后续的研究还发现，<strong>中间等级的自动化
+      （让人持续参与而非完全旁路）反而能带来更好的安全表现</strong>。
+    </p>
+
+    <p>
+      法航 AF447 空难是这一机制最沉重的注脚：皮托管结冰使自动驾驶断开、
+      飞行控制律切换，长期处于自动化之外的机组在混乱中无法理解飞机状态，
+      持续错误拉杆直至失速坠海，228 人遇难。它不是"人盲信机器"的故事，
+      而是<strong>"自动化退出后人接不住"</strong>的故事——这一点在引用时必须诚实。
+    </p>
+
+    <h3>3.2 映射到质量保障：被掏空的测试能力</h3>
+
+    <p>
+      今天的软件团队正在以小得多的尺度重演同一个反讽：
+    </p>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <div class="c-icon">⚙️</div>
+        <h4>常规工作被吞掉</h4>
+        <p>生成用例、执行回归、构造数据、编写断言、初步代码审查，越来越多地由工具与 AI 完成。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">🧠</div>
+        <h4>剩下的都是硬骨头</h4>
+        <p>工具搞不定的复杂状态机、分布式时序、隐蔽的业务逻辑缺陷、模型从未见过的失效模式——留给人。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">📉</div>
+        <h4>而人正在失去手感</h4>
+        <p>长期不亲手设计用例、不亲手定位问题，工程师在最需要判断力的时刻，恰好最缺乏训练。</p>
+      </div>
+    </div>
+
+    <div class="warn-box">
+      <strong>危险组合：</strong>一个团队如果同时满足"执行层高度自动化"和"工程师不再手工
+      操练"，那么它不是降低了对人的要求，而是<strong>把对人的要求提高到了它训练体系
+      无法支撑的水平</strong>。这正是 Bainbridge 反讽在 AI 编程时代的版本。
+    </div>
+
+    <h2>四、绿灯崇拜：为什么"全部通过"是个弱信号</h2>
+
+    <p>
+      质量保障里最普遍的一种安心感来自绿灯：测试全绿、覆盖率 85%、扫描零高危、
+      AI 审查通过。问题是，这些信号分别只证明了一件很窄的事。
+    </p>
+
+    <h3>4.1 绿灯只覆盖"被想到的路径"</h3>
+
+    <p>
+      测试全绿，只证明"<strong>被写出来的用例所覆盖的路径，在这次执行中没有触发断言失败</strong>"。
+      它对三件事保持沉默：没被写出来的用例、断言写错的用例、以及"测了但没测对"的用例。
+      覆盖率只是"代码被执行过"的结构性度量，与"行为被验证过"没有因果关系。
+    </p>
+
+    <p>
+      工业入侵检测领域的一项研究给出了量化的警示：Kus 等人 2022 年发现，
+      当攻击<strong>没有出现在训练数据中</strong>时，部分方法的检出率从报告中的约 99%
+      暴跌至 3.2%–14.7%。"已知集上的绿灯"与"面对未知时的保障"之间，隔着一道数量级的鸿沟。
+    </p>
+
+    <h3>4.2 AI 写的测试，可能只是"长得像测试"</h3>
+
+    <p>
+      2024 年 ASE 会议上，Yang 等人基于 17 个 Java 项目、5 个开源大模型的大规模实证
+      （arXiv:2406.18181）发现：LLM 生成的单元测试质量受提示方式影响极大，
+      在检出缺陷的有效性上能力有限。<strong>"AI 生成了一堆测试、并且全部通过"
+      是一个比"没有测试"更危险的状态</strong>——因为它附带了一层自动化的可信度外衣。
+    </p>
+
+    <h3>4.3 同源失效：自己给自己打分</h3>
+
+    <p>
+      AI 编程引入了一种传统流水线中不存在的新型失效：当写代码的模型、写测试的模型、
+      做审查的模型来自同一模型家族、共享同一训练语料时，三者会形成<strong>共享盲区</strong>。
+    </p>
+
+    <p>
+      Zheng 等人 2023 年关于 LLM-as-a-Judge 的研究明确记录了大模型裁判存在
+      <strong>自我增强偏差（self-enhancement bias）</strong>：模型会系统性偏袒
+      与自身风格一致的输出。Li 等人 2023 年的开源污染报告则发现，主流基准的污染程度
+      在 1%–45% 之间且快速上升，被污染的测试集上可观察到最高约 14% 的准确率虚高。
+      当"考生"和"阅卷老师"背过同一份答案，"考试通过"只是记忆复用，不是独立验证。
+    </p>
+
+    <h3>4.4 直接证据：用 AI 的人更自信，也写出更多漏洞</h3>
+
+    <p>
+      Perry、Srivastava、Kumar 与 Boneh 2023 年在 ACM CCS 发表的受控实验
+      （47 名纳入分析的开发者，5 个安全相关编程任务）给出了目前最直接的一手证据：
+    </p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>任务</th>
+            <th>使用 AI 助手组：写出安全方案比例</th>
+            <th>对照组</th>
+            <th>关键发现</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tagcell">ECDSA 签名</td>
+            <td>3%</td>
+            <td>21%</td>
+            <td>大量使用不安全随机数；许多参与者直接接受 AI 方案，未做额外验证</td>
+          </tr>
+          <tr>
+            <td class="tagcell">沙箱目录</td>
+            <td>12%</td>
+            <td>29%</td>
+            <td>符号链接处理显著更差</td>
+          </tr>
+          <tr>
+            <td class="tagcell">SQL 处理</td>
+            <td>36%</td>
+            <td>50%</td>
+            <td>存在 SQL 注入者 36% vs 7%</td>
+          </tr>
+          <tr>
+            <td class="tagcell">加解密</td>
+            <td>67%</td>
+            <td>79%</td>
+            <td>更易采用替换密码等平凡方案</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="data-note">
+      数据来源：Perry et al. (2023), Do Users Write More Insecure Code with AI Assistants?,
+      ACM CCS '23，arXiv:2211.03622。5 个任务中 4 个呈现上述模式。
+    </p>
+
+    <p>
+      论文中最有分量的行为发现是正向的：<strong>对 AI 信任度更低、更主动改写提示词、
+      坚持自己核验的参与者，写出的代码漏洞更少</strong>。原文直接使用了
+      "false sense of security（虚假的安全感）"这一表述。质疑不仅是态度，它在实验中
+      直接兑换为更少的安全漏洞。
+    </p>
+
+    <div class="insight-box">
+      工具的绿灯与人类的绿灯，证明力完全不同。工具的绿灯意味着"在它已知的世界里
+      没发现异常"；人的绿灯应当意味着"我检查了它的已知世界，也检查了它的盲区，
+      并为两者负责"。把前者冒充后者，就是绿灯崇拜。
+    </div>
+
+    <h2>五、"人在回路"如何沦为橡皮图章</h2>
+
+    <p>
+      面对上述风险，组织最常见的反应是加一道人工关卡：代码要人评审、发布要人审批、
+      AI 的输出要人确认。这在纸面上满足了"人在回路（Human-in-the-loop）"。
+      但人因学的研究反复说明：<strong>位置在回路里，不等于判断在回路里。</strong>
+    </p>
+
+    <h3>5.1 信任校准：目标不是"更信"，而是"恰当地信"</h3>
+
+    <p>
+      Lee 与 See 2004 年在《Human Factors》发表的信任模型指出，自动化的安全使用
+      要求人的信任与系统的真实可靠性<strong>校准（calibration）</strong>：
+      信任过高导致盲目接受，信任过低导致弃用。一个健康的质量体系，
+      不是让工程师"更信任工具"或"更怀疑工具"，而是让他们在工具可靠的地方放心用、
+      在工具边界处伸手接管。
+    </p>
+
+    <h3>5.2 橡皮图章是怎样炼成的</h3>
+
+    <p>
+      当人工关卡同时具备以下三个结构特征，它就会系统性失效：
+    </p>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <div class="c-icon">⏱️</div>
+        <h4>没时间</h4>
+        <p>一个人每天面对上百个待审 PR、上千条 AI 初判，实质核对在物理上不可能，只能批量点"通过"。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">🚫</div>
+        <h4>没权力</h4>
+        <p>审批者没有真正的否决权——拦下发布要承担进度责任，放行却由系统"背书"，激励结构完全倒挂。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">📄</div>
+        <h4>没信息</h4>
+        <p>审批者看到的是工具加工后的结论而非原始证据，无法判断结论的前提，质疑无从发起。</p>
+      </div>
+    </div>
+
+    <p>
+      内容审核行业的研究提供了劳动结构层面的旁证：在高吞吐、机器预标记、
+      强绩效时限的条件下，人工审核员对机器初判的实质挑战被系统性抑制
+      （Steiger 等 2021；Roberts 2019）。软件评审里的"LGTM 批发"是同一结构的产物。
+    </p>
+
+    <h3>5.3 立法者已经看穿了这一点</h3>
+
+    <p>
+      欧盟《人工智能法案》Regulation (EU) 2024/1689 第 14 条对高风险系统规定了
+      "人工监督（Human Oversight）"义务，其立法意图非常明确：监督者必须能够
+      <strong>实际理解系统输出、监测其运行，并在必要时干预、中止或推翻</strong>系统决策。
+      法理解读（Fink 2025；Panezi 2025）进一步确认：<strong>把监督委托给一个
+      没有时间、信息或权力去有效干预的人，在法律上不构成监督</strong>，
+      也不能据此把责任转移给这个"签字的人"。
+    </p>
+
+    <p>
+      还有一个漂亮的实验闭环：Skitka、Mosier 与 Burdick 2000 年发现，
+      当人被预先告知<strong>要为决策承担责任、需要说明理由</strong>时，
+      自动化偏见显著减弱。责任不只是事后的惩罚机制，它本身就是事前维持独立思考的
+      认知强制函数。<strong>一个不要求人交代理由的审批环节，等于主动拆除了纠偏装置。</strong>
+    </p>
+
+    <h2>六、责任为什么不能让渡给机器</h2>
+
+    <p>
+      Matthias 2004 年在《伦理与信息技术》上提出了著名的<strong>责任缺口
+      （Responsibility Gap）</strong>：当机器的行为由学习和自适应产生、
+      无法被任何人事先预见或控制时，传统的"控制者负责"框架会落空——
+      既怪不到操作者，也怪不到制造者。
+    </p>
+
+    <p>
+      这个论证常被误读为"所以可以没人负责"。恰恰相反，它是一个警告：
+      <strong>正因为责任无法被机器承接，组织才更必须确保有能力、有权力的人
+      保有判断与否决权</strong>，避免主动制造一个无法归责的系统。
+    </p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>典型场景</th>
+            <th>表面说法</th>
+            <th>真实结构</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tagcell">带缺陷上线</td>
+            <td>"测试都过了才发的"</td>
+            <td>把放行决策的责任推给测试套件；事故复盘时找不到判断主体</td>
+          </tr>
+          <tr>
+            <td class="tagcell">AI 代码引入漏洞</td>
+            <td>"AI 写的，我没看那么细"</td>
+            <td>生成可以委托，对生成物的验收责任从未转移</td>
+          </tr>
+          <tr>
+            <td class="tagcell">高风险变更审批</td>
+            <td>"工具评估风险可控"</td>
+            <td>工具提供的是参考证据，不是放行授权；授权必须来自能被问责的人</td>
+          </tr>
+          <tr>
+            <td class="tagcell">自动化应急处置</td>
+            <td>"系统自动切流的，没人操作"</td>
+            <td>若自动决策造成二次损害，设计、部署、维护该策略的人仍在责任链上</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      金融行业用血的学费确立了这条边界：Knight Capital 死于对自动化系统的盲信
+      （45 分钟损失约 4.4 亿美元），而它在事故前并非没有测试和流程，
+      缺的是有人在关键节点<strong>实质质疑"这次部署真的对吗"</strong>。
+      工程上可以记住一句话原则：
+    </p>
+
+    <div class="quote-block">
+      <span class="q-mark">"</span>
+      凡是以"工具说可以"作为放行理由的流程，都把责任结构留空了。
+    </div>
+
+    <h2>七、怎样让人保持"有效质疑"：七条工程实践</h2>
+
+    <p>
+      质疑不能只靠觉悟。高可靠行业（民航、核电）和人机交互研究给出的共同答案是：
+      <strong>用制度和工具设计，把质疑做成不可跳过的动作</strong>。以下七条，
+      每条都有前述研究或行业实践支撑。
+    </p>
+
+    <div class="checklist-box">
+      <h4>最小实践清单</h4>
+      <ol>
+        <li><strong>先独立判断，再看工具。</strong>评审代码前先自己读、先形成假设，再打开 AI 审查和扫描结果。认知强制函数在实验中可显著降低过度依赖（Buçinca 等 2021, CSCW）。</li>
+        <li><strong>关键产物强制独立复现，生成与审查不同源。</strong>核心代码、关键测试由未看过方案的人或不同模型/工具链独立复核；红队从"工具没测什么"出发，而不是只跑已覆盖项（Athalye 等 2018）。</li>
+        <li><strong>绿灯只当线索，不当结论。</strong>每次放行前单独回答："哪些失效模式是工具和我都没想到的？"把"未知盲区检查"做成发布检查项（Kus 等 2022；Perry 等 2023）。</li>
+        <li><strong>把接受率、否决率、逃逸率做成指标。</strong>监测 AI 建议被接受/推翻的比例，以及绿灯后被线上事故推翻的比例。零否决率通常是橡皮图章的信号，而非工具完美（Swaroop 等 2025；Lee & See 2004）。</li>
+        <li><strong>定期手动演练，保留无工具路径。</strong>周期性"关掉助手"做定位、回滚、用例设计演习；新人先打基础再上工具，对抗 Bainbridge 反讽与技能退化（Endsley & Kiris 1995）。</li>
+        <li><strong>解释用于核对，而非背书。</strong>要求 AI 给出推理过程，但必须回到原始证据核实——错误的解释同样会把人带偏（Vasconcelos 等 2023；Si 等 2024）。</li>
+        <li><strong>明确最终责任人，并赋予真实否决权。</strong>每一次放行有且仅有一个可问责的名字；审批者必须有时间、信息和无条件喊停的权力，且需要书面说明判断理由（Skitka 等 2000；EU AI Act 第 14 条；Matthias 2004）。</li>
+      </ol>
+    </div>
+
+    <p>
+      第七条在高可靠行业有成熟范本。民航的机组资源管理（CRM）把<strong>交叉检查、
+      明确说出不同意见、任何人都可以挑战操纵者</strong>写成训练标准；核工业的安全文化
+      强调不惩罚如实报告、任何人在疑虑时可启动"停工授权"。这些制度的共同点是：
+      <strong>质疑必须被赋权，否则它在进度压力下活不过第一个迭代。</strong>
+    </p>
+
+    <h2>八、结语：质量专业真正的主体</h2>
+
+    <div class="verdict-box">
+      <h3>执行会被持续吞掉，质疑与责任会留下来</h3>
+      <p>
+        回顾全文的证据链：人会因自动化偏见主动停止思考（Mosier & Skitka；Cummings），
+        会因自动化反讽在关键时刻接不住（Bainbridge；Endsley），
+        会被绿灯和同源测试制造虚假安全感（Perry；Kus；Zheng），
+        而形式上的"人在回路"在没时间、没权力、没信息时等于不存在（Lee & See；EU AI Act）。
+      </p>
+      <p class="key-line">
+        工具负责证明，人负责质疑证明本身——并为最终判断负责。
+      </p>
+      <p>
+        这不是保守主义者对自动化的抗拒。恰恰相反，它要求我们更大胆地使用工具：
+        把执行层尽可能交出去，同时把节省下来的认知资源，集中投向工具永远不会自问的问题——
+        前提是否成立、盲区在哪里、这次要不要信、出事了谁承担。
+      </p>
+      <p>
+        阿拉丁给金融世界的最终教训是：平台越强，"默认它正确"的诱惑越大，
+        独立质疑就越稀缺、越值钱。软件质量保障正在进入同一个历史位置。
+        <strong>未来区分质量团队高下的，不会是他们拥有多强的平台，
+        而是他们的人还能不能、敢不敢、有没有权力对平台说出那句："等一下，这里不对。"</strong>
+      </p>
+    </div>
+
+    <div class="references-section">
+      <h3>主要参考资料</h3>
+      <ol>
+        <li>Mosier, K. L., Skitka, L. J., Heers, S., & Burdick, M. (1998). Automation Bias: Decision Making and Performance in High-Tech Cockpits. The International Journal of Aviation Psychology, 8(1), 47–63. <a href="https://doi.org/10.1207/s15327108ijap0801_3" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Skitka, L. J., Mosier, K. L., & Burdick, M. (2000). Accountability and automation bias. International Journal of Human-Computer Studies, 52(4), 701–755. <a href="https://doi.org/10.1006/ijhc.1999.0349" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Cummings, M. L. (2004). Automation Bias in Intelligent Time Critical Decision Support Systems. AIAA 1st Intelligent Systems Technical Conference, AIAA 2004-6313. <a href="https://doi.org/10.2514/6.2004-6313" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Parasuraman, R., & Riley, V. (1997). Humans and Automation: Use, Misuse, Disuse, Abuse. Human Factors, 39(2), 230–253. <a href="https://doi.org/10.1518/001872097778543886" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Logg, J. M., Minson, J. A., & Moore, D. A. (2019). Algorithm appreciation: People prefer algorithmic to human judgment. Organizational Behavior and Human Decision Processes, 151, 90–103. <a href="https://doi.org/10.1016/j.obhdp.2018.12.005" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Dietvorst, B. J., Simmons, J. P., & Massey, C. (2015). Algorithm Aversion: People Erroneously Avoid Algorithms after Seeing Them Err. Journal of Experimental Psychology: General, 144(1), 114–126. <a href="https://doi.org/10.1037/xge0000033" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Tschandl, P., Rinner, C., Apalla, Z., et al. (2020). Human–computer collaboration for skin cancer recognition. Nature Medicine, 26, 1229–1234. <a href="https://doi.org/10.1038/s41591-020-0942-0" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Bainbridge, L. (1983). Ironies of automation. Automatica, 19(6), 775–779. <a href="https://doi.org/10.1016/0005-1098(83)90046-8" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Endsley, M. R., & Kiris, E. (1995). The Out-of-the-Loop Performance Problem and Level of Control in Automation. Human Factors, 37(2), 381–394. <a href="https://doi.org/10.1518/001872095779064555" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Kaber, D. B., & Endsley, M. R. (1997). Out-of-the-loop performance problems and the use of intermediate levels of automation. Process Safety Progress, 16(3), 126–131. <a href="https://doi.org/10.1002/prs.680160304" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Lee, J. D., & See, K. A. (2004). Trust in Automation: Designing for Appropriate Reliance. Human Factors, 46(1), 50–80. <a href="https://doi.org/10.1518/hfes.46.1.50.30392" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Perry, N., Srivastava, M., Kumar, D., & Boneh, D. (2023). Do Users Write More Insecure Code with AI Assistants? ACM CCS '23, pp. 2785–2799. <a href="https://arxiv.org/abs/2211.03622" target="_blank" rel="noopener">arXiv:2211.03622</a>.</li>
+        <li>Yang, L., et al. (2024). On the Evaluation of Large Language Models in Unit Test Generation. ASE 2024. <a href="https://arxiv.org/abs/2406.18181" target="_blank" rel="noopener">arXiv:2406.18181</a>.</li>
+        <li>Zheng, L., Chiang, W.-L., Sheng, Y., et al. (2023). Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena. NeurIPS 2023. <a href="https://arxiv.org/abs/2306.05685" target="_blank" rel="noopener">arXiv:2306.05685</a>.</li>
+        <li>Li, Y., Guerin, F., & Lin, C. (2023/2024). An Open Source Data Contamination Report for LLMs. <a href="https://arxiv.org/abs/2310.17589" target="_blank" rel="noopener">arXiv:2310.17589</a>.</li>
+        <li>Kus, D., et al. (2022). A False Sense of Security? Revisiting the State of Machine Learning-Based Industrial Intrusion Detection. ACM CPSS '22. <a href="https://doi.org/10.1145/3494107.3522773" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Athalye, A., Carlini, N., & Wagner, D. (2018). Obfuscated Gradients Give a False Sense of Security. ICML 2018. <a href="https://arxiv.org/abs/1802.00420" target="_blank" rel="noopener">arXiv:1802.00420</a>.</li>
+        <li>Buçinca, Z., Malaya, M. B., & Gajos, K. Z. (2021). To Trust or to Think: Cognitive Forcing Functions Can Reduce Overreliance on AI. PACM HCI (CSCW), 5. <a href="https://doi.org/10.1145/3449287" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Vasconcelos, H., et al. (2023). Explanations Can Reduce Overreliance on AI Systems During Decision-Making. PACM HCI (CSCW), 7. <a href="https://doi.org/10.1145/3579605" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Si, C., et al. (2024). Large Language Models Help Humans Verify Truthfulness — Except When They Are Convincingly Wrong. NAACL 2024. <a href="https://arxiv.org/abs/2310.12558" target="_blank" rel="noopener">arXiv:2310.12558</a>.</li>
+        <li>Swaroop, S., Buçinca, Z., Gajos, K. Z., & Doshi-Velez, F. (2025). Personalising AI Assistance Based on Overreliance Rate. IUI '25. <a href="https://doi.org/10.1145/3708359.3712128" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Matthias, A. (2004). The responsibility gap: Ascribing responsibility for the actions of learning automata. Ethics and Information Technology, 6(3), 175–183. <a href="https://doi.org/10.1007/s10676-004-3422-1" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>欧盟. 人工智能法案 Regulation (EU) 2024/1689，第 14 条 Human oversight. <a href="https://eur-lex.europa.eu/eli/reg/2024/1689/oj" target="_blank" rel="noopener">EUR-Lex</a>.</li>
+        <li>Fink, M. (2025). Human Oversight under Article 14 of the EU AI Act. <a href="https://doi.org/10.2139/ssrn.5146118" target="_blank" rel="noopener">SSRN</a>；Panezi, A. (2025). AI Act Article 14 Human oversight. <a href="https://doi.org/10.2139/ssrn.5131229" target="_blank" rel="noopener">SSRN</a>.</li>
+        <li>Steiger, M., et al. (2021). The Psychological Well-Being of Content Moderators. CHI '21. <a href="https://doi.org/10.1145/3411764.3445092" target="_blank" rel="noopener">DOI</a>；Roberts, S. T. (2019). Behind the Content Moderation. Yale University Press.</li>
+        <li>BEA (2012). Final Report on the Accident on 1st June 2009 to the Airbus A330 AF447（法航447最终报告，out-of-the-loop 接管混乱案例，引用须按异常接管框架定性）.</li>
+        <li>NTSB (2020). Collision Between SUV Operating With Partial Driving Automation and Crash Attenuator, Mountain View, CA, March 23, 2018, HAR-19/03. <a href="https://www.ntsb.gov/investigations/AccidentReports/Reports/HAR1903.pdf" target="_blank" rel="noopener">NTSB PDF</a>.</li>
+        <li>质量实验室.《贝莱德阿拉丁（Aladdin）深度解剖》《复杂金融系统为什么难测》（Knight Capital 事故，2012）. 本博客 posts 目录.</li>
+      </ol>
+    </div>
+
+    <div class="article-copyright">
+      <strong>© 2026 质量实验室 · mimic66</strong><br>
+      本文首发于 <a href="https://mimic66.github.io/blog/" target="_blank">mimic66.github.io/blog</a>，
+      遵循 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">CC BY-NC-ND 4.0</a> 协议。<br>
+      非商业转载请注明出处及原文链接，禁止修改演绎后转载。
+    </div>
+
+  </article>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    © 2024-2026 质量实验室 · 基于 GitHub Pages 构建
+  </div>
+</footer>
+
+</body>
+</html>
