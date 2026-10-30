@@ -142,7 +142,7 @@
         人为什么反而更需要独立质疑？本文从自动化偏见、自动化反讽、绿灯崇拜、同源失效
         四条证据链出发，回答一个问题：在工具持续吞掉执行层的时代，质量专业还剩下什么是不可替代的。
       </div>
-      <div class="meta">2026-10-30 · 金融质量保障 · 约 25 分钟阅读 · 文献截至 2026 年 10 月</div>
+      <div class="meta">2026-10-30（2026 新证据增补版）· 金融质量保障 · 约 35 分钟阅读 · 文献截至 2026 年 10 月</div>
     </div>
 
     <h2>一、起点：一句来自金融风险管理的教训</h2>
@@ -574,15 +574,199 @@
       <strong>质疑必须被赋权，否则它在进度压力下活不过第一个迭代。</strong>
     </p>
 
-    <h2>八、结语：质量专业真正的主体</h2>
+    <h2>八、2026 年的再检验：模型更强了，问题消失了吗？</h2>
+
+    <p>
+      一个自然的反驳是：前文引用的经典研究大多基于早期自动化或 2024 年以前的模型。
+      今天的编码智能体已经能自主完成多步任务、准确率大幅提升，这些老问题会不会自然消失？
+      2025 下半年至 2026 年的一批新研究给出的答案是：<strong>没有消失，而是换了更隐蔽的形态</strong>。
+    </p>
+
+    <h3>8.1 自动化偏见：2026 年最强 RCT，且"培训"不能免疫</h3>
+
+    <p>
+      Qazi 等人 2026 年发表于《NEJM AI》的随机对照试验中，44 名<strong>已完成 20 小时
+      AI 素养培训</strong>的医生处理 264 个病例，AI 建议可自愿查阅、也可拒绝。
+      结果综合诊断准确率从 84.9% 降到 73.3%（调整后 −14.0 个百分点，p&lt;0.0001），
+      首选诊断准确率降幅达 18.3 个百分点。<strong>自愿使用和正式培训都没能挡住偏见。</strong>
+    </p>
+
+    <p>
+      但要如实呈现学界的争论：同期《NEJM AI》的评论文章指出，这 14 个百分点的下降
+      也许只是"错误信息对推理的一般影响"（人类顾问给错信息同样如此），未必还应冠以
+      "automation bias"之名。<strong>效应是否成立已有强证据，该如何命名和归因仍在争论中</strong>——
+      对工程实践而言，这个分歧不改变结论：错误的 AI 建议确实在系统性地拉低专业判断。
+    </p>
+
+    <h3>8.2 智能体时代的新失效：高自信地漏掉"静默缺陷"</h3>
+
+    <p>
+      2026 年最贴近编码智能体现状的实验来自 Dissanayake 等人（含 MIT，arXiv:2610.27801）。
+      研究者让被试监督智能体的输出，输出分三类：正确、<strong>静默缺陷（没有任何外部报错的错）</strong>、
+      可见失败，并结合眼动和生理信号监测。结果发现：参与者在高自信状态下会系统性漏掉
+      静默缺陷——只做泛化检查、不去生成诊断性证据，甚至误读摆在眼前的缺陷证据。
+      论文由此区分了三个此前被混为一谈的层次：<strong>"我以为我在监督""我的动作像在监督"
+      "监督实际上有效"</strong>，三者可以完全分离。
+    </p>
+
+    <p>
+      微软研究院 FAccT 2026 的访谈研究（17 名有经验开发者）给出了定性侧写：
+      开发者会理性地选择"高效而非完美"的监督，并普遍持有一个危险启发式——
+      <strong>把"测试通过"直接当成"代码正确"的保证</strong>。这正是本文第四节"绿灯崇拜"
+      在智能体工作流下的自然延续。
+    </p>
+
+    <p>
+      Anthropic 2026 年 2 月基于数百万次真实人机交互的企业研究，补上了规模化视角
+      （数据来自 Claude Code 与公开 API，非同行评审）：
+    </p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>观察</th>
+            <th>数据</th>
+            <th>含义</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tagcell">信任随经验累积</td>
+            <td>全自动批准会话占比：新用户约 20%，750 次会话后升至 40%+</td>
+            <td>越熟练越放手——本身合理，但监督方式必须同步升级</td>
+          </tr>
+          <tr>
+            <td class="tagcell">复杂任务反而更少人盯</td>
+            <td>高复杂度任务人工参与 67%，低复杂度任务 87%</td>
+            <td><strong>步骤越多，逐步批准在结构上越不可行</strong>——风险与注意力倒挂</td>
+          </tr>
+          <tr>
+            <td class="tagcell">自主时长的长尾</td>
+            <td>99.9 分位单次自主运行：3 个月内从 &lt;25 分钟增至 &gt;45 分钟</td>
+            <td>人脱离回路的时间窗口正在变长</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="data-note">
+      来源：Anthropic, Measuring AI agent autonomy in practice (2026-02-18)，企业研究而非同行评审论文，
+      引用时注意证据等级。
+    </p>
+
+    <h3>8.3 可靠性悖论：AI 越准，残留的错误越致命</h3>
+
+    <div class="insight-box">
+      Ibrahim、Collins 等多机构作者（牛津、剑桥、普林斯顿、OpenAI 等）在 AIES 2026
+      （arXiv:2509.08010）中明确提出了一个<strong>"悖论"</strong>：
+      人们以为 AI 越成熟，过度依赖会自然消失；但随着 AI 能力增强，它的输出看起来越来越有说服力，
+      <strong>察觉它何时出错反而变得更困难</strong>。错误越罕见，人越缺少学习和校准的机会，
+      仅存的错误就集中在最隐蔽、最反直觉、人也最容易附和的地方。
+    </div>
+
+    <p>
+      多条 2026 年证据从不同方向汇聚到同一个点：
+    </p>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <div class="c-icon">🩺</div>
+        <h4>Qazi 2026</h4>
+        <p>错误稀少时，连受训专业人员都无法仅靠素养训练保持警觉。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">🔇</div>
+        <h4>Dissanayake 2026</h4>
+        <p>"静默缺陷"没有失败信号，高自信恰恰出现在最该怀疑的时刻。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">📉</div>
+        <h4>Anthis 等 2026</h4>
+        <p>人要"见过足够多错误"才会调整使用；错误罕见意味着校准机会被剥夺。</p>
+      </div>
+      <div class="concept-card">
+        <div class="c-icon">🎭</div>
+        <h4>METR 2026</h4>
+        <p>更强的模型既更会监督、也更会规避监督；红队发现智能体可学会骗过监控器。</p>
+      </div>
+    </div>
+
+    <p>
+      需要诚实标注证据强度："可靠性悖论"目前以立场论文、事故库统计（AI Incident Database,
+      N=1,339）和行为实验的<strong>间接证据</strong>为主，尚缺少"同一群人随模型准确率阶梯变化、
+      长期追踪罕见错误检出率"的纵向因果实验。但它的工程含义已经足够清晰：
+      <strong>不能用"模型更可靠了"作为放松人工质疑的理由，监督资源应当向罕见、静默、
+      高后果的错误集中，而不是平均摊在每一步上。</strong>
+    </p>
+
+    <h3>8.4 认知卸载的代价：顶刊给出的新证据</h3>
+
+    <p>
+      关于 Bainbridge 反讽，2026 年<strong>没有</strong>出现以它为直接框架的受控复制实验
+      （最新的直接复刻仍是 2023 年公共服务 RPA 场景研究），这一点必须如实说明。
+      但"技能退化"这一核心机制在 2026 年得到了顶刊级别的新证据：
+    </p>
+
+    <ul>
+      <li><strong>Cash 等（2026，《Trends in Cognitive Sciences》）"Is AI making us stupid?"</strong>：把认知完全卸载给 AI 会阻碍技能习得并导致退化；但保持"在认知回路内"的使用方式可以缓解——问题不在用不用，而在人是否还在线。</li>
+      <li><strong>Wiles 等（2026，《Nature Human Behaviour》，作者含 OpenAI 研究人员）</strong>：有工具时知识工作者表现出更高能力，但实验后拿走 ChatGPT，能力并未留存——是"临时技能提升"，不是知识获取。</li>
+      <li><strong>Noessel（2026，《AI Magazine》）</strong>：通过受控设计干预（"Human Goes First"原则）成功逆转了导航任务中的去技能，给出了可操作的反制手段。</li>
+    </ul>
+
+    <h3>8.5 编码智能体的新攻击面：66.5% 的恶意请求穿透防护</h3>
+
+    <p>
+      工具变强还带来了旧时代不存在的风险。Singh 等 2026 年的 IssueTrojanBench
+      （arXiv:2607.20759）对 Cursor、Claude Code、Codex Desktop 实测发现：
+      <strong>66.5% 的恶意 issue 请求穿透了智能体层与模型层的全部防护</strong>，
+      拒绝几乎全部来自大模型本身，智能体框架提供的额外防御有限。
+      2026 年还出现了多个真实 CVE：指令文件（CLAUDE.md / AGENTS.md）投毒、
+      自定义 agent hook 的远程代码执行（CVE-2026-70335）等。
+    </p>
+
+    <p>
+      与此同时，对智能体产出 PR 的研究显示了审查瓶颈：MSR 2026 的研究发现近 70% 的
+      agent 作者 PR 面临更长审查时间、完全未被审查或很快被拒；另一项研究用 SonarQube
+      证明"PR 合并成功"不能可靠代表合并后的代码质量。<strong>代码可以由智能体批量生产，
+      但质疑它的注意力是稀缺且不可批量的。</strong>
+    </p>
+
+    <h3>8.6 监管者的 2026 答案：有效监督，而非形式监督</h3>
+
+    <p>
+      金融稳定理事会（FSB）2026 年 10 月 15 日发布的《负责任采用 AI 的稳健做法》
+      12 条中，第 10 条专门规定人工监督：金融机构应按用例的重要性、风险、
+      <strong>自主性</strong>与可解释性配置"适当且有效"的监督，并明确把
+      "人工监督不足导致过度依赖、干预机制不足"列入风险清单。OECD 2026 年 9 月
+      对 25 个组织的访谈则发现：<strong>连续的逐步人审在规模化下被普遍认为不现实，
+      组织正在转向"边界内自主执行 + 高风险节点检查点"的校准模式</strong>——
+      这与本文第七节"把质疑资源集中到关键节点"的建议方向一致。
+    </p>
+
+    <p>
+      最后仍是两点诚实的空白：欧盟 AI 法案高风险义务已通过 Omnibus 推迟至 2027–2028 年，
+      因此 2026 年<strong>不存在</strong>真正意义上的"实施后"经验研究；
+      而"智能体模式 vs 补全模式"在同一任务下的安全差异严格对照实验，目前也仍是空白。
+    </p>
+
+    <div class="warn-box">
+      <strong>2026 年的总账单：</strong>模型准确率的提升，消除的是"显而易见的错误"，
+      而不是"对显而易见的安心感的需求"。当错误变得静默、罕见而有说服力，
+      独立质疑的对象从"逐条检查输出"升级为"审视系统的边界、假设与自身的过度自信"——
+      这对人的要求不是更低，而是更高了。
+    </div>
+
+    <h2>九、结语：质量专业真正的主体</h2>
 
     <div class="verdict-box">
       <h3>执行会被持续吞掉，质疑与责任会留下来</h3>
       <p>
-        回顾全文的证据链：人会因自动化偏见主动停止思考（Mosier & Skitka；Cummings），
-        会因自动化反讽在关键时刻接不住（Bainbridge；Endsley），
-        会被绿灯和同源测试制造虚假安全感（Perry；Kus；Zheng），
-        而形式上的"人在回路"在没时间、没权力、没信息时等于不存在（Lee & See；EU AI Act）。
+        回顾全文的证据链：人会因自动化偏见主动停止思考（Mosier & Skitka；Qazi 2026），
+        会因自动化反讽与认知卸载在关键时刻接不住（Bainbridge；Cash 2026；Wiles 2026），
+        会被绿灯、同源测试和智能体的"静默缺陷"制造虚假安全感（Perry；Dissanayake 2026），
+        而形式上的"人在回路"在没时间、没权力、没信息时等于不存在（Lee & See；EU AI Act；FSB 2026）。
+        2026 年的新研究没有推翻任何一条旧结论，反而揭示了它们在模型更强时更隐蔽的形态——可靠性悖论。
       </p>
       <p class="key-line">
         工具负责证明，人负责质疑证明本身——并为最终判断负责。
@@ -631,6 +815,26 @@
         <li>BEA (2012). Final Report on the Accident on 1st June 2009 to the Airbus A330 AF447（法航447最终报告，out-of-the-loop 接管混乱案例，引用须按异常接管框架定性）.</li>
         <li>NTSB (2020). Collision Between SUV Operating With Partial Driving Automation and Crash Attenuator, Mountain View, CA, March 23, 2018, HAR-19/03. <a href="https://www.ntsb.gov/investigations/AccidentReports/Reports/HAR1903.pdf" target="_blank" rel="noopener">NTSB PDF</a>.</li>
         <li>质量实验室.《贝莱德阿拉丁（Aladdin）深度解剖》《复杂金融系统为什么难测》（Knight Capital 事故，2012）. 本博客 posts 目录.</li>
+      </ol>
+      <h3 style="margin-top:22px">2025–2026 年新增证据（智能体 AI 时代的再检验）</h3>
+      <ol start="28">
+        <li>Qazi, I. A., et al. (2026). Automation Bias in Large Language Model–Assisted Diagnostic Reasoning among Physicians Trained in AI Literacy — A Randomized Clinical Trial. NEJM AI, 3(5), AIoa2501001. <a href="https://doi.org/10.1056/AIoa2501001" target="_blank" rel="noopener">DOI</a>；同刊评论 Branda & Ciccozzi (2026), DOI 10.1056/AIltr2600987；反方评论 DOI 10.1056/AIe2600354.</li>
+        <li>Dissanayake, D., et al. (2026). Looks Fine to Me: Understanding Oversight in Agentic Interactions（含 MIT；眼动+生理信号，"静默缺陷"漏检）. arXiv:2610.27801. <a href="https://arxiv.org/abs/2610.27801" target="_blank" rel="noopener">arXiv</a>.</li>
+        <li>Dhanorkar, S., Passi, S., & Vorvoreanu, M. (2026). Human Oversight of Agentic Systems in Practice: Developers Using Software Agents. FAccT '26（Microsoft Research；"测试通过=代码正确"危险启发式）. <a href="https://doi.org/10.1145/3805689.3812402" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Anthropic (2026-02-18). Measuring AI agent autonomy in practice（数百万次交互的企业研究，非同行评审；信任随经验增长、复杂任务人工参与反而更低）. <a href="https://www.anthropic.com/research/measuring-agent-autonomy" target="_blank" rel="noopener">anthropic.com</a>.</li>
+        <li>Ibrahim, L., Collins, K. M., et al. (2026). Measuring and Mitigating Overreliance to Build Human-Compatible AI（"可靠性悖论"；AI 事故库 N=1,339）. AIES 2026, arXiv:2509.08010. <a href="https://arxiv.org/abs/2509.08010" target="_blank" rel="noopener">arXiv</a>.</li>
+        <li>Li, S., et al. (2026). Guided Reflection in AI-Assisted Decision-Making: Effects on AI Overreliance and Decision Accuracy. CHI '26. <a href="https://doi.org/10.1145/3772318.3790632" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Anthis, J. R., Cha, H., Barocas, S., Chouldechova, A., & Hofman, J. (2026). Effects of Generative AI Errors on User Reliance Across Task Difficulty（N=577）. arXiv:2604.04319. <a href="https://arxiv.org/abs/2604.04319" target="_blank" rel="noopener">arXiv</a>.</li>
+        <li>Cash, T. N., Kelly, M. O., Macnamara, B. N., & Risko, E. F. (2026). Is AI making us stupid? Trends in Cognitive Sciences. <a href="https://doi.org/10.1016/j.tics.2026.06.004" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Wiles, E., et al. (2026). Generative AI and the temporary upskilling of knowledge workers. Nature Human Behaviour（拿走工具后能力未留存）. <a href="https://doi.org/10.1038/s41562-026-02566-6" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Noessel (2026). Deskilling and overreliance: Two long-term risks of AI assistance, and what designers can do about them. AI Magazine. <a href="https://doi.org/10.1002/aaai.70096" target="_blank" rel="noopener">DOI</a>.</li>
+        <li>Rathi, N., Jurafsky, D., & Zhou, K. (2025). Humans overrely on overconfident language models, across languages. COLM 2025, arXiv:2507.06306. <a href="https://arxiv.org/abs/2507.06306" target="_blank" rel="noopener">arXiv</a>；Puppart & Aru (2025/2026), 错误建议采纳率 52.1%、素养干预无效, arXiv:2503.10556.</li>
+        <li>Singh, A., Yang, J., & Chen, T.-H. (2026). IssueTrojanBench: Benchmarking AI Coding Agents Against Malicious Issue Requests（66.5% 恶意请求穿透全部防护）. arXiv:2607.20759. <a href="https://arxiv.org/abs/2607.20759" target="_blank" rel="noopener">arXiv</a>.</li>
+        <li>Agent PR 质量实证 (2026)：On the Use of Agentic Coding: An Empirical Study of Pull Requests on GitHub, ACM TOSEM, <a href="https://doi.org/10.1145/3798166" target="_blank" rel="noopener">DOI</a>；MSR '26（近 70% agent PR 审查受阻）DOI 10.1145/3793302.3793566；Cynthia, Muttakin & Roy (2026) 合并后质量问题；CHI '26 "When Help Hurts: Verification Load and Fatigue with AI Coding Assistants" DOI 10.1145/3772318.3791176.</li>
+        <li>FSB (2026-10-15). Sound Practices for Responsible Adoption of Artificial Intelligence: Final report（第 10 条 Human oversight）. <a href="https://www.fsb.org/uploads/P151026-1.pdf" target="_blank" rel="noopener">fsb.org PDF</a>.</li>
+        <li>OECD (2026-09-16). Agentic AI in organisations（25 个组织访谈；连续人审不现实，转向检查点模式）. <a href="https://www.oecd.org/content/dam/oecd/en/publications/reports/2026/09/agentic-ai-in-organisations_1f17d235/1257a26f-en.pdf" target="_blank" rel="noopener">OECD PDF</a>.</li>
+        <li>METR (2026). Frontier Risk Report（智能体欺骗监控器倾向）；Time Horizon 方法说明（"时间跨度"为人类任务耗时，非 agent 自主时长）. <a href="https://metr.org" target="_blank" rel="noopener">metr.org</a>；Stanford HAI, AI Index 2026. <a href="https://hai.stanford.edu/ai-index/2026" target="_blank" rel="noopener">hai.stanford.edu</a>.</li>
+        <li>证据空白如实记录：Bainbridge 反讽在 agentic AI 下尚无 2026 直接复制实验（直接复刻仍为 Lindgren 2023, dg.o '23）；EU AI Act 高风险义务经 Omnibus (EU) 2026/1744 推迟至 2027–2028，无"实施后"经验研究；agent 模式 vs 补全模式同任务安全严格对照缺失。</li>
       </ol>
     </div>
 
