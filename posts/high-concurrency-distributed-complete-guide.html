@@ -30,6 +30,18 @@
     }
     .formula-box .f { font-family: "Georgia", serif; font-size: 1.15em; font-weight: 700; color: #166534; }
 
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+    @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+    .side-card { border-radius: 12px; padding: 20px 24px; }
+    .side-dev { background: #eff6ff; border: 1px solid #93c5fd; }
+    .side-qa { background: #fef3c7; border: 1px solid #fcd34d; }
+    .side-card h3 { margin: 0 0 10px; font-size: 1.02em; }
+    .side-dev h3 { color: #1e40af; }
+    .side-qa h3 { color: #92400e; }
+    .side-card p, .side-card li { font-size: 0.88em; line-height: 1.75; color: #334155; }
+    .side-card ul { margin: 8px 0 0; padding-left: 20px; }
+    .data-note { font-size: 0.82em; color: #64748b; line-height: 1.7; margin: 4px 0 20px; }
+
     .diagram-wrap { margin: 28px 0; }
     .diagram-wrap svg { width: 100%; height: auto; display: block; }
     .diagram-caption { text-align: center; font-size: 0.83em; color: #64748b; margin-top: 8px; }
@@ -88,12 +100,13 @@
       <h1>高并发与分布式：<br>技术实现与质量保障的完整体系</h1>
       <div class="subtitle">
         高并发的本质不是"扛住更多请求"，而是<strong style="color:#86efac">在流量远超单机能力时，
-        依然保持可接受的延迟、可控的错误率与系统的稳定</strong>。本文从定量模型讲起，
-        拆解缓存、异步、池化、分片、限流熔断五大手段，再用一整套质量保障方法——
+        依然保持可接受的延迟、可控的错误率与系统的稳定</strong>。        本文先把<strong style="color:#86efac">高并发与分布式这两个正交维度讲清、并做系统对比</strong>，
+        再从定量模型讲起，
+        拆解缓存、异步、池化、分片、限流熔断五大手段，用一整套质量保障方法——
         容量规划、七类压测、全链路生产压测、混沌工程、SLO 与级联故障防御——回答
         "如何证明系统真的扛得住"。
       </div>
-      <div class="meta">2026-11-03 · 金融质量保障 · 约 42 分钟阅读 · 证据截至 2026 年 10 月</div>
+      <div class="meta">2026-11-03 · 金融质量保障 · 约 47 分钟阅读 · 证据截至 2026 年 10 月</div>
     </div>
 
     <h2>一、先定量：高并发的三个数学模型</h2>
@@ -147,7 +160,127 @@
       <strong>瓶颈定位两方法配合使用：</strong>USE（Gregg）对每个物理资源检查使用率/饱和度/错误数，用于<strong>找原因</strong>（CPU、内存、磁盘、网卡、锁、连接池）；RED（Wilkie）对每个服务监控速率/错误/延迟，用于<strong>看症状</strong>。Google 四大黄金信号（延迟、流量、错误、饱和）是 RED + 饱和。最佳实践：对症状（RED）告警，用 USE 排查。经验值：I/O 类资源使用率 70%+ 往往已是瓶颈。
     </div>
 
-    <h2>二、五大技术手段：系统如何把吞吐做上去</h2>
+    <h2>二、高并发 vs 分布式：两个正交的问题，常被混为一谈</h2>
+
+    <p>
+      在继续讲技术手段之前，必须先把两个概念分开——<strong>它们是两个独立维度的挑战，而不是同一件事的两种说法</strong>。
+      一个系统可以高并发但不分布式（单机高性能服务器），也可以分布式但不高并发（跨国部署的低频内部系统）。
+      理解它们的差异，是避免错误选型的第一步。
+    </p>
+
+    <h3>2.1 定义：各自要解决的根本问题不同</h3>
+
+    <div class="two-col">
+      <div class="side-card side-qa">
+        <h3>高并发（High Concurrency）</h3>
+        <p>核心问题：<strong>同一时刻涌来大量请求，如何在可接受的延迟内把它们处理完</strong>。它本质是一个"吞吐与延迟"问题，关心的是单位时间的处理能力。</p>
+        <ul>
+          <li>关键指标：QPS/TPS、P99 延迟、并发连接数</li>
+          <li>核心手段：缓存、异步、池化、无阻塞、扩容</li>
+          <li>失败表现：响应变慢、超时、资源耗尽、雪崩</li>
+        </ul>
+      </div>
+      <div class="side-card side-dev">
+        <h3>分布式（Distributed）</h3>
+        <p>
+          核心问题：<strong>业务跨越多台独立失败、无全局时钟、仅靠不可靠网络连接的机器，如何让它们协同得像一个整体</strong>。
+          它本质是一个"协作与正确"问题，关心的是多节点之间的一致性、可用性与容错。
+        </p>
+        <ul>
+          <li>关键指标：可用性、一致性级别、容错能力、分区行为</li>
+          <li>核心手段：复制、共识选主、分布式事务、服务发现</li>
+          <li>失败表现：脑裂、丢写、不一致、重复操作、无法收敛</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>2.2 根源差异：为什么会有这两类问题</h3>
+    <ul>
+      <li><strong>高并发的根源</strong>是<strong>资源有限而请求密集</strong>——CPU、内存、IO 的处理速度跟不上瞬时请求量，所以要"提升单位资源的处理效率 + 用更多资源分摊"。</li>
+      <li><strong>分布式的根源</strong>是<strong>物理规律</strong>——网络会延迟与中断（Waldo 等 1994《A Note on Distributed Computing》指出：本地调用与远程调用在延迟、内存、失败模式上有本质区别，无法透明统一）、节点会独立崩溃、系统没有全局时钟（Lamport 1978）、任何节点都无法及时准确获知另一节点的真实状态。</li>
+    </ul>
+
+    <h3>2.3 正交互补：四个象限</h3>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 880 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="高并发与分布式正交四象限图">
+        <text x="440" y="32" text-anchor="middle" font-size="18" font-weight="700" fill="#0f172a">高并发 × 分布式：两个独立维度，四个象限</text>
+
+        <!-- axes -->
+        <line x1="440" y1="70" x2="440" y2="410" stroke="#334155" stroke-width="2"/>
+        <line x1="140" y1="240" x2="740" y2="240" stroke="#334155" stroke-width="2"/>
+        <text x="440" y="438" text-anchor="middle" font-size="13.5" fill="#334155">分布式程度 →（单节点 … 跨多节点协作）</text>
+        <text x="70" y="240" font-size="13.5" fill="#334155" text-anchor="middle" transform="rotate(-90 70 240">并发程度 →（低 … 高）</text>
+
+        <!-- Q2 high concurrency / not distributed -->
+        <rect x="200" y="90" width="220" height="130" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+        <text x="310" y="118" text-anchor="middle" font-size="13.5" font-weight="700" fill="#92400e">高并发 · 不分布式</text>
+        <text x="310" y="146" text-anchor="middle" font-size="12" fill="#78350f">单机高性能服务器</text>
+        <text x="310" y="168" text-anchor="middle" font-size="11.5" fill="#78350f">多核+大内存优化单机吞吐</text>
+        <text x="310" y="192" text-anchor="middle" font-size="11.5" fill="#b45309">风险：单点故障，无容灾</text>
+
+        <!-- Q1 high concurrency + distributed -->
+        <rect x="460" y="90" width="220" height="130" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+        <text x="570" y="118" text-anchor="middle" font-size="13.5" font-weight="700" fill="#14532d">高并发 · 分布式</text>
+        <text x="570" y="146" text-anchor="middle" font-size="12" fill="#166534">双11、12306、大型互联网</text>
+        <text x="570" y="168" text-anchor="middle" font-size="11.5" fill="#166534">既要吞吐又要容错一致</text>
+        <text x="570" y="192" text-anchor="middle" font-size="11.5" fill="#15803d">最复杂，两套手段并用</text>
+
+        <!-- Q3 low concurrency / not distributed -->
+        <rect x="200" y="260" width="220" height="130" rx="10" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+        <text x="310" y="288" text-anchor="middle" font-size="13.5" font-weight="700" fill="#334155">低并发 · 不分布式</text>
+        <text x="310" y="316" text-anchor="middle" font-size="12" fill="#475569">内部小工具、单体小系统</text>
+        <text x="310" y="338" text-anchor="middle" font-size="11.5" fill="#475569">简单直接，本地 ACID</text>
+        <text x="310" y="362" text-anchor="middle" font-size="11.5" fill="#64748b">警惕：过度设计反而有害</text>
+
+        <!-- Q4 low concurrency + distributed -->
+        <rect x="460" y="260" width="220" height="130" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+        <text x="570" y="288" text-anchor="middle" font-size="13.5" font-weight="700" fill="#1e3a8a">低并发 · 分布式</text>
+        <text x="570" y="316" text-anchor="middle" font-size="12" fill="#1e40af">跨国多活内部系统、边缘节点</text>
+        <text x="570" y="338" text-anchor="middle" font-size="11.5" fill="#1e40af">主要矛盾是一致性而非吞吐</text>
+        <text x="570" y="362" text-anchor="middle" font-size="11.5" fill="#2563eb">用共识/事务，不需过度缓存</text>
+      </svg>
+      <div class="diagram-caption">图 2：先判断系统落在哪个象限，再决定手段组合——象限选错，越多优化越是负担</div>
+    </div>
+
+    <h3>2.4 核心差异速查表</h3>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>维度</th><th>高并发</th><th>分布式</th></tr></thead>
+        <tbody>
+          <tr><td class="tagcell">本质问题</td><td>吞吐与延迟（效率）</td><td>协作与正确（容错/一致）</td></tr>
+          <tr><td class="tagcell">产生根源</td><td>资源有限，请求密集</td><td>网络不可靠、节点独立失败、无全局时钟</td></tr>
+          <tr><td class="tagcell">关注指标</td><td>QPS、P99、并发数、资源利用率</td><td>可用性、一致性、分区容忍、恢复时间</td></tr>
+          <tr><td class="tagcell">核心手段</td><td>缓存、异步、池化、非阻塞、水平扩展</td><td>复制、共识选主、分布式事务、服务发现</td></tr>
+          <tr><td class="tagcell">典型病症</td><td>超时、资源耗尽、雪崩、响应变慢</td><td>脑裂、丢确认写、数据不一致、重复操作</td></tr>
+          <tr><td class="tagcell">主要理论</td><td>Little 法则、排队论、USL</td><td>CAP/PACELC、FLP、Paxos/Raft、ACID</td></tr>
+          <tr><td class="tagcell">默认假设</td><td>请求会越来越多</td><td>一切随时可能失败（不信任）</td></tr>
+          <tr><td class="tagcell">判断标准</td><td>快不快、扛不扛得住量</td><td>对不对、挂了能不能活、数据丢不丢</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>2.5 分布式独有的核心议题（高并发不涉及）</h3>
+    <p>以下问题源于"多节点"本身，即使没有任何流量压力也必须回答，这正是本篇前文缺失的部分：</p>
+    <ul>
+      <li><strong>副本一致性模型</strong>——线性/顺序/因果/最终一致，是系统对"读副本的观察者"的承诺；</li>
+      <li><strong>共识与选主</strong>——Paxos/Raft/Zab 解决"多个节点如何达成同一决定、谁来拍板"，FLP 不可能性给出根本边界；</li>
+      <li><strong>分布式事务</strong>——2PC/TCC/Saga/本地消息表，解决跨边界操作的一致性，补偿≠回滚；</li>
+      <li><strong>分布式的其他硬问题</strong>——服务发现与成员变更、分布式锁与 fencing token、不可靠故障检测、时钟与顺序、异构与部分失败、恰好一次语义的不可能性。</li>
+    </ul>
+    <p class="data-note">这三大议题的完整剖析，见本实验室《副本一致性、共识选主、分布式事务：分布式系统为什么需要它们》与《Java 分布式系统一致性》两篇专文，本文不重复展开。</p>
+
+    <h3>2.6 两者的交汇：为什么大型系统总是两者叠加</h3>
+    <div class="insight-box">
+      真实的大规模系统（双11、12306、头部互联网）都落在右上象限——<strong>为了承载高并发必须水平扩展成分布式，而一旦分布式，又引入一致性与容错的新难题</strong>。
+      这里有一个关键的反作用：<strong>分布式手段往往会伤害并发性能</strong>——共识多数派增加延迟、强一致限制并行、2PC 同步阻塞。
+      这就是 PACELC 的核心张力：分区时选可用还是一致、正常时选延迟还是一致。
+      所以架构师的真实工作不是"把高并发做好"或"把分布式做好"，而是<strong>在吞吐、延迟、一致性、可用性四个目标之间按业务做显式取舍</strong>。
+      一个反复出现的工程纪律是：<em>能用单库单机扛住的量，就不要过早分布式</em>——分布式是为解决容量瓶颈付出的"复杂度税"，不是先进的标志。
+    </div>
+
+    <h2>三、五大技术手段：系统如何把吞吐做上去</h2>
 
     <h3>2.1 缓存：最高性价比的手段，也是最危险的依赖</h3>
     <p>缓存把读请求从慢速数据库拦截到内存，是提升读吞吐的第一手段。生产中通常<strong>本地缓存（Caffeine）+ 分布式缓存（Redis）两级</strong>。</p>
@@ -255,10 +388,10 @@
         <text x="450" y="356" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fbbf24">贯穿全程：可观测性（Metrics / Logging / Tracing）+ SLO 告警</text>
         <text x="450" y="378" text-anchor="middle" font-size="12" fill="#94a3b8">容量规划 · 全链路压测 · 混沌工程 · 故障演练</text>
       </svg>
-      <div class="diagram-caption">图 2：高并发是纵深防御——任何单点手段都不够，必须层层设卡、全程可见</div>
+      <div class="diagram-caption">图 3：高并发是纵深防御——任何单点手段都不够，必须层层设卡、全程可见</div>
     </div>
 
-    <h2>三、架构演进：什么阶段用什么手段</h2>
+    <h2>四、架构演进：什么阶段用什么手段</h2>
 
     <div class="table-wrap">
       <table class="data-table">
@@ -287,7 +420,7 @@
       <li>Twitter 2014 世界杯冠军时刻峰值 <strong>618,725 条/分钟（约 1.03 万条/秒）</strong></li>
     </ul>
 
-    <h2>四、质量保障：如何证明系统真的扛得住</h2>
+    <h2>五、质量保障：如何证明系统真的扛得住</h2>
 
     <h3>4.1 容量规划与 SLO</h3>
     <ul>
@@ -364,7 +497,7 @@
       OpenTelemetry 由 OpenTracing + OpenCensus 合并，已于 <strong>2026 年 5 月从 CNCF 毕业</strong>，成为事实标准（traces/metrics/logs 均 GA）。
       饱和类告警应是预测性的（"磁盘预计 4 小时写满"）。<strong>监控自身必须独立生存</strong>——AWS 2021 事故中网络拥塞先损害了监控数据，显著拖慢定位。</p>
 
-    <h2>五、十个官方事故复盘</h2>
+    <h2>六、十个官方事故复盘</h2>
 
     <div class="table-wrap">
       <table class="data-table">
@@ -389,7 +522,7 @@
       Twitter Fail Whale 是架构回顾非事故复盘；网传各系统 QPS 无官方出处一律不采信。
     </div>
 
-    <h2>六、反复出现的七条规律</h2>
+    <h2>七、反复出现的七条规律</h2>
     <ol>
       <li><strong>过载是第一杀手，而非硬件失效</strong>——多数事故核心是过载 + 正反馈。</li>
       <li><strong>重试是放大器</strong>——必须退避 + 抖动 + 预算 + 过载状态码。</li>
@@ -452,6 +585,7 @@
         <li>Bronson et al. Metastable States in Distributed Systems, HotOS 2021。</li>
         <li>官方复盘：AWS Kinesis 2020 / 网络 2021 / S3 2017 / DynamoDB 2015；Slack 2022；GitHub 2018；Cloudflare 2019；Roblox 2021；GitLab 2017；FINRA AWC Robinhood 2020。</li>
         <li>12306《互联网售票系统架构优化及演进》；阿里双11 官方数据；Twitter 2014 世界杯回顾；Ticketmaster 业务说明（非技术复盘）。</li>
+        <li>分布式基础理论：Waldo, J. et al. (1994), A Note on Distributed Computing（本地与远程调用的本质差异）；Lamport, L. (1978), Time, Clocks and the Ordering of Events in a Distributed System（无全局时钟）；CAP/PACELC、FLP、Paxos/Raft（详见正文引用的两篇一致性专文）。</li>
         <li>延伸阅读：本实验室《副本一致性、共识选主、分布式事务》《Java 分布式系统一致性》《性能测试纪律循环》。</li>
       </ol>
     </div>
