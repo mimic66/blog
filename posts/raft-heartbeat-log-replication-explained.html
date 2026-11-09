@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>心跳不是握手，日志不是 app.log：从一个误解出发，把 Raft 讲到数据落盘 - 质量实验室</title>
+  <meta name="description" content="从'Raft 心跳和 TCP 三次握手是不是一回事'这个常见误解出发，沿心跳→共识→协议分类→日志复制→数据同步的路径深入 Raft：TCP 握手是一次性建连、Raft 心跳是周期性 AppendEntries RPC；Raft 用任期与随机选举超时解决选主；Raft 日志装的是状态机指令而非业务文本日志；业务数据变更经'日志复制到多数派→提交→按序应用到状态机'达成一致，节点间真正传输的是日志和快照，data 目录的数据是各副本'计算'出来的。">
+  <link rel="stylesheet" href="../css/style.css?v=20261026a">
+  <style>
+    .post-hero {
+      background: linear-gradient(135deg, #0b1220 0%, #1e3a8a 55%, #0ea5e9 100%);
+      color: #f0f9ff;
+      padding: 48px 40px;
+      border-radius: 12px;
+      margin-bottom: 36px;
+    }
+    .post-hero h1 { color: #fff; -webkit-text-fill-color: #fff; background: none; font-size: 1.66em; line-height: 1.42; margin-bottom: 12px; }
+    .post-hero .subtitle { color: #bae6fd; font-size: 0.95em; line-height: 1.8; }
+    .post-hero .meta { color: #7dd3fc; font-size: 0.85em; margin-top: 16px; }
+
+    .data-note { font-size: 0.82em; color: #94a3b8; line-height: 1.7; margin: 4px 0 20px; }
+
+    .diagram-wrap { margin: 30px 0; }
+    .diagram-wrap svg { width: 100%; height: auto; display: block; }
+    .diagram-caption { text-align: center; font-size: 0.83em; color: #64748b; margin-top: 8px; }
+
+    .concept-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px 22px; margin: 16px 0; border-top: 3px solid #0284c7; }
+    .concept-card h3 { margin: 0 0 8px; color: #0c4a6e; font-size: 1.02em; }
+    .concept-card p { margin: 8px 0; font-size: 0.9em; line-height: 1.8; color: #334155; }
+    .concept-card p strong { color: #0f172a; }
+    .concept-card .src { font-size: 0.78em; color: #9ca3af; }
+
+    .insight-box { background: #f0f9ff; border-left: 4px solid #0284c7; padding: 18px 22px; margin: 24px 0; border-radius: 0 10px 10px 0; font-size: 0.91em; line-height: 1.8; color: #0c4a6e; }
+    .warn-box { background: #fef2f2; border-left: 4px solid #dc2626; padding: 18px 22px; margin: 24px 0; border-radius: 0 10px 10px 0; font-size: 0.91em; line-height: 1.8; color: #991b1b; }
+
+    .table-wrap { overflow-x: auto; margin: 24px 0; }
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 0.86em; min-width: 620px; }
+    .data-table th { background: #0c4a6e; color: #f0f9ff; padding: 12px 14px; text-align: left; }
+    .data-table td { padding: 11px 14px; border-bottom: 1px solid #e0f2fe; vertical-align: top; line-height: 1.65; }
+    .data-table tr:nth-child(even) td { background: #f7fcff; }
+    .data-table .tagcell { white-space: nowrap; font-weight: 600; color: #0369a1; }
+
+    .compare-two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+    @media (max-width: 700px) { .compare-two { grid-template-columns: 1fr; } }
+    .cmp-card { border-radius: 12px; padding: 20px 24px; }
+    .cmp-a { background: #eff6ff; border: 1px solid #93c5fd; }
+    .cmp-b { background: #ecfeff; border: 1px solid #67e8f9; }
+    .cmp-card h3 { margin: 0 0 10px; font-size: 1em; }
+    .cmp-a h3 { color: #1d4ed8; }
+    .cmp-b h3 { color: #0e7490; }
+    .cmp-card p, .cmp-card li { font-size: 0.86em; line-height: 1.72; color: #334155; }
+    .cmp-card ul { margin: 6px 0 0; padding-left: 18px; }
+
+    .code-block { background: #0f172a; color: #bae6fd; border-radius: 10px; padding: 18px 22px; margin: 18px 0; font-family: "SF Mono", Menlo, monospace; font-size: 0.83em; line-height: 1.8; overflow-x: auto; white-space: pre; }
+    .code-block .cmt { color: #64748b; }
+
+    .step-flow { counter-reset: step; margin: 24px 0; }
+    .step-item { position: relative; padding: 14px 16px 14px 56px; margin: 10px 0; background: #f7fcff; border: 1px solid #bae6fd; border-radius: 10px; font-size: 0.88em; line-height: 1.7; color: #334155; }
+    .step-item::before { counter-increment: step; content: counter(step); position: absolute; left: 14px; top: 14px; width: 28px; height: 28px; line-height: 28px; text-align: center; border-radius: 50%; background: #0284c7; color: #fff; font-weight: 700; }
+    .step-item strong { color: #0c4a6e; }
+
+    .references-section { background: #f7fcff; border: 1px solid #bae6fd; border-radius: 10px; padding: 24px 28px; margin-top: 40px; }
+    .references-section h3 { margin-top: 0; color: #0c4a6e; }
+    .references-section ol { padding-left: 22px; font-size: 0.8em; line-height: 1.7; color: #0c4a6e; }
+    .references-section li { margin: 6px 0; }
+
+    .article-copyright { margin-top: 48px; padding: 20px 24px; background: #f7fcff; border-left: 4px solid #7dd3fc; border-radius: 0 8px 8px 0; font-size: 0.85em; color: #0369a1; line-height: 1.7; }
+    .article-copyright strong { color: #0c4a6e; }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="../index.html" class="site-title">质量<span>实验</span>室</a>
+    <nav>
+      <a href="../index.html">首页</a>
+      <a href="../about.html">关于</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <article>
+
+    <div class="post-hero">
+      <h1>心跳不是握手，日志不是 app.log</h1>
+      <div class="subtitle">从"Raft 心跳和 TCP 三次握手是不是一回事"这个小误解出发，沿心跳 → 共识 → 协议分类 → 日志复制 → 数据同步一路走到底，看一条写请求最终如何变成多副本一致的业务数据。</div>
+      <div class="meta">2026-11-04 · 分布式概念精读 · 约 35 分钟阅读 · 写给想把 Raft 从"听说过"变成"讲得清"的工程师</div>
+    </div>
+
+    <p>学习分布式算法，常常卡在一些"听起来差不多"的词上：心跳和握手是不是一回事？Raft 日志和我天天看的 <code>app.log</code> 是一个东西吗？为什么说数据是"复制"的，可我在节点目录里看到的文件却各不相同、也没人来拷贝我的数据文件？</p>
+
+    <p>这些问题看似零散，但只要顺着它们一层层往下挖，最终会走到同一个地方——<strong>Raft 到底是怎么让多个副本上的数据保持一致的</strong>。本文就按这条路径展开：先拆掉最外层的误解，再进入 Raft 的核心机制，最后落到数据如何通过日志和快照实现同步。</p>
+
+    <h2>一、第一个误解：TCP 三次握手不是心跳</h2>
+
+    <p>很多人第一次接触 Raft 心跳时会下意识类比 TCP——"TCP 不也有三次握手、来回发消息确认对方在吗？那不就是心跳？"不是。两者解决的问题、发生的时机、所在的层次都不同。</p>
+
+    <div class="compare-two">
+      <div class="cmp-card cmp-a">
+        <h3>TCP 三次握手</h3>
+        <ul>
+          <li><strong>性质：</strong>一次性的连接建立过程</li>
+          <li><strong>目的：</strong>同步双方初始序列号、确认收发能力正常，建立一条可靠连接</li>
+          <li><strong>时机：</strong>只在建连时发生一次，连接建好后就不再重复</li>
+          <li><strong>层次：</strong>传输层</li>
+          <li>握手完成 ≠ 持续证明对方"还活着"</li>
+        </ul>
+      </div>
+      <div class="cmp-card cmp-b">
+        <h3>Raft 心跳</h3>
+        <ul>
+          <li><strong>性质：</strong>周期性、持续不断的信号</li>
+          <li><strong>目的：</strong>维持领导者权威，告诉跟随者"我还在，别发起选举"</li>
+          <li><strong>载体：</strong>可以是空的 AppendEntries RPC</li>
+          <li><strong>层次：</strong>应用层 / 分布式共识算法层</li>
+          <li>只要领导者在位，就按固定间隔一直发</li>
+        </ul>
+      </div>
+    </div>
+
+    <p>一句话区分：<strong>握手回答的是"我们能不能开始通信"，问一次就结束；心跳回答的是"我现在是否还活着、还是不是领导"，要反复地、周期性地回答。</strong></p>
+
+    <p>网络语境里"心跳"这个词还常指另外两样东西，注意别混：一个是 <strong>TCP Keepalive</strong>（连接空闲很久后发探测包，确认对端没掉线，属于传输层保活），一个是<strong>应用层自己实现的保活</strong>。它们和 Raft 心跳形式相似——都是周期性发信号，但目的不同：Keepalive 保的是"连接"，Raft 心跳保的是"领导地位"。</p>
+
+    <div class="insight-box">
+      <strong>概念的锚点：</strong>"心跳"这个词的核心语义只有一句——<strong>周期性地发一个信号，证明"我还活着 / 我还在位"</strong>。至于在哪个层次、证明什么、断了会触发什么动作，不同系统各有设计。看清这一点，就能把形形色色的"心跳"归到同一个心智模型下。
+    </div>
+
+    <h2>二、同一套心跳逻辑，用在无数地方</h2>
+
+    <p>"周期性发信号证明我还活着、一旦信号中断就触发动作"是一个极其通用的模式，从硬件到分布式系统都在用：</p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>场景</th><th>心跳怎么用</th><th>信号中断后触发什么</th></tr></thead>
+        <tbody>
+          <tr><td class="tagcell">高可用集群 / 故障转移</td><td>主备节点间用心跳线周期性互探</td><td>备节点判定主节点故障，接管服务</td></tr>
+          <tr><td class="tagcell">操作系统 / 进程监控</td><td>被监控服务定期喂狗（喂 watchdog）</td><td>systemd 等判定服务假死，重启它</td></tr>
+          <tr><td class="tagcell">网络设备 / 网关协议</td><td>VRRP 在主备交换机间发通告心跳</td><td>备机升级为主，避免网关单点</td></tr>
+          <tr><td class="tagcell">容器编排 / 分布式调度</td><td>节点周期性上报自身状态（Kubernetes node lease/heartbeat）</td><td>控制面摘除失联节点，迁走其上负载</td></tr>
+          <tr><td class="tagcell">底层硬件 / 时钟</td><td>处理器内部定时心跳、多核全局计时器同步</td><td>作为芯片各部件协调推进的节拍</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>从这个表能看出，心跳模式有两个共同部件：<strong>一个周期性的信号源</strong>，和<strong>一个"超时未收到即判定异常"的监听方</strong>。Raft 心跳正是这个通用模式在共识算法里的实例——只是它"超时后的动作"比较特别：不是简单重启或接管，而是<strong>跟随者发起一次新的选举</strong>。</p>
+
+    <h2>三、Raft 到底解决什么问题</h2>
+
+    <p>Raft（论文：Ongaro &amp; Ousterhout, <em>In Search of an Understandable Consensus Algorithm</em>, 2014）被设计出来的首要目标不是最强，而是<strong>可理解</strong>——它把复杂的分布式共识拆成几个相对独立、可以分别讲解的子问题。心跳正是其中"领导者选举"的一个零件。</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, 'PingFang SC', sans-serif">
+        <rect x="300" y="20" width="300" height="60" rx="10" fill="#0284c7"/>
+        <text x="450" y="45" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">分布式共识</text>
+        <text x="450" y="66" text-anchor="middle" font-size="10.5" fill="#e0f2fe">多个副本对"同一件事、同一个顺序"达成一致</text>
+
+        <g>
+          <rect x="40" y="130" width="190" height="130" rx="10" fill="#f0f9ff" stroke="#38bdf8"/>
+          <text x="135" y="158" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0369a1">① 领导者选举</text>
+          <text x="55" y="184" font-size="10.5" fill="#334155">任期 Term + 随机化</text>
+          <text x="55" y="204" font-size="10.5" fill="#334155">选举超时</text>
+          <text x="55" y="224" font-size="10.5" fill="#334155">保证任一时刻最多</text>
+          <text x="55" y="244" font-size="10.5" fill="#334155">一个领导者</text>
+
+          <rect x="250" y="130" width="190" height="130" rx="10" fill="#f0f9ff" stroke="#38bdf8"/>
+          <text x="345" y="158" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0369a1">② 日志复制</text>
+          <text x="265" y="184" font-size="10.5" fill="#334155">领导者把日志并行</text>
+          <text x="265" y="204" font-size="10.5" fill="#334155">复制给跟随者</text>
+          <text x="265" y="224" font-size="10.5" fill="#334155">多数确认后提交</text>
+          <text x="265" y="244" font-size="10.5" fill="#334155">并按序应用</text>
+
+          <rect x="460" y="130" width="190" height="130" rx="10" fill="#f0f9ff" stroke="#38bdf8"/>
+          <text x="555" y="158" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0369a1">③ 安全性</text>
+          <text x="475" y="184" font-size="10.5" fill="#334155">选举限制 + 提交规则</text>
+          <text x="475" y="204" font-size="10.5" fill="#334155">+ 日志匹配特性</text>
+          <text x="475" y="224" font-size="10.5" fill="#334155">保证已提交日志</text>
+          <text x="475" y="244" font-size="10.5" fill="#334155">不被篡改/丢失</text>
+
+          <rect x="670" y="130" width="190" height="130" rx="10" fill="#f0f9ff" stroke="#38bdf8"/>
+          <text x="765" y="158" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0369a1">④ 成员变更/恢复</text>
+          <text x="685" y="184" font-size="10.5" fill="#334155">联合共识 / 单节点变更</text>
+          <text x="685" y="204" font-size="10.5" fill="#334155">保证配置切换安全</text>
+          <text x="685" y="224" font-size="10.5" fill="#334155">快照让落后节点</text>
+          <text x="685" y="244" font-size="10.5" fill="#334155">快速追赶</text>
+        </g>
+
+        <line x1="450" y1="80" x2="135" y2="128" stroke="#7dd3fc"/>
+        <line x1="450" y1="80" x2="345" y2="128" stroke="#7dd3fc"/>
+        <line x1="450" y1="80" x2="555" y2="128" stroke="#7dd3fc"/>
+        <line x1="450" y1="80" x2="765" y2="128" stroke="#7dd3fc"/>
+      </svg>
+      <div class="diagram-caption">图 1：Raft 把共识拆成四个可以分别理解的子问题</div>
+    </div>
+
+    <p>本文沿着从外到内的顺序，最终重点落在第 ② 个——日志复制，因为它直接回答了"数据怎么变一致"。但在那之前，先把第 ① 个里两个最容易被问到的概念讲清楚：任期和选举超时。</p>
+
+    <h2>四、任期是逻辑时钟，不是物理时长</h2>
+
+    <p>Raft 里的 <strong>Term（任期）</strong>是一个单调递增的整数，每开始一次新的选举就加一。它的作用相当于一台<strong>逻辑时钟</strong>——用来分辨"谁的信息更新"，而不是用来衡量物理上过了多少秒。</p>
+
+    <div class="insight-box">
+      一个节点看到更高的任期号，就知道对方代表的是"更新的一个时代"，于是主动让位、更新自己的任期。这样 Raft 不需要全局同步的物理时钟，仅靠这台逻辑时钟就能识别过期的领导者和旧请求——<strong>Term 衡量的是"先后"，不是"长短"</strong>。
+    </div>
+
+    <p>真正在工程中和物理时间相关、也最需要调校的，是<strong>选举超时（election timeout）</strong>：跟随者在这么久没收到心跳后，就认为领导者可能挂了，转而发起选举。这里有一组常被引用的数字：</p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>参数</th><th>典型值</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td class="tagcell">etcd 心跳间隔</td><td>默认 100ms</td><td>领导者多久发一次心跳</td></tr>
+          <tr><td class="tagcell">etcd 选举超时</td><td>默认 1000ms</td><td>跟随者多久没收到心跳就发起选举（官方 tuning 文档口径）</td></tr>
+          <tr><td class="tagcell">学术上的选举超时</td><td>约 150–300ms，且随机化</td><td>Raft 论文建议在一个区间内随机取值</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="data-note">来源：etcd 官方文档 tuning 章节（heartbeat interval 100ms、election timeout 1000ms）；随机化区间的建议来自 Raft 论文。具体数值随版本与部署环境而变，跨城/高延迟场景需另行调大。</p>
+
+    <p>选举超时的设置遵循几条原则：</p>
+
+    <ul>
+      <li><strong>远大于网络 RTT 和一次持久化的耗时</strong>，否则正常的网络抖动会被误判成领导者挂了；</li>
+      <li><strong>通常至少是心跳间隔的数倍</strong>，保证中间能漏掉几次心跳也不立刻重选；</li>
+      <li><strong>必须随机化</strong>：让各个跟随者的超时错开，避免大家同时抢主导致选票平分——随机化是 Raft 简单而关键的设计；</li>
+      <li><strong>是一个权衡</strong>：太短，频繁重选、系统抖动；太长，领导者真挂了之后恢复得慢。</li>
+    </ul>
+
+    <h2>五、插曲：通信协议到底分几类</h2>
+
+    <p>讲到这里容易发散到一个更大的问题——Raft 算哪门子"协议"，它和 TCP、HTTP、gRPC 是什么关系？简单做个分类，有助于定位 Raft 的位置：</p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>分类层面</th><th>典型协议</th><th>回答的问题</th></tr></thead>
+        <tbody>
+          <tr><td class="tagcell">网络 / 传输层</td><td>TCP、UDP；IP、ICMP、ARP</td><td>数据怎么在网络上可靠/不可靠地传</td></tr>
+          <tr><td class="tagcell">应用层（通用）</td><td>HTTP、DNS、SMTP</td><td>通用应用之间如何交换报文</td></tr>
+          <tr><td class="tagcell">API / 程序调用</td><td>REST、GraphQL、gRPC；MQTT、AMQP</td><td>程序之间"怎么调接口 / 怎么收发消息"</td></tr>
+          <tr><td class="tagcell">分布式共识</td><td><strong>Paxos、Raft、2PC</strong></td><td>多个节点如何对同一件事达成一致</td></tr>
+          <tr><td class="tagcell">特定领域 / 硬件</td><td>Modbus、OPC、PROFINET</td><td>工业设备等专用场景的通信约定</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>所以 Raft 是一种<strong>分布式共识协议</strong>：它通常跑在 TCP 之上（用 TCP 保证基本的可靠传输），通过自己定义的 RPC（RequestVote、AppendEntries）在应用层达成多节点共识。<strong>TCP 管"消息别丢、按序到"，Raft 管"即使节点会挂、网络会抖，哪些日志算数、按什么顺序生效"——两者是上下层协作，不是一回事。</strong></p>
+
+    <h2>六、进入正题前：领导者的带宽为什么更高</h2>
+
+    <p>在看日志复制之前，先有一个直观的工程现象：Raft 集群里领导者的网络和负载通常明显高于跟随者。原因正是它要承担"复制中心"的角色：</p>
+
+    <div class="compare-two">
+      <div class="cmp-card cmp-a">
+        <h3>领导者：大量出站</h3>
+        <ul>
+          <li><strong>扇出复制：</strong>一条日志要发给 N−1 个跟随者</li>
+          <li><strong>周期性心跳：</strong>持续向所有节点发送</li>
+          <li><strong>客户端请求集中：</strong>所有写入都汇聚到领导者</li>
+          <li><strong>快照传输：</strong>给落后节点发快照时的瞬时高峰</li>
+        </ul>
+      </div>
+      <div class="cmp-card cmp-b">
+        <h3>跟随者：主要是入站</h3>
+        <ul>
+          <li>被动接收日志和心跳</li>
+          <li>返回的确认响应非常小</li>
+          <li>不主动发起复制</li>
+          <li>流量结构明显不对称</li>
+        </ul>
+      </div>
+    </div>
+
+    <p>这种不对称可以通过工程手段缓解：<strong>Follower Read</strong>（读请求分摊到跟随者，注意一致性处理）、日志和心跳的<strong>批处理</strong>与<strong>流水线</strong>、以及<strong>Multi-Raft 分片</strong>（把数据切成多个 Raft 组，让不同组的领导者分散在不同物理机上，互相分摊压力）。理解了"扇出"这个特征，就自然理解了为什么需要 Multi-Raft。</p>
+
+    <h2>七、第二个关键澄清：Raft 日志不是 app.log</h2>
+
+    <p>这是和"心跳/握手"并列的另一个高频误解。Raft 里反复出现的"日志（log）"，和你在服务器上 <code>tail -f app.log</code> 看的那个日志，<strong>同名但完全是两种东西</strong>。</p>
+
+    <div class="compare-two">
+      <div class="cmp-card cmp-a">
+        <h3>Raft 日志</h3>
+        <ul>
+          <li><strong>装的是状态机指令</strong>，例如 <code>PUT key=foo value=bar</code></li>
+          <li>每条含：索引 index、任期号 term、命令 command</li>
+          <li>是序列化后的"待执行操作指令"</li>
+          <li><strong>用途：</strong>在多副本间复制、参与状态恢复</li>
+          <li>是达成一致性的核心数据结构</li>
+        </ul>
+      </div>
+      <div class="cmp-card cmp-b">
+        <h3>业务本地日志 app.log</h3>
+        <ul>
+          <li><strong>装的是程序运行的文本记录</strong></li>
+          <li>给人看的：错误堆栈、关键事件、调试信息</li>
+          <li>是"已经发生之事"的描述</li>
+          <li><strong>用途：</strong>调试、审计、监控、排障</li>
+          <li>不参与状态恢复，重放它无法重建数据</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-block"><span class="cmt"># Raft 日志大致长这样（伪结构）：每条是一条"操作指令"</span>
+index=42  term=3  command="PUT key=foo value=bar"
+index=43  term=3  command="DEL key=old"
+index=44  term=3  command="PUT key=cnt value=9"
+
+<span class="cmt"># 而 app.log 长这样（给人看的文本）：
+# 2026-11-04T10:00:01 INFO  request handled path=/v1/kv status=200
+# 2026-11-04T10:00:02 ERROR downstream timeout, retrying...</span></div>
+
+    <p>一句话记住区别：<strong>Raft 日志是"待执行、待同步的操作指令清单"，重放它能精确重建状态；业务日志是"程序运行过程的文字记录"，只是给人看的旁证。</strong>这条区分是理解后面所有内容的前提。</p>
+
+    <h2>八、日志复制与业务数据：复制的是"操作"，不是"数据文件"</h2>
+
+    <p>现在可以正面回答最初那个问题了：业务数据到底是怎么被"复制"的？先明确 Raft 日志里装的指令范围——<strong>它复制的是"会改变状态的操作指令"，既可以是元数据操作，也可以是业务数据操作</strong>。也就是说，业务数据的变更通常正是通过 Raft 日志来复制和达成共识的。</p>
+
+    <p>一条写请求的完整旅程如下：</p>
+
+    <div class="step-flow">
+      <div class="step-item"><strong>变成日志条目：</strong>客户端写请求（如 <code>PUT foo=bar</code>）到达领导者，被编码成一条 Raft 日志条目。</div>
+      <div class="step-item"><strong>复制到多数派：</strong>领导者把这条日志并行发给所有跟随者，各节点先持久化到本地日志。</div>
+      <div class="step-item"><strong>多数确认后提交：</strong>当超过半数节点（含领导者）确认写入，这条日志被标记为 committed——这一刻它才算"生效"。</div>
+      <div class="step-item"><strong>按序应用到状态机：</strong>各节点按相同的全局顺序，把已提交日志应用到本地状态机（etcd 用 BoltDB，TiKV 用 RocksDB），于是在 data 目录产生出相同的数据。</div>
+      <div class="step-item"><strong>返回客户端：</strong>领导者应用成功后向客户端返回成功。</div>
+    </div>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 900 360" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, 'PingFang SC', sans-serif">
+        <defs>
+          <marker id="ar" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#0284c7"/></marker>
+        </defs>
+
+        <rect x="330" y="20" width="240" height="50" rx="8" fill="#0c4a6e"/>
+        <text x="450" y="42" text-anchor="middle" font-size="12.5" font-weight="700" fill="#fff">客户端：PUT foo=bar</text>
+        <text x="450" y="60" text-anchor="middle" font-size="10" fill="#bae6fd">写请求</text>
+
+        <rect x="330" y="100" width="240" height="60" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+        <text x="450" y="124" text-anchor="middle" font-size="12" font-weight="700" fill="#0369a1">领导者</text>
+        <text x="450" y="146" text-anchor="middle" font-size="10.5" fill="#334155">① 编码为日志条目</text>
+
+        <line x1="330" y1="130" x2="180" y2="200" stroke="#0284c7" stroke-width="2" marker-end="url(#ar)"/>
+        <line x1="450" y1="160" x2="450" y2="196" stroke="#0284c7" stroke-width="2" marker-end="url(#ar)"/>
+        <line x1="570" y1="130" x2="720" y2="200" stroke="#0284c7" stroke-width="2" marker-end="url(#ar)"/>
+
+        <rect x="60" y="200" width="180" height="80" rx="8" fill="#f0f9ff" stroke="#38bdf8"/>
+        <text x="150" y="226" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0369a1">跟随者 A</text>
+        <text x="150" y="248" text-anchor="middle" font-size="10" fill="#334155">② 持久化日志</text>
+        <text x="150" y="266" text-anchor="middle" font-size="10" fill="#059669">✓ 确认</text>
+
+        <rect x="360" y="200" width="180" height="80" rx="8" fill="#f0f9ff" stroke="#38bdf8"/>
+        <text x="450" y="226" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0369a1">领导者（自己也存）</text>
+        <text x="450" y="248" text-anchor="middle" font-size="10" fill="#334155">③ 多数确认→提交</text>
+        <text x="450" y="266" text-anchor="middle" font-size="10" fill="#059669">committed</text>
+
+        <rect x="660" y="200" width="180" height="80" rx="8" fill="#f0f9ff" stroke="#38bdf8"/>
+        <text x="750" y="226" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0369a1">跟随者 B</text>
+        <text x="750" y="248" text-anchor="middle" font-size="10" fill="#334155">持久化日志</text>
+        <text x="750" y="266" text-anchor="middle" font-size="10" fill="#64748b">可能稍后</text>
+
+        <rect x="360" y="300" width="180" height="50" rx="8" fill="#d1fae5" stroke="#059669" stroke-width="2"/>
+        <text x="450" y="322" text-anchor="middle" font-size="11" font-weight="700" fill="#047857">④ 按序应用到状态机</text>
+        <text x="450" y="340" text-anchor="middle" font-size="9.5" fill="#065f46">data 目录生成相同数据</text>
+      </svg>
+      <div class="diagram-caption">图 2：日志复制（发给多数派）→ 提交（共识）→ 应用到状态机；注意节点间传输的是日志，不是数据文件</div>
+    </div>
+
+    <p>这里有一个精确的表述值得记住，它厘清了 Raft 和存储引擎的分工：</p>
+
+    <div class="insight-box">
+      <strong>Raft 管的是"业务数据变更的复制与共识"，而不是"业务数据的物理存储与查询"</strong>。Raft 决定"哪条变更算数、按什么顺序生效"；真正把数据写进磁盘、提供查询的是下层状态机（BoltDB / RocksDB）。两者是协作关系，不是割裂关系。
+    </div>
+
+    <h2>九、"复制"和"共识"分别指什么</h2>
+
+    <p>这两个词经常连着说，但它们是两件不同的事：</p>
+
+    <div class="compare-two">
+      <div class="cmp-card cmp-a">
+        <h3>复制 Replication</h3>
+        <p>把变更操作编码成日志条目，<strong>并行发送给所有跟随者</strong>，确保至少有多数节点把这个变更提议记录下来。</p>
+        <p class="src">关注：这条日志有没有在足够多的节点上存下来。</p>
+      </div>
+      <div class="cmp-card cmp-b">
+        <h3>共识 Consensus</h3>
+        <p><strong>多数派确认才生效</strong>（committed），所有副本按相同的顺序应用，保证状态机一致。</p>
+        <p class="src">关注：这条变更在全局顺序里处于什么位置、何时才算数。</p>
+      </div>
+    </div>
+
+    <p>合起来看完整闭环：一条写请求先变成日志条目被<strong>复制</strong>到多数节点，多数确认后按全局统一顺序提交并应用（<strong>共识</strong>），最终所有副本的业务数据状态保持一致。<strong>复制是"让足够多的节点看到同一条指令"，共识是"大家就这条指令的生效与顺序达成一致"</strong>。</p>
+
+    <h2>十、data 目录的数据：是"算"出来的，不是拷贝来的</h2>
+
+    <p>最后回到那个最具体的困惑：我在每个副本的 data 目录下都看到了数据，那是不是有谁把数据文件复制过来了？不是。数据的产生是一个<strong>两阶段过程</strong>，节点之间真正传输的始终是日志和快照：</p>
+
+    <div class="step-flow">
+      <div class="step-item"><strong>日志复制阶段：</strong>变更指令先写入 Raft 日志，复制到多数节点并持久化，多数确认后提交。</div>
+      <div class="step-item"><strong>状态机应用阶段：</strong>各节点按相同顺序执行已提交的日志指令，在本地 data 目录"计算"出相同的数据（etcd 写入 BoltDB，TiKV 写入 RocksDB）。</div>
+    </div>
+
+    <p>所以 data 目录里的数据，是每个节点<strong>用同一份日志、按同一顺序各自执行后得到的结果</strong>——因为输入（日志）和顺序完全相同，状态机又是确定性的，结果自然一致。这比直接拷贝数据文件更可靠：直接拷贝二进制文件无法处理"拷贝到一半、版本不一致、文件损坏"等问题，而"日志 + 确定性重放"能精确保证一致。</p>
+
+    <h3>落后节点怎么追：快照 + 日志</h3>
+
+    <p>如果一个节点宕机很久、落后了成千上万条日志，一条条补太慢。Raft 的做法是<strong>快照（Snapshot）</strong>：</p>
+
+    <ul>
+      <li>领导者把自己某一时刻的状态机整体打成快照，发给落后节点；</li>
+      <li>跟随者<strong>用快照替换本地状态</strong>，先快速追到快照点；</li>
+      <li>然后<strong>从快照点之后继续同步日志</strong>，把快照之后的新变更补上。</li>
+    </ul>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 900 240" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, 'PingFang SC', sans-serif">
+        <defs>
+          <marker id="ar3" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#0284c7"/></marker>
+        </defs>
+
+        <rect x="60" y="70" width="200" height="100" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+        <text x="160" y="98" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0369a1">领导者</text>
+        <text x="160" y="122" text-anchor="middle" font-size="10.5" fill="#334155">状态机 @ index=1000</text>
+        <text x="160" y="144" text-anchor="middle" font-size="10.5" fill="#334155">打成快照 Snapshot</text>
+
+        <line x1="266" y1="105" x2="420" y2="105" stroke="#0284c7" stroke-width="2" marker-end="url(#ar3)"/>
+        <text x="343" y="92" text-anchor="middle" font-size="10" fill="#0369a1">① 发快照</text>
+
+        <rect x="426" y="70" width="200" height="100" rx="10" fill="#f0f9ff" stroke="#38bdf8"/>
+        <text x="526" y="98" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0369a1">落后跟随者</text>
+        <text x="526" y="122" text-anchor="middle" font-size="10.5" fill="#334155">用快照替换本地状态</text>
+        <text x="526" y="144" text-anchor="middle" font-size="10.5" fill="#059669">先追到 index=1000</text>
+
+        <line x1="632" y1="135" x2="786" y2="135" stroke="#059669" stroke-width="2" stroke-dasharray="5 3" marker-end="url(#ar3)"/>
+        <text x="709" y="122" text-anchor="middle" font-size="10" fill="#047857">② 续传 1000 之后日志</text>
+
+        <rect x="792" y="90" width="90" height="80" rx="10" fill="#d1fae5" stroke="#059669"/>
+        <text x="837" y="124" text-anchor="middle" font-size="10.5" font-weight="700" fill="#047857">追平</text>
+        <text x="837" y="146" text-anchor="middle" font-size="9.5" fill="#065f46">一致</text>
+      </svg>
+      <div class="diagram-caption">图 3：落后节点先用快照快速对齐，再续传快照点之后的日志</div>
+    </div>
+
+    <div class="insight-box">
+      <strong>最终的本质：</strong>节点之间真正在网络上传输的，是<strong>日志（逐条指令）和快照（某个时点的整体状态）</strong>，从来不是直接拷贝 data 目录里的数据文件。每个副本上的业务数据，都是它"重放日志 / 加载快照后续传日志"自己计算出来的结果。
+    </div>
+
+    <h2>结语：从一次"听不懂"，到讲清整条数据流</h2>
+
+    <p>回头看这条学习路径，最初只是一个小疑问——"心跳是不是握手"——但顺着它一层层走，竟然串起了 Raft 的大半内容：</p>
+
+    <ul>
+      <li><strong>心跳不是握手</strong>：握手问一次"能不能开始"，心跳周期性证明"我还在位"；</li>
+      <li><strong>任期不是时长</strong>：它是分辨先后的逻辑时钟；选举超时才是需要按 RTT 调校的物理参数；</li>
+      <li><strong>Raft 日志不是 app.log</strong>：前者是可重放的状态机指令，后者是给人看的运行记录；</li>
+      <li><strong>复制不是拷贝数据文件</strong>：节点间传的是日志和快照，data 目录的数据是各副本按相同顺序"算"出来的。</li>
+    </ul>
+
+    <p>把这四组"看似一样、实则不同"的概念分清，Raft 就不再是一堆名词，而是一条清晰的数据流：<strong>写请求变成日志 → 复制到多数派 → 多数确认后按统一顺序提交 → 各自应用到状态机 → 多副本数据一致；落后者用快照先对齐、再续传日志</strong>。</p>
+
+    <p>很多时候学不懂一个技术，不是因为它难，而是被几个"同名异物""形似实异"的词挡在了门外。一旦把这层窗户纸捅破——就像分清心跳和握手、日志和日志——后面的机制反而顺理成章。这大概也是学习一切复杂系统时最值得复用的方法：<strong>先在概念的边界处停下来，问一句"它们真的是一回事吗"</strong>。</p>
+
+    <div class="references-section">
+      <h3>主要参考资料</h3>
+      <ol>
+        <li>Ongaro, D. &amp; Ousterhout, J. (2014), In Search of an Understandable Consensus Algorithm (Raft)，USENIX ATC（任期、随机化选举超时、日志复制、安全性、快照与成员变更）。</li>
+        <li>Ongaro, D. (2014), Consensus: Bridging Theory and Practice，斯坦福博士论文（Raft 的完整论证与工程细节）。</li>
+        <li>etcd 官方文档：tuning / configuration 章节（心跳间隔默认 100ms、选举超时默认 1000ms）；Raft 相关说明。</li>
+        <li>TiKV 官方文档：Multi-Raft、RocksDB 作为状态机、snapshot 与日志复制。</li>
+        <li>通用可靠性基础：Postel RFC 793（TCP 三次握手）、RFC 1122（Keepalive）；VRRP（RFC 5798）；systemd watchdog 文档。</li>
+        <li>姊妹篇：《副本一致性、共识选主、分布式事务：分布式系统为什么需要它们》（共识在三层概念中的位置）；《Java 分布式系统一致性》（工程实现与验证）。</li>
+      </ol>
+    </div>
+
+    <div class="article-copyright">
+      <strong>© 2026 质量实验室 · mimic66</strong><br>
+      本文首发于 <a href="https://mimic66.github.io/blog/" target="_blank">mimic66.github.io/blog</a>，
+      遵循 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">CC BY-NC-ND 4.0</a> 协议。<br>
+      非商业转载请注明出处及原文链接，禁止修改演绎后转载。
+    </div>
+
+  </article>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    © 2024-2026 质量实验室 · 基于 GitHub Pages 构建
+  </div>
+</footer>
+
+</body>
+</html>

@@ -330,9 +330,19 @@
       </div>
     </a>
 
+    <a href="posts/raft-heartbeat-log-replication-explained.html" class="post-card">
+      <h3>心跳不是握手，日志不是 app.log：从一个误解把 Raft 讲到数据落盘</h3>
+      <div class="meta">2026-11-04 · 35 分钟</div>
+      <div class="excerpt">TCP 三次握手是一次性建连，Raft 心跳是周期性空 AppendEntries RPC；任期是逻辑时钟，选举超时（etcd 默认 1000ms/心跳 100ms）才是按 RTT 调校的物理参数；Raft 日志装状态机指令而非业务文本日志。沿心跳→共识→协议分类→日志复制→数据同步，讲清写请求如何'复制到多数派→提交→按序应用到状态机'：节点间传的是日志和快照，data 目录数据是各副本自己'算'出来的。</div>
+      <div class="tags">
+        <span class="tag red">Raft</span>
+        <span class="tag blue">概念辨析</span>
+        <span class="tag yellow">日志复制</span>
+      </div>
+    </a>
+
     <a href="posts/distributed-consistency-concepts-explained.html" class="post-card">
-      <h3>副本一致性、共识选主、分布式事务：分布式系统为什么需要它们</h3>
-      <div class="meta">2026-11-02 · 36 分钟</div>
+      <h3>副本一致性、共识选主、分布式事务：分布式系统为什么需要它们</h3>      <div class="meta">2026-11-02 · 36 分钟</div>
       <div class="excerpt">三个最常混淆的概念其实是三个层次的答案：副本模型是系统对观察者的承诺，共识选主决定"哪个写入算数"，分布式事务把跨边界操作拉回一致。从单机世界讲起，逐一回答为什么存在、带来什么问题（脑裂/僵尸leader/补偿非回滚）、如何验证避免。含三层关系SVG、概念辨析表与设计评审清单。</div>
       <div class="tags">
         <span class="tag red">概念溯源</span>
