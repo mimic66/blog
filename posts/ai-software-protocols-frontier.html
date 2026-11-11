@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 正在重写软件系统依赖的协议：网络、推理、Agent、数据与信任边界 - 质量实验室</title>
+  <meta name="description" content="AI 对软件系统的影响不只在编码效率，而在反向重塑协议：训练把网络从主机互通推向 collective-aware fabric，推理把无状态 HTTP 推向 KV Cache、流式会话和 prefill/decode 分离，Agent 把工具连接、任务委托、授权、审计和持久执行推向新的基础设施层。本文基于 NCCL、UEC、RoCE、Orca、vLLM、DistServe、Mooncake、MCP、A2A、OAuth、OpenTelemetry 等一手规范与系统论文，梳理 2024–2026 年协议栈变化、前沿方案、成熟度边界和证据缺口。">
+  <link rel="stylesheet" href="../css/style.css?v=20261026a">
+  <style>
+    .post-hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 55%, #0891b2 100%);
+      color: #e0f2fe;
+      padding: 48px 40px;
+      border-radius: 12px;
+      margin-bottom: 36px;
+    }
+    .post-hero h1 { color: #fff; -webkit-text-fill-color: #fff; background: none; font-size: 1.62em; line-height: 1.45; margin-bottom: 12px; }
+    .post-hero .subtitle { color: #bae6fd; font-size: 0.95em; line-height: 1.8; }
+    .post-hero .meta { color: #7dd3fc; font-size: 0.85em; margin-top: 16px; }
+
+    .diagram-wrap { margin: 30px 0; }
+    .diagram-wrap svg { width: 100%; height: auto; display: block; }
+    .diagram-caption { text-align: center; font-size: 0.83em; color: #64748b; margin-top: 8px; }
+
+    .concept-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px 22px; margin: 16px 0; border-top: 3px solid #0284c7; }
+    .concept-card h3 { margin: 0 0 8px; color: #075985; font-size: 1.02em; }
+    .concept-card p { margin: 8px 0; font-size: 0.9em; line-height: 1.8; color: #334155; }
+    .concept-card p strong { color: #0f172a; }
+    .concept-card .src { font-size: 0.78em; color: #94a3b8; }
+
+    .insight-box { background: #f0f9ff; border-left: 4px solid #0284c7; padding: 18px 22px; margin: 24px 0; border-radius: 0 10px 10px 0; font-size: 0.91em; line-height: 1.8; color: #0c4a6e; }
+    .warn-box { background: #fef2f2; border-left: 4px solid #dc2626; padding: 18px 22px; margin: 24px 0; border-radius: 0 10px 10px 0; font-size: 0.91em; line-height: 1.8; color: #991b1b; }
+    .quote-box { background: #f8fafc; border-left: 4px solid #94a3b8; padding: 18px 24px; margin: 24px 0; border-radius: 0 10px 10px 0; font-size: 0.9em; line-height: 1.85; color: #334155; font-family: Georgia, "Songti SC", serif; }
+    .quote-box .who { display: block; margin-top: 8px; font-family: inherit; font-size: 0.85em; color: #64748b; }
+
+    .table-wrap { overflow-x: auto; margin: 24px 0; }
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 0.86em; min-width: 700px; }
+    .data-table th { background: #0f172a; color: #e0f2fe; padding: 12px 14px; text-align: left; }
+    .data-table td { padding: 11px 14px; border-bottom: 1px solid #e0f2fe; vertical-align: top; line-height: 1.65; }
+    .data-table tr:nth-child(even) td { background: #f8fafc; }
+    .data-table .tagcell { white-space: nowrap; font-weight: 600; color: #0369a1; }
+
+    .badge { display: inline-block; font-size: 0.72em; font-weight: 700; padding: 1px 7px; border-radius: 4px; vertical-align: middle; margin-left: 4px; }
+    .badge-l1 { background: #dcfce7; color: #166534; }
+    .badge-l2 { background: #dbeafe; color: #1e40af; }
+    .badge-l3 { background: #fef9c3; color: #854d0e; }
+
+    .protocol-box {
+      background: linear-gradient(135deg, #020617 0%, #0c4a6e 100%);
+      color: #bae6fd;
+      border-radius: 12px;
+      padding: 30px 32px;
+      margin: 30px 0;
+    }
+    .protocol-box h2 { color: #fff; margin-top: 0; }
+    .protocol-box .rule { margin: 16px 0; font-size: 0.92em; line-height: 1.8; }
+    .protocol-box .rule strong { color: #7dd3fc; }
+    .protocol-box .rule .num { display: inline-block; width: 26px; height: 26px; line-height: 26px; text-align: center; border-radius: 50%; background: #0284c7; color: #fff; font-weight: 700; margin-right: 8px; font-size: 0.85em; }
+
+    .layer-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 24px 0; }
+    @media (max-width: 800px) { .layer-grid { grid-template-columns: 1fr; } }
+    .layer-card { border-radius: 12px; padding: 20px 22px; background: #f8fafc; border: 1px solid #cbd5e1; }
+    .layer-card h3 { margin: 0 0 10px; color: #075985; font-size: 1em; }
+    .layer-card p, .layer-card li { font-size: 0.86em; line-height: 1.7; color: #334155; }
+    .layer-card ul { margin: 6px 0 0; padding-left: 18px; }
+
+    .maturity-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin: 24px 0; }
+    @media (max-width: 900px) { .maturity-col { grid-template-columns: 1fr; } }
+    .maturity-card { border-radius: 12px; padding: 20px 22px; }
+    .maturity-ok { background: #ecfdf5; border: 1px solid #6ee7b7; }
+    .maturity-early { background: #fffbeb; border: 1px solid #fcd34d; }
+    .maturity-hype { background: #fef2f2; border: 1px solid #fca5a5; }
+    .maturity-card h3 { margin: 0 0 8px; font-size: 1em; }
+    .maturity-ok h3 { color: #047857; }
+    .maturity-early h3 { color: #b45309; }
+    .maturity-hype h3 { color: #b91c1c; }
+    .maturity-card ul { margin: 6px 0 0; padding-left: 18px; }
+    .maturity-card li { font-size: 0.85em; line-height: 1.7; color: #334155; margin: 5px 0; }
+
+    .references-section { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 24px 28px; margin-top: 40px; }
+    .references-section h3 { margin-top: 0; color: #0f172a; }
+    .references-section ol { padding-left: 22px; font-size: 0.8em; line-height: 1.7; color: #334155; }
+    .references-section li { margin: 6px 0; }
+
+    .article-copyright { margin-top: 48px; padding: 20px 24px; background: #f8fafc; border-left: 4px solid #94a3b8; border-radius: 0 8px 8px 0; font-size: 0.85em; color: #475569; line-height: 1.7; }
+    .article-copyright strong { color: #0f172a; }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="../index.html" class="site-title">质量<span>实验</span>室</a>
+    <nav>
+      <a href="../index.html">首页</a>
+      <a href="../about.html">关于</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <article>
+
+    <div class="post-hero">
+      <h1>AI 正在重写软件系统依赖的协议</h1>
+      <div class="subtitle">网络从主机互通变成 collective-aware fabric，推理从无状态 HTTP 变成 KV Cache 与会话管理，Agent 把工具、任务、授权、审计和持久执行推向新的基础设施层</div>
+      <div class="meta">2026-11-10 · 分布式系统与 AI 基础设施 · 约 41 分钟阅读 · 写给架构师、平台工程师、QA 与正在建设 Agent 系统的团队</div>
+    </div>
+
+    <p>过去一年，很多人讨论“AI 提升了多少编码效率”。这当然重要，但它还不是最深的变化。更深的变化发生在软件系统平时默认依赖的那些协议上：<strong>网络如何传、状态放在哪、请求持续多久、工具如何调用、权限如何委托、失败如何恢复、动作如何审计</strong>。</p>
+
+    <p>传统 Web 系统的默认假设很清晰：客户端发一个 HTTP 请求，服务端尽快返回一个完整 JSON；应用层尽量无状态，状态放进数据库或缓存；服务之间通过 RPC 通信；身份由登录态、API key 或服务间凭证保证。大模型系统把这些假设逐一拉长、拆开，甚至倒过来重排。</p>
+
+    <p>训练侧，一个 job 需要成百上千甚至上万张加速器同时存活，主要流量不是零散 RPC，而是 AllReduce、AllGather、ReduceScatter、AllToAll 和 MoE expert dispatch。推理侧，一个请求会在 GPU 显存里维护持续增长的 KV Cache，并可能跨 prefill 与 decode 两个资源池迁移。Agent 侧，模型不再只是输出文本，而是选择工具、发起调用、等待审批、接收结果、再决定下一步。</p>
+
+    <div class="insight-box">
+      <strong>本文的核心判断：</strong>AI 没有催生一个可以解决所有问题的“万能 Agent 协议”。它真正推动的是协议栈重新分层：collective-aware fabric、KV-aware inference runtime、MCP/A2A 互操作、durable execution、外部授权审计和 GenAI observability 必须组合使用。
+    </div>
+
+    <h2>一、先看全景：为什么一个协议已经不够用了</h2>
+
+    <p>“协议”这个词容易被理解得太窄。很多团队一提到 AI 协议，就只问 MCP 是什么、A2A 是什么、OpenAI API 怎么调。可是从系统角度看，一次模型请求至少穿过下面这些层次，而每一层都有不同的协议问题。</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 920 520" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, 'PingFang SC', sans-serif">
+        <defs>
+          <marker id="arrowA" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 z" fill="#0284c7"/>
+          </marker>
+        </defs>
+        <rect x="40" y="30" width="840" height="70" rx="10" fill="#e0f2fe" stroke="#38bdf8"/>
+        <text x="460" y="58" text-anchor="middle" font-size="16" font-weight="700" fill="#075985">应用与 Agent 层</text>
+        <text x="460" y="84" text-anchor="middle" font-size="12.5" fill="#0369a1">Chat / Responses API · Function Calling · MCP · A2A · Durable Workflow</text>
+
+        <rect x="40" y="125" width="840" height="70" rx="10" fill="#ecfeff" stroke="#22d3ee"/>
+        <text x="460" y="153" text-anchor="middle" font-size="16" font-weight="700" fill="#155e75">推理运行时层</text>
+        <text x="460" y="179" text-anchor="middle" font-size="12.5" fill="#0e7490">Iteration Scheduling · Continuous Batching · KV Cache · Prefill / Decode</text>
+
+        <rect x="40" y="220" width="840" height="70" rx="10" fill="#f0f9ff" stroke="#7dd3fc"/>
+        <text x="460" y="248" text-anchor="middle" font-size="16" font-weight="700" fill="#0c4a6e">数据与状态层</text>
+        <text x="460" y="274" text-anchor="middle" font-size="12.5" fill="#0369a1">Parallel File · Object Store · Checkpoint · Vector DB · Shared Log</text>
+
+        <rect x="40" y="315" width="840" height="70" rx="10" fill="#eff6ff" stroke="#60a5fa"/>
+        <text x="460" y="343" text-anchor="middle" font-size="16" font-weight="700" fill="#1e40af">网络与硬件层</text>
+        <text x="460" y="369" text-anchor="middle" font-size="12.5" fill="#2563eb">Ethernet / TCP / UDP · RDMA / RoCE · InfiniBand · NCCL · NVLink / UALink / CXL</text>
+
+        <rect x="40" y="410" width="840" height="70" rx="10" fill="#f8fafc" stroke="#94a3b8"/>
+        <text x="460" y="438" text-anchor="middle" font-size="16" font-weight="700" fill="#334155">信任与观测层</text>
+        <text x="460" y="464" text-anchor="middle" font-size="12.5" fill="#475569">OAuth/OIDC · mTLS/SPIFFE · Policy · Audit · OpenTelemetry · Provenance</text>
+
+        <line x1="460" y1="100" x2="460" y2="120" stroke="#0284c7" marker-end="url(#arrowA)"/>
+        <line x1="460" y1="195" x2="460" y2="215" stroke="#0284c7" marker-end="url(#arrowA)"/>
+        <line x1="460" y1="290" x2="460" y2="310" stroke="#0284c7" marker-end="url(#arrowA)"/>
+        <line x1="460" y1="385" x2="460" y2="405" stroke="#0284c7" marker-end="url(#arrowA)"/>
+      </svg>
+      <div class="diagram-caption">图 1：AI 系统协议栈不是一条协议，而是一组分别承担连接、状态、协调、信任和观测的层次</div>
+    </div>
+
+    <p>这些层次回答的是不同问题：</p>
+
+    <div class="layer-grid">
+      <div class="layer-card">
+        <h3>如何说话</h3>
+        <p>由 HTTP、gRPC、JSON-RPC、SSE、WebSocket、RDMA verbs 等承担，定义消息如何编码、传输、流式返回。</p>
+      </div>
+      <div class="layer-card">
+        <h3>谁在说话</h3>
+        <p>由 OAuth/OIDC、mTLS、SPIFFE/SPIRE、API key、工作负载身份等承担，定义用户、Agent、工具和服务的身份。</p>
+      </div>
+      <div class="layer-card">
+        <h3>状态在哪里</h3>
+        <p>由 GPU 显存、KV Cache、checkpoint、对象存储、并行文件系统、向量数据库和共享日志承担。</p>
+      </div>
+      <div class="layer-card">
+        <h3>动作是否可靠</h3>
+        <p>由 durable workflow、事务、幂等键、重试、超时、补偿、审批和回滚机制承担。</p>
+      </div>
+    </div>
+
+    <p>因此，MCP 不能自动解决授权，A2A 不能自动解决事务，SSE 重连不能证明工具副作用没有发生，UEC 规范发布也不能直接等同于多厂商大规模生产成熟。<strong>协议栈必须分层设计、分层验证。</strong></p>
+
+    <h2>二、训练网络：从“通用主机互联”到 collective-aware fabric</h2>
+
+    <p>传统数据中心网络的主要目标，是让大量主机通过通用协议可靠互联。即使存在 RPC、短连接、shuffle、南北向流量和局部拥塞，网络本身通常不需要理解某个应用层同步原语。大模型训练改变了这一点。</p>
+
+    <h3>2.1 一个 rank 停顿，为什么会拖垮整个 job</h3>
+
+    <p>大模型训练通常组合多种并行策略：data parallel 将数据样本切到多个 rank，tensor parallel 在层内切分权重和算子，pipeline parallel 将不同层放到不同 stage，expert parallel 在 MoE 模型中把专家分布到不同设备。一个 rank 失败或慢下来以后，参与同一个 collective 的其他 rank 无法独立越过当前 step。</p>
+
+    <p>这与普通 Web 服务很不一样。普通服务中一个副本变慢，负载均衡可以把新请求导走；训练中一个 rank 停顿，其他所有 rank 都可能在同步点等待。故障成本因此变成：</p>
+
+    <div class="quote-box">
+      故障检测时间 + 节点替换或重排队时间 + 通信域和训练进程初始化时间 + checkpoint 读取和 resharding 时间 + checkpoint 之后计算的重放时间
+      <span class="who">——大模型训练中的故障成本不是“修一张卡”，而是整个 gang 的停顿成本</span>
+    </div>
+
+    <p>Meta 关于大规模机器学习研究集群可靠性的论文显示，硬件归因故障影响的 job 比例并不高，但会显著影响 GPU runtime；job 使用的 GPU 数越多，MTTF 越短。这类数据的重要性在于，它把“故障是异常事件”的传统观念改成了“故障是大规模训练内的常态条件”。</p>
+
+    <h3>2.2 集合通信原语决定网络行为</h3>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>集合通信原语</th><th>典型用途</th><th>网络行为</th><th>主要风险</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="tagcell">AllReduce</td><td>数据并行梯度同步</td><td>周期性强，同步边界明确；ring/tree 路径常见</td><td>慢节点、链路热点、尾延迟</td></tr>
+          <tr><td class="tagcell">ReduceScatter</td><td>ZeRO/FSDP 等状态分片</td><td>先归约再分散，常与 AllGather 组合</td><td>路径组织与分片不均</td></tr>
+          <tr><td class="tagcell">AllGather</td><td>分片参数、状态聚合</td><td>大消息、多节点同步</td><td>瞬时带宽压力和 incast</td></tr>
+          <tr><td class="tagcell">AllToAll</td><td>张量重排、MoE token dispatch</td><td>目的端多、熵高、负载随内容变化</td><td>Hash 极化、局部拥塞</td></tr>
+          <tr><td class="tagcell">Expert dispatch/combine</td><td>MoE 专家路由</td><td>token 根据专家选择动态流动</td><td>专家负载不均、计算与网络同时空闲</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>NCCL 位于训练框架和底层网络之间：对上给 PyTorch、Megatron 等框架提供集合通信 API；对下使用 NVLink、shared memory、InfiniBand verbs、RoCE、socket、NetworkDirect 或插件；内部根据拓扑、消息大小、rank 数量和平台能力选择 ring、tree、CollNet、NVLS、PAT 等算法。</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 920 430" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, 'PingFang SC', sans-serif">
+        <defs>
+          <marker id="arrB" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 z" fill="#0284c7"/>
+          </marker>
+        </defs>
+        <text x="460" y="32" text-anchor="middle" font-size="17" font-weight="700" fill="#075985">训练 Fabric：同一次 step 中的多层通信</text>
+
+        <rect x="60" y="70" width="170" height="80" rx="10" fill="#e0f2fe" stroke="#38bdf8"/>
+        <text x="145" y="102" text-anchor="middle" font-size="13" font-weight="700" fill="#075985">Scale-up Pod</text>
+        <text x="145" y="127" text-anchor="middle" font-size="11.5" fill="#0369a1">NVLink / UALink / CXL</text>
+
+        <rect x="375" y="70" width="170" height="80" rx="10" fill="#ecfeff" stroke="#22d3ee"/>
+        <text x="460" y="102" text-anchor="middle" font-size="13" font-weight="700" fill="#155e75">NCCL / CCL</text>
+        <text x="460" y="127" text-anchor="middle" font-size="11.5" fill="#0e7490">Ring / Tree / NVLS / PAT</text>
+
+        <rect x="690" y="70" width="170" height="80" rx="10" fill="#eff6ff" stroke="#60a5fa"/>
+        <text x="775" y="102" text-anchor="middle" font-size="13" font-weight="700" fill="#1e40af">Scale-out Fabric</text>
+        <text x="775" y="127" text-anchor="middle" font-size="11.5" fill="#2563eb">IB / RoCE / UEC</text>
+
+        <line x1="230" y1="110" x2="370" y2="110" stroke="#0284c7" marker-end="url(#arrB)"/>
+        <line x1="545" y1="110" x2="685" y2="110" stroke="#0284c7" marker-end="url(#arrB)"/>
+
+        <g>
+          <rect x="70" y="210" width="150" height="55" rx="8" fill="#f8fafc" stroke="#94a3b8"/>
+          <text x="145" y="243" text-anchor="middle" font-size="12" fill="#334155">Tensor Parallel</text>
+          <rect x="250" y="210" width="150" height="55" rx="8" fill="#f8fafc" stroke="#94a3b8"/>
+          <text x="325" y="243" text-anchor="middle" font-size="12" fill="#334155">Pipeline Parallel</text>
+          <rect x="430" y="210" width="150" height="55" rx="8" fill="#f8fafc" stroke="#94a3b8"/>
+          <text x="505" y="243" text-anchor="middle" font-size="12" fill="#334155">Data Parallel</text>
+          <rect x="610" y="210" width="150" height="55" rx="8" fill="#f8fafc" stroke="#94a3b8"/>
+          <text x="685" y="243" text-anchor="middle" font-size="12" fill="#334155">Expert Parallel</text>
+        </g>
+
+        <line x1="145" y1="150" x2="145" y2="205" stroke="#0284c7" marker-end="url(#arrB)"/>
+        <line x1="325" y1="150" x2="325" y2="205" stroke="#0284c7" marker-end="url(#arrB)"/>
+        <line x1="505" y1="150" x2="505" y2="205" stroke="#0284c7" marker-end="url(#arrB)"/>
+        <line x1="685" y1="150" x2="685" y2="205" stroke="#0284c7" marker-end="url(#arrB)"/>
+
+        <rect x="170" y="320" width="580" height="60" rx="10" fill="#f0f9ff" stroke="#7dd3fc"/>
+        <text x="460" y="345" text-anchor="middle" font-size="13" font-weight="700" fill="#0c4a6e">调度与网络必须联合决策</text>
+        <text x="460" y="370" text-anchor="middle" font-size="11.5" fill="#0369a1">拓扑放置 · 队列配额 · 拥塞控制 · 故障绕行 · checkpoint 恢复</text>
+      </svg>
+      <div class="diagram-caption">图 2：训练网络不再只是“把机器连起来”，而要理解并行策略、集合通信和故障恢复</div>
+    </div>
+
+    <h3>2.3 Scale-up 与 scale-out 是两个问题</h3>
+
+    <p>AI 集群常被笼统称为“高速互联”，但实际上 scale-up 和 scale-out 的设计目标不同。Scale-up 关注一个服务器、机架或 pod 内几十个加速器的高带宽、低延迟、内存语义和可能的缓存一致性；scale-out 关注跨机架、跨集群、大量端点的路由、拥塞、故障域、队列和可扩展性。</p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>层级</th><th>代表技术</th><th>适合通信</th><th>关注点</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="tagcell">Package / server</td><td>HBM、PCIe、CXL、NVLink-C2C</td><td>本地 CPU/GPU、内存扩展</td><td>带宽、延迟、一致性</td></tr>
+          <tr><td class="tagcell">Rack / pod scale-up</td><td>NVLink/NVSwitch、UALink、ICI</td><td>Tensor parallel、小规模 AllToAll</td><td>全互联、故障域、内存语义</td></tr>
+          <tr><td class="tagcell">Multi-rack scale-out</td><td>InfiniBand、RoCE、UEC</td><td>Data parallel、跨 pod collective</td><td>路由、拥塞、容错、扩展</td></tr>
+          <tr><td class="tagcell">跨站点</td><td>WAN、多集群调度</td><td>容灾、混合云、异地协同</td><td>广域延迟、安全域、一致性</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>NVLink/NVSwitch 是强垂直整合方案；UALink 面向开放加速器 scale-up；CXL 重点在 coherency、memory semantics 和内存池化；UEC 更偏 AI/HPC scale-out fabric。把它们说成彼此完全替代，会丢失各自真正解决的问题。</p>
+
+    <h2>三、InfiniBand、RoCE 与 UEC：没有单一赢家</h2>
+
+    <p>关于 AI 网络，行业里常有两种过强说法：一种认为大规模训练必须使用 InfiniBand，另一种认为以太网会很快全面替代一切。公开的系统实践更接近第三条结论：<strong>多条路线并存，而且超大规模云厂商往往使用深度定制传输</strong>。</p>
+
+    <h3>3.1 InfiniBand 的优势与边界</h3>
+
+    <p>InfiniBand 长期服务 HPC，在 RDMA verbs、硬件可靠传输、低延迟、自适应路由、子网管理、网内计算和 AI/HPC 软件生态方面积累完整。它的优势不是“端口带宽高”这一项，而是端到端栈成熟。</p>
+
+    <p>边界也同样清楚：它通常意味着更集中的生态、专用设备、特定管理体系和成本结构。对希望复用现有以太网运维、交换和多供应商生态的组织来说，RoCE 或 UEC 更有吸引力。</p>
+
+    <h3>3.2 RoCEv2：把 RDMA 放进 IP/UDP，复杂性转移到无损与拥塞层</h3>
+
+    <p>RoCEv2 使用 IP 和 UDP 封装 RDMA 语义，支持三层路由。它保留了以太网基础设施，但对以下机制高度敏感：PFC 是否产生暂停风暴或死锁，ECN 标记是否及时，DCQCN 参数是否匹配 RTT，QP、NIC 队列、ECMP hash 和多路径是否匹配集合通信模式。</p>
+
+    <div class="warn-box">
+      <strong>注意：</strong>RoCEv2 的难点不是“RDMA 能不能跑在以太网上”，而是在微秒级 RTT、同步训练和突发大流中保持低拥塞、低尾延迟，并能快速定位故障和恢复。
+    </div>
+
+    <p>Meta 在 SIGCOMM 2024 的 AI training over Ethernet 实践说明，在严格工程控制、网络部署和上层集合通信库协同下，以太网 RDMA 可以支撑大规模训练。该经验的价值不是证明“以太网无条件优于 InfiniBand”，而是证明路线选择依赖运营能力、拓扑、拥塞控制和软件栈协同。</p>
+
+    <h3>3.3 UEC：从 PFC 依赖走向现代 AI Ethernet</h3>
+
+    <p>Ultra Ethernet Consortium 针对 AI/HPC 负载重构以太网传输体系。公开规范和材料强调 packet spraying、selective retransmission、adaptive multipath、sender window、receiver credit、端到端拥塞控制、遥测、多路径和可扩展 fabric。</p>
+
+    <p>这背后的趋势是：不再简单依赖 PFC 在整条链路上构造“全局无损”，而是通过更细粒度的传输、拥塞反馈、多路径分发和选择性恢复，降低 PFC 可能导致的 head-of-line blocking、拥塞传播和死锁风险。</p>
+
+    <p>但标准发布与大规模生产成熟是两件事。UEC 要真正成为跨厂商基础设施，还需要网卡、交换机、GPU 平台、拥塞控制、集合通信库、运维工具和故障定位体系经过多代互操作验证。</p>
+
+    <h3>3.4 前沿办法及代价</h3>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>前沿办法</th><th>解决的问题</th><th>代价或限制</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="tagcell">Rail-aligned topology</td><td>让 GPU 多 NIC 与网络 rail 对齐，降低跨 rail 流量</td><td>故障 rail、异构硬件和拓扑变化需额外治理</td></tr>
+          <tr><td class="tagcell">Packet spraying</td><td>把包分散到多条路径，降低 hash 极化和热点</td><td>乱序、重复、接收状态和非幂等操作问题</td></tr>
+          <tr><td class="tagcell">Selective retransmission</td><td>只重传丢失片段，减少粗粒度超时成本</td><td>需要包级跟踪和状态规模平衡</td></tr>
+          <tr><td class="tagcell">In-network reduction</td><td>把归约、广播、屏障下沉到交换机</td><td>SHARP/NVLS 依赖垂直生态；开放标准仍早期</td></tr>
+          <tr><td class="tagcell">GPUDirect RDMA</td><td>NIC 直接访问 GPU 注册内存，减少 CPU copy</td><td>对拓扑、驱动、IOMMU、ACS 和注册内存有要求</td></tr>
+          <tr><td class="tagcell">SDN / OCS</td><td>通过软件网络或光交换绕开故障设备</td><td>重配置粒度、容量损失和硬件成本限制</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>四、推理协议：无状态 HTTP 为什么不够了</h2>
+
+    <p>传统在线服务的一个理想状态是应用层无状态：任何一个副本都能处理请求，状态保存在数据库、缓存或对象存储中。LLM 推理不同，它在 GPU 显存里持有 KV Cache，并在请求生命周期内持续增长。推理服务因此从“请求转发系统”变成“显存内状态管理系统”。</p>
+
+    <h3>4.1 从完整响应到流式 token</h3>
+
+    <p>一个普通 HTTP API 的模式是：</p>
+
+    <div class="quote-box">
+      HTTP Request → complete JSON Response
+    </div>
+
+    <p>LLM 推理更常见的是：</p>
+
+    <div class="quote-box">
+      HTTP/JSON Request → SSE token events → final completion event
+    </div>
+
+    <p>SSE 提供服务器到客户端的单向事件流、浏览器自动重连和 <code>Last-Event-ID</code>。它适合逐 token 输出、进度更新和长响应。但 WHATWG 的 SSE 标准本身不定义执行恢复、事务、幂等、应用层背压、工具副作用或服务端会话迁移。</p>
+
+    <p>因此，客户端断线后重新连上，只说明传输层重新建立，不说明：</p>
+
+    <ul>
+      <li>模型是否已经完成生成；</li>
+      <li>工具调用是否已经产生副作用；</li>
+      <li>请求是否应该重试；</li>
+      <li>重试会不会重复执行；</li>
+      <li>服务端是否仍保留该请求的 KV Cache；</li>
+      <li>客户端能否从某个 token 或某个工具步骤继续。</li>
+    </ul>
+
+    <h3>4.2 Orca：调度粒度从 request 变成 iteration</h3>
+
+    <p>Orca 指出，自回归生成模型不是在一次完整 batch 中处理完所有请求，而是在多个 iteration 中持续生成。Orca 因此提出 iteration-level scheduling 和 selective batching：调度器在每个 iteration 决定哪些请求参与计算，而不是假设一个请求从进入到完成都固定在同一个 batch 中。</p>
+
+    <p>这给后续系统奠定了共同方向：推理调度不再只是负载均衡器把请求发给某个副本，而是进入运行时内部，与 batch、KV Cache、生成长度、排队延迟和 SLO 联动。</p>
+
+    <h3>4.3 PagedAttention：KV Cache 像虚拟内存一样分页</h3>
+
+    <p>Transformer decoder 在生成每个 token 时需要之前 token 的 key/value。若每次重新计算历史 token，成本会随上下文长度增长；系统因此把 KV 张量保存在 GPU 显存中。问题是请求长度和生成长度不可完全预测，连续预留会造成碎片。</p>
+
+    <p>vLLM 的 PagedAttention 借鉴操作系统虚拟内存和分页机制：KV Cache 以固定大小 block 管理，逻辑连续块可以映射到非连续物理块，并支持 copy-on-write sharing。它解决的不是模型算法，而是推理内存管理。</p>
+
+    <h3>4.4 SGLang：公共前缀成为可复用资源</h3>
+
+    <p>SGLang 的 RadixAttention 关注公共前缀 KV Cache 的复用。系统提示词、公共文档、多轮对话、结构化输出和 Agent 子任务经常共享前缀，如果路由和上下文组织能命中已有 KV，就可以减少重复计算。</p>
+
+    <p>这也改变了网关职责。普通网关只看 URL、header 和副本健康状态；推理网关还可能关心模型版本、LoRA adapter、会话上下文、前缀位置、KV 容量、TTFT、TPOT 和请求迁移。</p>
+
+    <h2>五、Prefill / Decode 分离：KV Cache 成为跨资源池状态</h2>
+
+    <p>如果说 PagedAttention 解决的是单个推理引擎内的 KV Cache 管理，那么 DistServe、SplitWise 和 Mooncake 推进的是更下一层：<strong>prefill 与 decode 的资源需求不同，可以拆分到不同资源池，KV Cache 需要在资源池之间迁移</strong>。</p>
+
+    <h3>5.1 两个阶段的瓶颈为什么不同</h3>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>阶段</th><th>计算特征</th><th>主要瓶颈</th><th>资源策略</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="tagcell">Prefill</td><td>一次性处理大量输入 token，矩阵乘 batch 大</td><td>算力、长上下文峰值、TTFT、排队延迟</td><td>高算力 GPU、独立资源池、chunked prefill</td></tr>
+          <tr><td class="tagcell">Decode</td><td>逐 token 自回归生成，每次迭代计算量较小</td><td>HBM 带宽、KV Cache、TPOT、batch 组织</td><td>内存带宽友好、大 batch、独立 decode 池</td></tr>
+          <tr><td class="tagcell">KV transfer</td><td>把 prefill 产生的 KV 迁移给 decode</td><td>NIC、CPU、序列化、缓存容量和尾延迟</td><td>RDMA、统一索引、引用管理和 connector</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>DistServe 的系统结论是：把 prefill 和 decode 合并部署会互相干扰，拆分后可以分别优化资源并提升 goodput。SplitWise 进一步强调不同阶段可以匹配不同硬件。Mooncake 则把 KV Cache 作为中心对象，利用 GPU 集群外的 CPU、DRAM、SSD、NIC 构建分离式缓存层。</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 920 390" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, 'PingFang SC', sans-serif">
+        <defs>
+          <marker id="arrC" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 z" fill="#0284c7"/>
+          </marker>
+        </defs>
+        <text x="460" y="34" text-anchor="middle" font-size="17" font-weight="700" fill="#075985">推理状态流：请求、KV Cache 与阶段分离</text>
+
+        <rect x="55" y="80" width="180" height="95" rx="12" fill="#e0f2fe" stroke="#38bdf8"/>
+        <text x="145" y="115" text-anchor="middle" font-size="14" font-weight="700" fill="#075985">Client</text>
+        <text x="145" y="142" text-anchor="middle" font-size="11.5" fill="#0369a1">HTTP / SSE</text>
+        <text x="145" y="164" text-anchor="middle" font-size="11.5" fill="#0369a1">流式接收</text>
+
+        <rect x="310" y="80" width="180" height="95" rx="12" fill="#ecfeff" stroke="#22d3ee"/>
+        <text x="400" y="112" text-anchor="middle" font-size="14" font-weight="700" fill="#155e75">Prefill Pool</text>
+        <text x="400" y="139" text-anchor="middle" font-size="11.5" fill="#0e7490">处理 prompt</text>
+        <text x="400" y="161" text-anchor="middle" font-size="11.5" fill="#0e7490">生成 KV</text>
+
+        <rect x="685" y="80" width="180" height="95" rx="12" fill="#eff6ff" stroke="#60a5fa"/>
+        <text x="775" y="112" text-anchor="middle" font-size="14" font-weight="700" fill="#1e40af">Decode Pool</text>
+        <text x="775" y="139" text-anchor="middle" font-size="11.5" fill="#2563eb">逐 token 生成</text>
+        <text x="775" y="161" text-anchor="middle" font-size="11.5" fill="#2563eb">管理 batch</text>
+
+        <rect x="310" y="250" width="180" height="80" rx="12" fill="#f8fafc" stroke="#94a3b8"/>
+        <text x="400" y="282" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">KV Cache Pool</text>
+        <text x="400" y="307" text-anchor="middle" font-size="11.5" fill="#475569">CPU DRAM / SSD / NIC</text>
+
+        <line x1="235" y1="127" x2="305" y2="127" stroke="#0284c7" marker-end="url(#arrC)"/>
+        <line x1="490" y1="127" x2="680" y2="127" stroke="#0284c7" marker-end="url(#arrC)"/>
+        <line x1="400" y1="175" x2="400" y2="245" stroke="#0284c7" marker-end="url(#arrC)"/>
+        <line x1="490" y1="290" x2="680" y2="160" stroke="#0284c7" marker-end="url(#arrC)"/>
+      </svg>
+      <div class="diagram-caption">图 3：KV Cache 从单引擎内状态变成跨 prefill、decode、缓存层流动的对象</div>
+    </div>
+
+    <h3>5.2 最大缺口：没有开放可移植 KV 格式</h3>
+
+    <p>尽管 KV Cache 已成为推理系统的中心资源，但公开证据不足以支持“跨厂商统一线格式已经形成”。vLLM、SGLang、TensorRT-LLM、Mooncake 等系统都在管理 KV，但张量布局、块粒度、传输 connector、引用方式、缓存层级和引擎内部状态并不天然一致。</p>
+
+    <div class="insight-box">
+      <strong>工程含义：</strong>当前可以依赖引擎内分页、前缀复用和显式 connector 优化 KV，但不应假设一个引擎生成的 KV 能无转换地被另一个引擎消费，也不应假设 KV transfer 本身就是事务性、可恢复的。
+    </div>
+
+    <h3>5.3 推理网关标准化的是扩展点，不是全部语义</h3>
+
+    <p>Kubernetes Gateway API Inference Extension 通过 Envoy External Processing Protocol 扩展网关，核心资源包括 <code>InferencePool</code> 和 <code>InferencePoolImport</code>。它的目标是标准化推理工作负载的路由扩展点，让网关可以根据推理后端能力做更合适的路由。</p>
+
+    <p>但它不是统一模型格式，不定义 KV Cache 线协议，也不完整规定 Agent 工具调用、事务、审批、审计或会话迁移。把推理网关误认为完整 Agent 基础设施，会造成架构上的过度假设。</p>
+
+    <h2>六、MCP 与 A2A：工具连接和任务委托不是一回事</h2>
+
+    <p>Agent 生态中最常被放在一起比较的是 MCP 和 A2A。但它们解决的问题处在不同层次。<strong>MCP 让模型宿主连接工具和上下文；A2A 让独立 Agent 之间协作和委托任务。</strong></p>
+
+    <h3>6.1 MCP：模型宿主、客户端和工具服务器</h3>
+
+    <p>MCP 的基本结构是 host/model application、MCP client 和 MCP server。Host 是模型应用，client 负责与某个 server 建立连接，server 暴露 resources、tools、prompts 或其他能力。MCP 使用 JSON-RPC 编码消息，但 JSON-RPC 本身只是传输无关的消息格式，不提供 MCP 的会话生命周期。</p>
+
+    <p>2025-06-18 版定义了 stdio 和 Streamable HTTP 两种标准传输：stdio 适合本地子进程，Streamable HTTP 通过一个支持 POST 和 GET 的 HTTP endpoint 通信。对于请求，服务端可以返回单个 JSON，也可以返回 <code>text/event-stream</code>。有状态会话可以通过 <code>Mcp-Session-Id</code> 标识。</p>
+
+    <p>规范中的几个边界非常重要：</p>
+
+    <ul>
+      <li>断线不应被解释为取消；取消应显式发送 <code>CancelledNotification</code>；</li>
+      <li><code>Last-Event-ID</code> 用于 SSE 消息重放，不代表会话状态恢复；</li>
+      <li>Streamable HTTP 可流式返回，但不自动提供事务提交或回滚；</li>
+      <li>MCP server 不能默认读取完整对话，也不应默认探测其他 server；</li>
+      <li>Host 需要负责权限、客户端隔离、上下文聚合和用户边界。</li>
+    </ul>
+
+    <h3>6.2 A2A：面向独立、可能不透明的 Agent</h3>
+
+    <p>A2A 的设计前提是：协作双方可能由不同框架、语言或厂商构建，也不共享内部状态、记忆或工具。因此它通过 Agent Card 声明身份、技能、端点和安全方案，通过 Task 管理工作单元，通过 Message、Part 和 Artifact 表达输入、内容与结果。</p>
+
+    <p>A2A 1.0 的权威数据模型由 <code>a2a.proto</code> 定义，并提供 JSON-RPC、gRPC 和 HTTP/REST 绑定。它支持同步、流式、异步任务、推送通知和长任务管理。</p>
+
+    <p>需要注意幂等边界。A2A 规范中，Cancel Task 要求幂等；Send Message 可以通过 <code>messageId</code> 检测重复，但这不等同所有消息天然 exactly-once，也不保证远程 Agent 的工具副作用自动去重。跨 Agent 的重复提交和副作用仍需要应用层或持久工作流处理。</p>
+
+    <h3>6.3 二者如何组合</h3>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>协议</th><th>核心问题</th><th>典型路径</th><th>不解决什么</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="tagcell">MCP</td><td>模型宿主如何连接工具、资源和提示</td><td>Host → MCP Client → MCP Server → Tool/Data</td><td>不自动提供完整事务、安全策略或跨 Agent 协作</td></tr>
+          <tr><td class="tagcell">A2A</td><td>独立 Agent 如何发现能力、委托任务、交换产物</td><td>Client Agent → Remote Agent → Task / Artifact</td><td>不共享内部工具，不保证所有副作用 exactly-once</td></tr>
+          <tr><td class="tagcell">Durable Workflow</td><td>长任务如何持久化、等待、审批、重试和恢复</td><td>Workflow + Activity + History</td><td>不自动让第三方 API 变幂等或事务性</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>一个典型系统可能同时使用三者：Agent Orchestrator 通过 MCP 连接文件、数据库、搜索、工单等工具；遇到专业子任务时通过 A2A 委托给另一个独立 Agent；整个长流程由 Temporal 一类 durable execution 承载状态、审批、超时、重试和恢复。</p>
+
+    <h2>七、数据、存储、Checkpoint 与 RAG：状态语义正在分裂</h2>
+
+    <p>AI 系统中的状态不再只有“业务数据库里的权威数据”这一类。权重、checkpoint、KV Cache、embedding、vector index、intermediate activation、训练样本和检索结果具有不同的持久性、可重算性和一致性要求。协议设计必须先区分状态类型，而不是对所有状态使用同一种事务模型。</p>
+
+    <h3>7.1 AI 数据路径的新负载</h3>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>负载</th><th>访问模式</th><th>主要风险</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="tagcell">Data preparation</td><td>Sort、shuffle、混合读写、大量中间结果</td><td>聚合带宽不足、阶段屏障拖慢</td></tr>
+          <tr><td class="tagcell">Dataloader</td><td>大量 worker 随机读取小到中块，数据常只读一次</td><td>GPU 等数据，页缓存命中率低</td></tr>
+          <tr><td class="tagcell">Checkpoint save</td><td>周期性 TB 级突发大写</td><td>与训练通信、前台 I/O 冲突</td></tr>
+          <tr><td class="tagcell">Checkpoint load</td><td>全量读取并 reshard</td><td>RTO 高，并行拓扑变化带来转换成本</td></tr>
+          <tr><td class="tagcell">KV Cache</td><td>随机读写、迁移、驱逐、复用</td><td>热点、GC、跨阶段传输成本</td></tr>
+          <tr><td class="tagcell">Vector index</td><td>构建、更新、删除、压缩、检索</td><td>新鲜度、召回率和重建成本难兼顾</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>7.2 3FS：AI workload 驱动的并行文件系统</h3>
+
+    <p>DeepSeek 3FS 面向 data preparation、dataloaders、checkpointing 和 KVCache。公开材料显示，它采用 disaggregated architecture，支持 locality-oblivious 访问，使用 CRAQ 强一致复制、RDMA、现代 NVMe SSD、文件接口和事务 KV 支撑的元数据层。</p>
+
+    <p>官方 README 中最常被引用的指标，是 180 个存储节点在训练背景流量下实现约 6.6 TiB/s 聚合读。引用这个数字时必须保留条件：它来自 DeepSeek 指定硬件、网络、节点配置和测试场景，并非第三方在任意环境下的独立复测。</p>
+
+    <p>3FS 的关键价值不是重新发明了 CRAQ 或 RDMA，而是把已有强一致复制、SSD、高速网络和文件接口围绕 AI 全数据路径进行端到端整合。它应被定位为有真实生产背景的开源系统突破，而不是未经限定的通用文件系统理论革命。</p>
+
+    <h3>7.3 Checkpoint 从存盘变成状态迁移协议</h3>
+
+    <p>ByteCheckpoint 的关键设计是 parallelism-agnostic checkpoint representation 和 load-time resharding。它让 checkpoint 不再只是崩溃后恢复所需的文件，而成为模型状态跨并行策略、GPU 数量、训练阶段、评估任务和存储后端迁移的协议层。</p>
+
+    <p>Universal Checkpointing 也将 checkpoint 与 tensor parallelism、pipeline parallelism、sequence parallelism、ZeRO distributed training 等策略解耦，使训练可以在不同硬件配置和并行策略之间重配置。</p>
+
+    <p>但截至 2026 年，还不能说已经形成跨所有框架、覆盖 optimizer state、scheduler state、RNG state、parallel topology、shard mapping 和完整运行时状态的中立统一标准。Safetensors 解决的是 tensor 安全分发与加载，避免 pickle 任意代码执行风险，但不等同完整训练 checkpoint。</p>
+
+    <h3>7.4 RAG：不是写入向量库就结束</h3>
+
+    <p>生产 RAG 的完整链路包括源数据库变更捕获、文档解析和切块、embedding、向量写入、索引更新、hybrid search、metadata/ACL 过滤、rerank 和上下文组装。系统问题集中在新鲜度、权限和索引版本，而不只是向量检索是否快。</p>
+
+    <p>常见路径是 CDC 与消息系统捕获源库变化，再触发 chunk、embed 和索引更新。Debezium 官方文档说明其默认提供 at-least-once；在 Kafka Connect 中可以结合 Kafka transactions 使用 exactly-once 支持。但端到端保证还取决于 sink 幂等、offset 提交、schema 变化、索引提交、失败恢复和 embedding 版本管理。</p>
+
+    <div class="warn-box">
+      <strong>不要把链路各组件能力直接相加：</strong>“Debezium 可接 Kafka”“Kafka 有事务”“向量库支持写入”不能自动推出 source DB → chunk → embed → vector index → ACL 的端到端 exactly-once 已经无条件成立。
+    </div>
+
+    <h3>7.5 派生状态更适合版本化发布，而非逐条长事务</h3>
+
+    <p>KV Cache、embedding、vector index 和 materialized result 多是可由源数据和权重重算的派生状态。丢失它们通常主要影响性能，不一定影响权威数据正确性。因此更自然的工程模式是：</p>
+
+    <div class="quote-box">
+      后台构建新一代状态 → 校验质量、召回率和延迟 → 原子切换 metadata pointer → 保留旧版本用于回滚
+    </div>
+
+    <p>这与 Iceberg 的 snapshot、manifest、metadata pointer 和 optimistic concurrency 思想相似：不是对每个对象逐个做长事务，而是用不可变文件、元数据图和原子指针发布形成版本边界。不同产品对原子切换、alias、多租户、权限和回滚的支持程度不同，需要逐项验证。</p>
+
+    <h2>八、信任边界：Agent 的授权不能交给模型自己判断</h2>
+
+    <p>传统系统的授权链路主要是“用户—应用—数据库/内部 API”。Agent 系统把这条链路拉成“用户—Agent Orchestrator—LLM Provider—MCP Tool—第三方 API—其他 Agent”的动态委托链。谁代表谁行动、令牌能访问什么、动作是否可撤销，都必须显式表达。</p>
+
+    <h3>8.1 动态委托链需要回答的问题</h3>
+
+    <ul>
+      <li>当前动作代表哪个用户；</li>
+      <li>运行 Agent 的工作负载身份是什么；</li>
+      <li>令牌能用于哪个资源服务器；</li>
+      <li>允许读、写、删除还是审批；</li>
+      <li>Agent 是否能再次委托给其他 Agent；</li>
+      <li>高风险动作是否需要人工批准；</li>
+      <li>动作如何审计、撤销和追责。</li>
+    </ul>
+
+    <p>长期全局 API key 很难表达这些边界，还容易造成凭证扩散和过度授权。更合适的基线是 OAuth 2.0/OIDC + PKCE、短时 token、明确 audience/resource、RFC 9728 Protected Resource Metadata、SPIFFE/SPIRE、mTLS、细粒度 scope 和外部策略引擎。</p>
+
+    <h3>8.2 Resource Indicators 解决什么</h3>
+
+    <p>RFC 8707 Resource Indicators 允许客户端在授权请求或令牌请求中显式声明目标资源。授权服务器可以据此限制访问令牌的 audience，降低令牌被拿到其他资源服务器使用的风险。它对 Agent 场景非常 relevant，但不能单独解决所有多 Agent confused deputy 问题。</p>
+
+    <p>多 Agent 链路中，仍需要绑定用户身份、工作负载身份、资源服务器、scope、委托条件、审批记录和调用链。也就是说，resource indicator 是一个重要构件，不是完整授权系统。</p>
+
+    <h3>8.3 Prompt injection 让数据和命令边界变成安全问题</h3>
+
+    <p>Indirect prompt injection 中，外部内容可能被模型解释成指令。RAG 检索结果、网页、邮件、工单、issue、PR、工具返回值、长期 memory、Agent Card、工具描述以及其他 Agent 的响应，都可能携带攻击内容。</p>
+
+    <p>这意味着“数据”不再天然是被动数据。模型读到一段网页内容或文档片段后，可能把其中的句子当作下一步计划。可靠系统必须把不可信内容显式作为 data 处理，而不是让它自然进入指令层。</p>
+
+    <p>更稳妥的控制包括：工具 allowlist、读写工具分离、网络出口控制、DLP、tool-level quota、任务预算、高风险操作人工审批、policy decision、audit log、攻击回放和 red teaming。</p>
+
+    <div class="protocol-box">
+      <h2>一条不可绕过的安全原则</h2>
+      <div class="rule"><span class="num">1</span><strong>模型负责理解和计划</strong>，但不能作为最终授权判断者。</div>
+      <div class="rule"><span class="num">2</span><strong>权限由策略引擎、网关、工具代理或资源服务器强制执行</strong>，即使模型输出错误请求也无法越界。</div>
+      <div class="rule"><span class="num">3</span><strong>高风险写操作必须人类审批并保留完整审计</strong>，审批 UI 要展示实际工具、完整参数、目标资源和外发目的地。</div>
+    </div>
+
+    <h3>8.4 人类批准不是万能框</h3>
+
+    <p>很多 Agent 框架在工具调用前弹一个确认框，但这并不天然安全。攻击者可能伪造工具描述，把恶意参数藏在看似正常的文本中，或通过多个低风险步骤组合成高风险结果。用户如果只看到“是否允许执行”，很难判断真实副作用。</p>
+
+    <p>审批界面至少应展示实际工具名、完整参数、目标资源、读写属性、代表用户、外发目的地、与原始目标关系、不可信内容引用、可回滚性和副作用范围。缺少这些信息的确认，不应被视为充分控制。</p>
+
+    <h3>8.5 TEE 能保护什么，不能保护什么</h3>
+
+    <p>Confidential computing 通过 TEE 和 remote attestation 保护使用中的数据，并证明运行环境。CPU TEE 和机密 VM 已较成熟，GPU confidential computing 正在演进。它可以降低宿主、运维和内存窥探风险。</p>
+
+    <p>但 TEE 不解决 prompt injection、越权工具调用、RAG 污染、模型错误决策、应用层授权和完整跨设备证明。采用时需要明确 TCB 范围、attestation 内容、CPU/GPU/固件/驱动版本、跨设备数据保护、调试和 profiling 限制、KV Cache 保护以及侧信道缓解。</p>
+
+    <h2>九、可观测性与 AIOps：从普通 trace 到 Agent 状态证据</h2>
+
+    <p>传统可观测性主要围绕请求、服务、数据库、消息队列、错误码、延迟和资源使用。AI 系统增加了模型、prompt、token、cost、embedding、retrieval、memory、tool call、approval、workflow 和 eval。观测对象从一次 RPC 扩展成一棵持续变化的 Agent 执行树。</p>
+
+    <h3>9.1 Agent 最小观测模型</h3>
+
+    <div class="quote-box">
+      Agent run<br>
+      ├─ plan / workflow<br>
+      ├─ LLM inference：provider、model、version、prompt version、token、cost、status<br>
+      ├─ retrieval / embedding：source、document、chunk id、score、parameters<br>
+      ├─ memory read / write<br>
+      └─ tool execution：tool、target resource、arguments reference、result、approval
+    </div>
+
+    <p>OpenTelemetry 和 OTLP 的核心 traces、metrics、logs 管道成熟，但 GenAI semantic conventions 在 2026 年仍处于快速演进阶段。生产系统应固定 instrumentation 版本，在 Collector 层统一字段映射，避免字段重命名造成历史数据断裂。</p>
+
+    <h3>9.2 默认不要记录完整 Prompt 和工具参数</h3>
+
+    <p>Prompt、RAG 文本和工具参数可能包含 PII、商业秘密、金融医疗信息、凭证、内部代码或恶意注入载荷。默认记录完整内容会把观测系统变成新的敏感数据集中点。</p>
+
+    <p>更稳妥的方式是默认记录长度、哈希、引用 ID、脱敏摘要、token 数、模型版本和状态；确需保存原文时，放入具有独立访问控制、保留期限和审计能力的存储，trace 中仅保存引用。</p>
+
+    <h3>9.3 AIOps 的四级权限</h3>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>级别</th><th>能力</th><th>控制要求</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="tagcell">L1 只读分析</td><td>读取日志、指标、trace、依赖和变更记录</td><td>访问控制和审计</td></tr>
+          <tr><td class="tagcell">L2 建议方案</td><td>生成诊断、runbook、补丁或配置建议</td><td>人工阅读、验证和选择</td></tr>
+          <tr><td class="tagcell">L3 自动操作</td><td>重启、扩容、隔离异常实例等低风险可回滚动作</td><td>幂等、灰度、quota、自动回滚</td></tr>
+          <tr><td class="tagcell">L4 高风险操作</td><td>删除、权限变更、数据库写入、生产发布</td><td>变更单、双人审批、完整审计</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>AIOpsLab、RCACopilot、Triangle 等研究支持 LLM 在事件收集、分诊、根因假设、多源信息汇总和受控缓解中的作用。但这些证据多来自特定组织、数据集或受控环境，不能外推出“无人值守自治数据中心已经成熟”。所有写操作仍需要 dry run、幂等键、执行计划、实际 diff、回滚方案、完成后验证和事件关联。</p>
+
+    <h2>十、成熟度总览：哪些可用，哪些要观察，哪些别轻信</h2>
+
+    <div class="maturity-col">
+      <div class="maturity-card maturity-ok">
+        <h3>已有生产验证或强系统证据</h3>
+        <ul>
+          <li>InfiniBand/RDMA、RoCEv2、NCCL 基础集合通信</li>
+          <li>NVLink/NVSwitch、GPUDirect RDMA、rail-aligned topology</li>
+          <li>HTTP/JSON、SSE、JSON-RPC、gRPC、Batch API</li>
+          <li>Orca、vLLM、SGLang 等推理运行时机制</li>
+          <li>对象存储、并行文件系统、Iceberg、Kafka/Debezium</li>
+          <li>OAuth/OIDC、mTLS、SPIFFE、OPA、OTLP、CPU TEE</li>
+          <li>Temporal 一类 durable execution</li>
+        </ul>
+      </div>
+      <div class="maturity-card maturity-early">
+        <h3>研究、早期标准或局部生产</h3>
+        <ul>
+          <li>UEC 完整多厂商 AI fabric 与 In-Network Collectives</li>
+          <li>UALink 开放 scale-up 生态</li>
+          <li>跨框架统一 checkpoint 和 checkpoint-free recovery</li>
+          <li>CXL 内存池与 CXL pod 数据库</li>
+          <li>Tiga、Mako、LazyLog 等协调协议</li>
+          <li>跨引擎 KV Cache 传输和会话迁移</li>
+          <li>GPU confidential computing</li>
+          <li>多 Agent 分诊、RCA 和受控修复</li>
+        </ul>
+      </div>
+      <div class="maturity-card maturity-hype">
+        <h3>炒作或证据不足</h3>
+        <ul>
+          <li>一个万能 Agent 协议统一连接、事务、身份和恢复</li>
+          <li>接入 MCP/A2A 就自动拥有安全层</li>
+          <li>LLM 可以自己可靠判断是否越权</li>
+          <li>SSE 重连等于任务或事务恢复</li>
+          <li>CDC + Kafka 端到端 exactly-once 无条件开箱即用</li>
+          <li>TEE 能端到端解决 Prompt injection 和工具滥用</li>
+          <li>以太网或 InfiniBand 已经无条件胜出</li>
+          <li>无人自治数据中心已经普遍成熟</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>结语：可靠的 AI 系统，是一组深度模块的组合</h2>
+
+    <p>AI 对软件系统协议的影响，可以概括为六个变化：通信主体从独立 RPC 扩展到 collective、KV Cache 迁移和动态 Agent 消息；状态位置从数据库和缓存扩展到 GPU 显存、分离式缓存、并行文件系统和版本化索引；时间边界从毫秒请求扩展到数分钟、数小时甚至数天的长任务；信任边界从固定服务边界扩展到工具、记忆、RAG 内容和其他 Agent；协调停顿被 GPU idle 和 WAN wait 放大；治理要求必须与身份、策略、审计、provenance、成本和观测联动。</p>
+
+    <p>因此，2024–2026 年最可靠的路线不是等待一个“AI 时代的 TCP/IP”一统天下，而是接受协议栈的自然分层：</p>
+
+    <div class="insight-box">
+      <strong>collective-aware fabric + KV-aware inference runtime + MCP/A2A 分层互操作 + durable execution + 外部授权审计 + GenAI observability。</strong>
+    </div>
+
+    <p>好的系统不会让 Agent 在没有边界的协议空间里自由行动。它会让网络理解集合通信，让运行时管理 KV，让工作流承载恢复，让策略引擎守住权限，让可观测性记录证据，让人类最终为意图和风险负责。这不是更保守，而是 AI 系统真正能进入核心业务的前提。</p>
+
+    <div class="references-section">
+      <h3>主要参考资料与证据等级</h3>
+      <ol>
+        <li>NCCL Official Documentation，NVIDIA（集合通信 API、算法与传输）。</li>
+        <li>NVIDIA SHARP Documentation（网内归约、屏障和广播）。</li>
+        <li>RoCEv2 Whitepaper，NVIDIA（IP/UDP 上的 RDMA 语义）。</li>
+        <li>Zhu et al., DCQCN, SIGCOMM 2015（RoCE 拥塞控制）。</li>
+        <li>Kalia et al., IRN, SIGCOMM 2018（弱化 PFC 依赖的 RDMA 传输）。</li>
+        <li>Jiang et al., MegaScale, NSDI 2024（万卡集群训练系统）。</li>
+        <li>Meta, Distributed AI Training over Ethernet, SIGCOMM 2024（AI 训练 RoCE 生产实践）。</li>
+        <li>Alibaba, High-Performance Network for AI Training, SIGCOMM 2024。</li>
+        <li>Ultra Ethernet Consortium Specification（AI Ethernet 传输、拥塞、遥测和多路径）。</li>
+        <li>UALink 1.0 Whitepaper（开放加速器 scale-up 互连）。</li>
+        <li>AWS Science, SRD / EFA（云厂商自定义可靠传输和 packet spraying）。</li>
+        <li>Yu et al., Orca, OSDI 2022（iteration-level scheduling 和 selective batching）。</li>
+        <li>Kwon et al., PagedAttention / vLLM, SOSP 2023（KV Cache 分页管理）。</li>
+        <li>Zheng et al., SGLang, NeurIPS 2024（RadixAttention 与结构化语言模型程序）。</li>
+        <li>Zhong et al., DistServe, OSDI 2024（prefill/decode disaggregation）。</li>
+        <li>SplitWise, ISCA 2024（prompt/generation 阶段拆分）。</li>
+        <li>Qin et al., Mooncake, FAST 2025（KVCache-centric 推理架构）。</li>
+        <li>Llumnix, 2024（推理请求动态调度和迁移）。</li>
+        <li>Model Context Protocol Specification, 2025-03-26 / 2025-06-18（架构、生命周期、传输）。</li>
+        <li>Agent2Agent Protocol Specification 1.0（Agent Card、Task、Artifact 和协议绑定）。</li>
+        <li>Kubernetes Gateway API Inference Extension（InferencePool 与推理路由扩展）。</li>
+        <li>Envoy External Processing Filter Documentation。</li>
+        <li>DeepSeek 3FS Official GitHub Repository（AI 并行文件系统、CRAQ、RDMA）。</li>
+        <li>ByteCheckpoint, NSDI 2025（checkpoint 表示和 load-time resharding）。</li>
+        <li>Universal Checkpointing, USENIX ATC 2025。</li>
+        <li>GEMINI, SOSP 2023（in-memory checkpoint 恢复）。</li>
+        <li>Bamboo, NSDI 2023；Oobleck, SOSP 2023（抢占和故障恢复研究）。</li>
+        <li>Milvus、Weaviate 官方一致性和架构文档；pgvector 官方仓库。</li>
+        <li>Debezium Exactly Once 官方文档（at-least-once 与 Kafka Connect EOS 边界）。</li>
+        <li>Apache Iceberg Specification（snapshot、manifest、metadata pointer）。</li>
+        <li>OpenLineage Specification；Safetensors Official Repository。</li>
+        <li>RFC 8707 Resource Indicators for OAuth 2.0；RFC 9728 Protected Resource Metadata。</li>
+        <li>JSON-RPC 2.0 Specification；WHATWG Server-sent Events；OpenAPI 3.1；WebRTC W3C Recommendation。</li>
+        <li>SPIFFE/SPIRE Concepts；Open Policy Agent Documentation。</li>
+        <li>OpenTelemetry Specification Status and GenAI Semantic Conventions。</li>
+        <li>OWASP Agentic AI Threats and Mitigations；Indirect Prompt Injection, arXiv:2302.12173。</li>
+        <li>PoisonedRAG；Invariant Labs GitHub MCP Analysis。</li>
+        <li>AIOpsLab；Triangle；RCACopilot（AIOps 与多 Agent 运维研究）。</li>
+        <li>NIST AI 600-1；EU AI Act；SLSA Specification。</li>
+      </ol>
+    </div>
+
+    <div class="article-copyright">
+      <strong>© 2026 质量实验室 · mimic66</strong><br>
+      本文首发于 <a href="https://mimic66.github.io/blog/" target="_blank">mimic66.github.io/blog</a>，
+      遵循 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">CC BY-NC-ND 4.0</a> 协议。<br>
+      非商业转载请注明出处及原文链接，禁止修改演绎后转载。
+    </div>
+
+  </article>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    © 2024-2026 质量实验室 · 基于 GitHub Pages 构建
+  </div>
+</footer>
+
+</body>
+</html>
