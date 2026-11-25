@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>具身智能质量保障体系：九层 QA、与传统软件测试的 17 维差异与落地路线图 - 质量实验室</title>
+  <meta name="description" content="面向人形机器人、自动驾驶与移动操作机器人的质量保障深度调研：ISO/IEC 42001、ISO 26262、ISO 21448、UL 4600 等标准监管版图，九层具身智能 QA 体系，与传统软件 QA 的 17 维差异，Waymo、Boston Dynamics、Figure、1X、NVIDIA 的证据链实践，以及企业 0 到 1 的 18 个月落地路线图（2026）。">
+  <link rel="stylesheet" href="../css/style.css?v=20261026a">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="../index.html" class="site-title">质量<span>实验</span>室</a>
+    <nav>
+      <a href="../index.html">首页</a>
+      <a href="../about.html">关于</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <article class="post-content">
+    <a href="../index.html" class="back-link">← 返回首页</a>
+
+    <h1>具身智能质量保障体系：九层 QA、与传统软件测试的 17 维差异与落地路线图</h1>
+    <div class="post-meta">
+      2026-11-25 · 阅读约 50 分钟 · 标签：<span class="tag red">具身智能</span> <span class="tag blue">质量保障</span> <span class="tag yellow">功能安全</span> <span class="tag green">SDET</span>
+    </div>
+
+    <div class="callout blue">
+      <strong>核心问题</strong>
+      具身智能不是"把大模型装进机器人"。它把模型错误转化为现实世界的力、速度、能量和空间占用——软件可回滚，已施加的物理动作不可回滚。本文基于 32 条一手资料（ISO/IEC、UL、IEEE、GB 标准文件与 Waymo、Boston Dynamics、Figure、1X、NVIDIA 官方材料），回答三个问题：质量保障体系该分几层、它和传统软件 QA 到底差在哪、企业从 0 到 1 该怎么建。配套前文《<a href="shanghai-embodied-ai-companies-2026.html">上海具身智能公司深度调研</a>》阅读更佳。
+    </div>
+
+    <h2>摘要</h2>
+
+    <p>具身智能（Embodied AI）是感知、学习、决策、控制、机械本体、传感器、执行器、云端数据系统和运行环境共同构成的网络物理系统（CPS）。质量目标从传统软件的"功能正确、性能稳定、兼容可用"，扩展为在开放物理世界中<strong>可验证、可追溯、可限制、可恢复、可监管</strong>的风险控制能力。</p>
+
+    <p>2024–2026 年标准与监管正在快速补齐：ISO/IEC 42001 建立 AI 管理体系，ISO/IEC 23894 给出 AI 风险管理，ISO/IEC 25059 定义 AI 质量模型，ISO/PAS 8800 将 AI 安全纳入道路车辆框架；汽车领域以 ISO 26262、ISO 21448、ISO/SAE 21434、UL 4600 组合处理故障、预期功能不足、网络攻击和自动驾驶安全论证；工业机器人 ISO 10218-1:2025 已更新，协作机器人 ISO/TS 15066 进入修订；中国 2026 年实施三项智能网联汽车强制性国标，并于 2025 年底成立工信部人形机器人与具身智能标准化技术委员会<sup><a href="#ref-1">[1]</a><a href="#ref-2">[2]</a><a href="#ref-3">[3]</a><a href="#ref-4">[4]</a><a href="#ref-8">[8]</a><a href="#ref-9">[9]</a><a href="#ref-14">[14]</a><a href="#ref-15">[15]</a><a href="#ref-16">[16]</a></sup>。</p>
+
+    <p>产业实践表明，QA 核心是建设"需求与运行域—数据—模型—仿真—硬件—封闭场地—真实场景—运行监测—事件回灌"的<strong>闭环证据链</strong>。Waymo、Boston Dynamics、Figure、1X、NVIDIA 已将风险审查、遥操作数据、仿真、EOL、OTA 和现场故障分析纳入同一迭代系统<sup><a href="#ref-17">[17]</a><a href="#ref-20">[20]</a><a href="#ref-21">[21]</a><a href="#ref-22">[22]</a><a href="#ref-23">[23]</a><a href="#ref-24">[24]</a></sup>。</p>
+
+    <h2>一、背景：为什么具身智能 QA 是一个新问题</h2>
+
+    <h3>1.1 三类典型形态与各自的关键风险</h3>
+
+    <p>本文将"具身智能"定义为：<strong>通过传感器感知环境、通过 AI/控制算法决策或生成动作，并通过物理执行器在环境中持续行动、反馈和学习的智能系统</strong>。</p>
+
+    <table>
+      <tr><th>类型</th><th>典型系统</th><th>主要环境</th><th>关键质量风险</th></tr>
+      <tr><td>自动驾驶（ADS）</td><td>Robotaxi、L3 有条件自动驾驶、自动货运</td><td>开放道路、混合交通</td><td>碰撞、违规、接管失败、长尾场景、网络攻击</td></tr>
+      <tr><td>人形机器人</td><td>Atlas、Figure 03、NEO、G1/H1</td><td>工厂、仓库、家庭</td><td>跌倒、夹伤、碰撞、任务失败、电池/执行器故障</td></tr>
+      <tr><td>移动操作机器人</td><td>工业协作臂、仓储机器人、巡检机器人</td><td>产线、仓储、园区</td><td>人机协作、定位、夹取、力控、工作单元集成风险</td></tr>
+      <tr><td>专用具身系统</td><td>医疗、矿山、应急、农业机器人</td><td>高价值或高危场景</td><td>行业认证、任务可靠性、维护与应急处置</td></tr>
+    </table>
+
+    <p>传统软件主要处理数字信息；具身智能把错误输出转化为现实世界的力、速度、能量和空间占用。因此 QA 对象是"<strong>模型 + 控制器 + 本体 + 场景 + 人 + 运维</strong>"的系统组合。</p>
+
+    <h3>1.2 从"功能质量"到"风险可接受性"</h3>
+
+    <p>ISO 21448 的 SOTIF（预期功能安全）关注功能不足或可合理预见误用导致的不合理风险<sup><a href="#ref-9">[9]</a></sup>——即使没有硬件故障或软件崩溃，感知误判、泛化不足、人类异常行为和任务边界不清也可能造成伤害。</p>
+
+    <p>所以传统 QA 问"需求是否实现"，具身 QA 还要回答：允许的 ODD（运行设计域）是什么；残余风险如何证明可接受；不确定性如何降级或接管；硬件、模型、数据和现场变化后安全论证是否仍成立；每次 OTA 是否构成一次新的安全发布。Waymo 2025 年论文正把发布准备（readiness determination）界定为评估新部署残余风险的治理流程<sup><a href="#ref-17">[17]</a></sup>。</p>
+
+    <h2>二、标准与监管版图：不是"一个标准管全部"</h2>
+
+    <p>具身智能企业面对的是多套标准叠加：质量体系管组织过程，功能安全管 E/E 故障，SOTIF 管无故障时的能力不足，网络安全管恶意攻击，AI 管理标准管组织级治理；NIST AI RMF 可作风险治理参考，UL 4600 则要求自主产品建立完整安全案例<sup><a href="#ref-6">[6]</a><a href="#ref-12">[12]</a></sup>。</p>
+
+    <h3>2.1 关键标准对比</h3>
+
+    <table>
+      <tr><th>标准/法规</th><th>状态与时间</th><th>在具身 QA 中的作用</th><th>局限</th></tr>
+      <tr><td>IEC 61508 <sup><a href="#ref-11">[11]</a></sup></td><td>跨行业 E/E/PE 功能安全基础标准</td><td>SIL、全生命周期和安全功能框架</td><td>仍需汽车、机械、机器人专用标准</td></tr>
+      <tr><td>ISO 26262:2018 <sup><a href="#ref-8">[8]</a></sup></td><td>汽车 E/E 功能安全，2026 年已有 DIS 修订进程</td><td>HARA、ASIL、安全目标、软硬件开发与安全确认</td><td>主要处理故障，不覆盖所有算法性能不足</td></tr>
+      <tr><td>ISO 21448:2022 <sup><a href="#ref-9">[9]</a></sup></td><td>SOTIF 第一版，二版在研</td><td>场景识别、触发条件、V&amp;V 和运行阶段反馈</td><td>汽车导向，机器人需类比转化</td></tr>
+      <tr><td>ISO/SAE 21434:2021 <sup><a href="#ref-10">[10]</a></sup></td><td>汽车网络安全工程，二版 2026 批准工作项</td><td>TARA、CSMS、供应链网络安全</td><td>不证明功能安全或 AI 性能安全</td></tr>
+      <tr><td>ISO/PAS 8800:2024 <sup><a href="#ref-4">[4]</a></sup></td><td>2024-12 发布</td><td>将 AI 生命周期纳入汽车安全框架</td><td>PAS 非正式长期标准，后续会演进</td></tr>
+      <tr><td>ISO/IEC 42001:2023 <sup><a href="#ref-1">[1]</a></sup></td><td>2023-12 发布</td><td>组织级 AI 治理、责任、风险和持续改进</td><td>管理体系，不是产品认证清单</td></tr>
+      <tr><td>ISO/IEC 23894:2023 <sup><a href="#ref-2">[2]</a></sup></td><td>2023-02 发布</td><td>AI 风险识别、分析、评价和处置指导</td><td>不提供行业阈值</td></tr>
+      <tr><td>ISO/IEC 25059:2023 <sup><a href="#ref-3">[3]</a></sup></td><td>2026 年 FDIS 二版审批阶段</td><td>在传统软件质量外描述适应性、鲁棒性、可控性等</td><td>质量特性仍需映射到任务和安全指标</td></tr>
+      <tr><td>ISO/IEC TR 5469:2024 <sup><a href="#ref-5">[5]</a></sup></td><td>2024-01 发布</td><td>说明安全相关应用中 AI 的功能安全问题</td><td>技术报告，不能替代 ISO/PAS 8800</td></tr>
+      <tr><td>UL 4600 Ed.3</td><td>2023-03-17 发布</td><td>自主安全案例、更新再评估和 ODD 论证</td><td>不规定固定道路测试里程</td></tr>
+      <tr><td>ISO 10218-1/-2:2025 <sup><a href="#ref-13">[13]</a></sup></td><td>2025-02 发布</td><td>工业机器人本质安全、风险降低和集成安全</td><td>不覆盖服务、消费、医疗、军用机器人</td></tr>
+      <tr><td>ISO/TS 15066:2016 <sup><a href="#ref-31">[31]</a></sup></td><td>2025 年进入修订</td><td>速度/间距、功率/力限制等协作安全</td><td>仅限工业协作，非家用通用认证</td></tr>
+      <tr><td>IEEE P2817 <sup><a href="#ref-32">[32]</a></sup></td><td>PAR 2024-09 批准，延期至 2026-12</td><td>组件/系统级自主验证过程指南</td><td>仍为 Active PAR，非正式标准</td></tr>
+    </table>
+
+    <p>这些标准之间不是替代关系。UL 明确提出，高度自动驾驶安全案例通常需要 ISO 26262 + ISO 21448 + ISO/SAE 21434 + UL 4600 共同支撑<sup><a href="#ref-12">[12]</a></sup>。Automotive SPICE 4.0（2023-11 发布）新增 MLE.1–MLE.4 机器学习过程和 SUP.11 数据管理过程，说明汽车产业已把 ML 数据和模型正式纳入过程评估模型<sup><a href="#ref-7">[7]</a></sup>。</p>
+
+    <h3>2.2 中国监管与标准化进展</h3>
+
+    <p><strong>智能网联汽车强制标准先行。</strong>2024-08-23，GB 44495—2024《汽车整车信息安全技术要求》、GB 44496—2024《汽车软件升级通用技术要求》、GB 44497—2024《智能网联汽车 自动驾驶数据记录系统》获批，2026-01-01 实施——工信部称其为我国智能网联汽车领域首批强制性国家标准<sup><a href="#ref-15">[15]</a></sup>。</p>
+
+    <p><strong>L3 准入采用"五限定"路径。</strong>2025 年 12 月，工信部第 401 批《公告》附条件许可两款 L3 车型：长安车型可在重庆指定快速路拥堵环境、最高 50 km/h 单车道场景启用；极狐车型可在北京指定高速/城市快速路、最高 80 km/h 单车道场景启用，同时强调运行监测和安全保障<sup><a href="#ref-16">[16]</a></sup>。即：<strong>限定企业、限定车型、限定道路、限定速度、限定使用主体，并保留持续监测和退出机制</strong>。</p>
+
+    <p><strong>人形机器人标委会刚成立。</strong>工信部人形机器人与具身智能标准化技术委员会 2025-12-26 成立，秘书处设在中国电子学会，首次会议强调开源、数据、操作系统、仿真平台、伦理治理、质量提升和中试验证<sup><a href="#ref-14">[14]</a></sup>。截至本研究，尚未形成类似汽车 ISO 26262/UL 4600 那样成熟统一的人形机器人安全认证体系，家庭服务场景的强制标准矩阵缺口最大。</p>
+
+    <h3>2.3 标准适用矩阵：不要机械贴标签</h3>
+
+    <table>
+      <tr><th>风险/活动</th><th>自动驾驶</th><th>工业/协作机器人</th><th>人形/服务机器人</th></tr>
+      <tr><td>组织质量体系</td><td>ISO 9001、IATF/ASPICE 生态</td><td>ISO 9001、ISO 10218</td><td>ISO 9001、ISO/IEC 42001</td></tr>
+      <tr><td>AI 治理</td><td>42001、23894、8800</td><td>42001、23894</td><td>42001、23894、25059</td></tr>
+      <tr><td>E/E 故障</td><td>ISO 26262</td><td>IEC 61508、机械安全标准</td><td>IEC 61508 思想 + 行业标准</td></tr>
+      <tr><td>预期功能不足</td><td>ISO 21448</td><td>风险评估、仿真和现场验证</td><td>尚需行业化 SOTIF 方法</td></tr>
+      <tr><td>网络安全/OTA</td><td>ISO/SAE 21434、GB 44495/44496</td><td>IEC 62443 等</td><td>IoT/机器人安全要求待整合</td></tr>
+      <tr><td>自主安全论证</td><td>UL 4600</td><td>ISO 10218-2 集成安全</td><td>可借鉴 UL 4600 安全案例</td></tr>
+      <tr><td>人机接触</td><td>车外人因、接管设计</td><td>ISO 10218、ISO/TS 15066</td><td>碰撞、夹点、软组织、儿童/宠物等新标准缺口</td></tr>
+    </table>
+
+    <h2>三、具身智能分层 QA 体系：九层闭环</h2>
+
+    <p>不要把测试团队放在研发末端。建议按九层建设闭环。</p>
+
+    <h3>3.1 第一层：概念、危害分析与 ODD/任务边界</h3>
+    <p>概念阶段建立四类基线：预期用途与误用清单；道路/家庭/工厂等 ODD 条件；碰撞、夹伤、跌倒、电池热失控、越权行动等危害清单；可测量的速度、力、间距、停止时间、成功率和接管准则。ISO 26262 的 HARA/ASIL 与 ISO 21448 的触发条件分析是方法起点<sup><a href="#ref-8">[8]</a><a href="#ref-9">[9]</a></sup>；人形机器人还须补充机械能、重心、跌倒、夹持、软组织接触以及儿童/宠物突入等危害。</p>
+
+    <h3>3.2 第二层：系统需求与可验证性</h3>
+    <p>"机器人会整理客厅"不是可验证需求。可验证的写法是 Figure Helix 2.5 评测口径：<strong>"在指定 30 个未见家庭、无现场微调、无人为安全介入、每件物品有超时限制、全部物品入篮才算成功"</strong><sup><a href="#ref-21">[21]</a></sup>。需求评审必须强制回答：</p>
+    <ul>
+      <li>输入模态：图像、深度、力矩、触觉、语音、激光雷达、本体状态？</li>
+      <li>输出动作：速度、关节位置、扭矩、末端位姿、底盘轨迹还是高层计划？</li>
+      <li>控制频率、延迟、抖动和安全停止时间是多少？</li>
+      <li>模型置信度低、传感器污染、执行器过热时如何降级？</li>
+      <li>任务成功、部分成功、失败、危险失败如何区分？</li>
+      <li>数据和模型升级后哪些旧证据失效？</li>
+    </ul>
+
+    <h3>3.3 第三层：数据 QA 与数据治理</h3>
+    <p>数据质量直接决定动作质量。Open X-Embodiment 汇集 22 种本体、60 个数据集、34 个实验室、100 多万条真实轨迹（527 种技能、160,266 个任务），但跨本体数据会引入动作空间、标定、采样频率和任务语义不一致<sup><a href="#ref-25">[25]</a></sup>。</p>
+    <table>
+      <tr><th>维度</th><th>检查内容</th></tr>
+      <tr><td>采集合规</td><td>授权、隐私、人脸/家庭信息、地域合规、数据留存</td></tr>
+      <tr><td>时序同步</td><td>图像、深度、力/力矩、关节状态、动作指令时间戳一致</td></tr>
+      <tr><td>标定质量</td><td>相机内外参、IMU、编码器、夹爪、底盘坐标系统</td></tr>
+      <tr><td>标签与任务</td><td>任务阶段、成功/失败、干预、异常、对象状态</td></tr>
+      <tr><td>分布覆盖</td><td>场景、材质、光照、物体、人体行为、地面和故障分布</td></tr>
+      <tr><td>偏差控制</td><td>采样偏差、操作员偏差、反馈回路偏差、地域/家庭偏差</td></tr>
+      <tr><td>数据血缘</td><td>原始数据、清洗、标注、训练集、模型版本和部署版本关联</td></tr>
+    </table>
+    <p>1X 与 NVIDIA 合作时，把"对少量演示数据过拟合以验证基线模型正确性"作为新学习代码库接入 NEO 的关键步骤，并明确检查图像—动作时间同步<sup><a href="#ref-23">[23]</a></sup>——先验证管线正确性，再扩大到数千小时数据，这是典型的数据 QA 最小闭环。</p>
+
+    <h3>3.4 第四层：模型 QA、不确定性与对抗鲁棒性</h3>
+    <p>VLA 模型的输出是连续动作或动作块，离线 loss 不一定与真实任务成功率相关。1X 明确指出模仿学习目标与真实世界表现不相关，不适合作为 checkpoint 选择依据；其世界模型转而预测候选策略的未来状态和成功概率，并与真机评测建立相关性<sup><a href="#ref-24">[24]</a></sup>。模型 QA 应分四级：</p>
+    <ol>
+      <li><strong>数据级</strong>：训练/验证/测试集隔离，未见对象、未见家庭、未见本体和长尾场景独立评测；</li>
+      <li><strong>组件级</strong>：感知、定位、语言理解、动作生成、力控、规划接口测试；</li>
+      <li><strong>策略级</strong>：固定初始状态下的成功率、恢复率、耗时、能量、碰撞、力/扭矩、干预次数；</li>
+      <li><strong>系统级</strong>：真实 ODD 中与人和环境交互的风险表现。</li>
+    </ol>
+    <p>Physical Intelligence π0.5 展示了开放世界泛化和长程家庭操作<sup><a href="#ref-26">[26]</a></sup>，但演示能力不等于商业部署能力——后者还要求可重复、可维护、可保险、可召回、可解释失败原因。</p>
+
+    <h3>3.5 第五层：仿真、世界模型与场景生成</h3>
+    <p>仿真是高并发、低伤害、可复现的证据来源，但不是真机证明的替代品。BEHAVIOR-1K 定义 1,000 项日常活动、50 个场景、5,000 多个对象，并在 OmniGibson 中模拟刚体、可变形体和液体<sup><a href="#ref-27">[27]</a></sup>；NVIDIA Newton、Isaac Lab、GR00T、Cosmos 把物理引擎、策略评估和合成数据整合为基础设施<sup><a href="#ref-19">[19]</a></sup>。关键不是画面逼真，而是：接触力学、摩擦、惯量、延迟、噪声、动作空间、控制频率、安全限制是否经<strong>真机标定</strong>；危险长尾是否覆盖；仿真结果能否预测真机排序；合成数据是否有独立留存评测。1XWM 也承认未见对象的物理交互仍可能失败，世界模型只能辅助筛选，不能单独承担安全认证<sup><a href="#ref-24">[24]</a></sup>。</p>
+
+    <h3>3.6 第六层：硬件、HIL 与产线 EOL 测试</h3>
+    <p>Figure 在 Figure 03 量产文章中披露：BotQ 在 120 天内把节拍从每天 1 台提高到每小时 1 台，已交付 350 多台；产线有 150 多个联网工位、50 多个过程检查点；每台机器人 EOL 经历 80 多项功能验证，包括数千次深蹲、肩推、慢跑等 burn-in；终端一次合格率超 80%，电池线一次合格率 99.3%<sup><a href="#ref-22">[22]</a></sup>。人形机器人 QA 必须吸收汽车和高端制造方法：来料与供应商管理、DFMEA/PFMEA、电机/减速器/编码器/力矩传感器/相机/IMU/电池包一致性、SIL/HIL、温湿度/振动/EMC/IP/电池滥用、关节寿命与批次追溯、单机 EOL/老化测试。1X 制造文章同样提到用汽车业启发的 DFMEA/PFMEA 定义装配检查<sup><a href="#ref-28">[28]</a></sup>。</p>
+
+    <h3>3.7 第七层：安全架构、人机交互与失效降级</h3>
+    <p>必须假设模型会错、传感器会脏、执行器会磨损、人会意外进入。安全架构应包含：独立安全控制器，限速/限力/限功率/限工作空间，硬软件急停和远程接管，多传感器诊断，动作边界与碰撞预测，任务级 fallback ladder（降级阶梯），跌倒和电池热保护，夹点防护，以及不可绕过的审计策略。Figure 把 fallback ladder、现场故障跟踪、硬件修订、车队升级和召回纳入体系<sup><a href="#ref-22">[22]</a></sup>；1X NEO 强调软体、封闭关节、低惯量腱绳驱动和 HIC 等被动安全设计，但这些仍是厂商资料，需要第三方测试验证<sup><a href="#ref-29">[29]</a></sup>。</p>
+
+    <h3>3.8 第八层：封闭场地、影子运行与有限场景试点</h3>
+    <p>自动驾驶已形成"仿真—封闭场地—公共道路—有限商业运营"的证据阶梯。UL 4600 不规定固定路测里程，而要求用安全案例论证方法组合足以支持初始车辆和每次更新<sup><a href="#ref-12">[12]</a></sup>；中国 L3 也采用指定道路、速度和使用主体的准入<sup><a href="#ref-16">[16]</a></sup>。人形机器人可按"实验室 → 机电安全 → 标准测试场 → 遥操作/监督 → 员工或受控客户现场 → 任务白名单 + 地理围栏、可远程暂停/召回的商业试点"逐步推进。</p>
+
+    <h3>3.9 第九层：运行监测、事件学习与 OTA 再认证</h3>
+    <p>真实运行会暴露训练和仿真没有覆盖的长尾。运行阶段应监控：任务成功率、干预率、危险/近失事件、碰撞、跌倒、力超限、急停、热事件、感知不确定、控制饱和、通信中断、单机和单部件健康、数据/场景漂移及版本差异。GB 44497—2024 对自动驾驶数据记录、存储读取、信息安全、耐撞性和环境评价提出要求<sup><a href="#ref-15">[15]</a></sup>；家庭机器人同样需要"可取证日志"，但必须以隐私最小化为前提。</p>
+
+    <div class="callout yellow">
+      <strong>九层闭环一句话</strong>
+      边界定义 → 可验证需求 → 数据治理 → 模型评测 → 仿真 → 硬件/EOL → 安全架构 → 受控试点 → 运行回灌。上一层的证据失效（换模型、换硬件批次、扩 ODD），必须触发下一层重新验证。
+    </div>
+
+    <h2>四、具身智能 QA 与传统软件 QA 的 17 维差异</h2>
+
+    <table>
+      <tr><th>维度</th><th>传统软件 QA</th><th>具身智能 QA</th><th>组织影响</th></tr>
+      <tr><td>环境</td><td>数字环境，输入可控</td><td>开放物理世界，受光照、摩擦、地形、人群影响</td><td>必须建设场景工程和现场运营</td></tr>
+      <tr><td>错误后果</td><td>业务、数据、体验或安全事件</td><td>可直接产生碰撞、夹伤、跌倒、能量伤害</td><td>QA 与功能安全、法务、保险深度耦合</td></tr>
+      <tr><td>主要对象</td><td>代码、接口、UI、服务</td><td>数据、模型、控制器、传感器、执行器、本体、云平台</td><td>跨软件、算法、机械、电子、制造团队</td></tr>
+      <tr><td>输出</td><td>离散状态、文本、交易、接口响应</td><td>轨迹、力、速度、关节动作、连续控制</td><td>断言从相等变为分布、边界和风险</td></tr>
+      <tr><td>需求稳定性</td><td>相对明确，可冻结</td><td>ODD/任务边界持续扩展，模型能力难穷举</td><td>需求与风险持续演化</td></tr>
+      <tr><td>开发方式</td><td>人写逻辑为主</td><td>数据驱动、学习策略、仿真训练、规则安全层混合</td><td>Code review 之外要做数据和模型评审</td></tr>
+      <tr><td>缺陷根因</td><td>代码逻辑、配置、依赖、并发</td><td>数据偏差、标定、控制延迟、硬件磨损、分布外输入</td><td>根因分析链路更长</td></tr>
+      <tr><td>测试输入</td><td>单元、接口、UI、压力、兼容性</td><td>SIL/HIL、仿真、传感器、机械、封闭场地、真实试点</td><td>测试资产和基础设施成本高</td></tr>
+      <tr><td>通过标准</td><td>用例通过率、缺陷等级、SLA</td><td>任务成功率、伤害风险、残余风险、安全案例充分性</td><td>需要风险接受委员会</td></tr>
+      <tr><td>可复现性</td><td>容器和 mock 后较高</td><td>硬件、环境和人类行为引入随机性</td><td>需多次重复、统计置信和标准化场景</td></tr>
+      <tr><td>版本发布</td><td>代码/配置发布</td><td>模型、控制参数、校准、硬件批次、场景授权共同发布</td><td>OTA 必须再评估</td></tr>
+      <tr><td>回滚</td><td>多数可回滚</td><td>动作不可撤回，硬件磨损不可逆，现场状态可能已改变</td><td>发布前验证和运行时防护更关键</td></tr>
+      <tr><td>自动化测试</td><td>CI 中快速执行</td><td>仿真可大规模执行，真机测试慢且贵</td><td>仿真分级和真机门禁结合</td></tr>
+      <tr><td>性能指标</td><td>TPS、延迟、可用性</td><td>控制频率、端到端时延、成功率、能耗、力、MTBF</td><td>指标体系跨学科</td></tr>
+      <tr><td>安全边界</td><td>鉴权、加密、权限、漏洞管理</td><td>还需物理限速、限力、防护、急停、人机距离</td><td>网络安全与物理安全融合</td></tr>
+      <tr><td>数据使用</td><td>用户数据偏业务分析</td><td>数据本身是行为来源</td><td>数据版本、标注和偏差成为质量核心</td></tr>
+      <tr><td>监管证据</td><td>日志、审计、测试报告</td><td>安全案例、场景覆盖、V&amp;V、事故记录、量产一致性</td><td>证据长期保存和可追溯</td></tr>
+    </table>
+
+    <h3>4.1 "测试通过"为什么不够</h3>
+    <p>具身系统的状态空间包含连续感知、连续动作、人体行为、物体材料和硬件老化，无法靠枚举穷尽。SOTIF 的思路正是把已知不安全、未知不安全区域通过场景发现、验证和运行反馈持续压缩<sup><a href="#ref-9">[9]</a></sup>。具身 QA 的目标不是证明"永不出错"，而是形成一套可审计论证：哪些风险已识别；哪些场景已验证；哪些被 ODD 排除；哪些残余风险由降级、接管、保险或用户告知处理；每次变更影响哪些证据；事故后如何定位、修复和防止再发。</p>
+
+    <h3>4.2 成功率不是安全率</h3>
+    <p>Figure Helix 2.5 在 30 个未见家庭中把零样本成功率从 9% 提升到 56%，且不给部分分<sup><a href="#ref-21">[21]</a></sup>——但 44% 的失败中是否包含跌倒、碰撞、错误抬举、危险接近人或宠物，需要独立安全事件指标。自动驾驶的 miles per disengagement 同理。加州 DMV 明确提示：脱离报告不适合跨公司直接比较，且只覆盖公共道路测试，不含私人场地、州外、仿真和部署许可下的运营<sup><a href="#ref-18">[18]</a></sup>。建议同时建立四层指标：</p>
+    <ol>
+      <li><strong>任务效能</strong>：成功率、耗时、重试率、单位任务成本；</li>
+      <li><strong>可靠性</strong>：MTBF、故障间隔、硬件寿命、软件异常率；</li>
+      <li><strong>安全性</strong>：伤害、近失、碰撞、力超限、急停、不安全接管；</li>
+      <li><strong>治理性</strong>：覆盖度、数据血缘、升级影响面、证据完整率、审计可追溯性。</li>
+    </ol>
+
+    <h2>五、行业案例：领先者如何建设质量证据链</h2>
+
+    <h3>5.1 Waymo：把"能不能发布"变成风险治理流程</h3>
+    <p>Waymo 2025 年安全论文把 ADS 新发布的 readiness determination 定义为风险评估流程，核心问题是残余风险是否可接受，并讨论方法论准则、治理和发布决策<sup><a href="#ref-17">[17]</a></sup>。它把以下问题制度化：候选版本与上一版本差异；新 ODD 引入哪些风险；仿真、封闭场地、道路和运营数据各自提供什么证据；哪些风险不能由工程团队单独决定；谁有权批准、暂停或撤回部署。其 VRU 研究称在 5670 万英里对比中行人受伤碰撞降低 92%、骑行者和摩托车骑手各降低 82%、路口受伤碰撞降低 96%<sup><a href="#ref-30">[30]</a></sup>——厂商研究，引用时注意方法、基线和适用地域。</p>
+    <p>加州 DMV 2025 年 1 月公布：2023-12 至 2024-11，加州测试许可车辆共行驶 4,498,066 英里（安全员模式 3,945,171、全无人 552,895）；31 家持安全员测试许可，6 家获批无人测试，3 家可商业化运营<sup><a href="#ref-18">[18]</a></sup>。这些适合作监管报告样例，而非公司间安全性排名。<strong>启示：机器人企业也需要发布门禁，而不是创始人或 demo 负责人凭感觉上线。</strong></p>
+
+    <h3>5.2 Boston Dynamics Atlas：数据—仿真—评测闭环</h3>
+    <p>Boston Dynamics 与 TRI 在 2025 年介绍 Atlas 大型行为模型时，把策略建设拆成四步：真机和仿真中的遥操作数据采集；处理、标注和策展数据；跨任务训练神经网络策略；用任务测试套件评估并指导补数和架构迭代<sup><a href="#ref-20">[20]</a></sup>。策略以图像、本体状态和语言提示为输入，30Hz 控制 50 自由度的完整 Atlas；模型为 4.5 亿参数 Diffusion Transformer（flow matching），并使用 QA 工具审查、过滤和反馈所采数据。仿真承担三类作用：快速迭代遥操作系统；编写单元和集成测试防破坏；执行真机上更慢、更贵、更难重复的训练和评估——仿真栈尽量忠实复现硬件和机载软件，使数据管线、训练代码和接口可跨仿真/真机复用。<strong>启示：机器人 QA 不是"测模型"，而是让仿真、真机控制接口、数据管线和评测套件共享同一工程底座。</strong></p>
+
+    <h3>5.3 Figure：家庭泛化评测 + 量产 EOL 双端体系</h3>
+    <p>一端是模型泛化：Helix 2.5 在 30 个未采集数据、未微调、未现场适配的湾区家庭执行客厅整理、叠毛巾、整理床铺；固定 checkpoint，不允许用评测回滚或选择权重，安全人工干预即判失败，零样本成功率 9% → 56%<sup><a href="#ref-21">[21]</a></sup>。另一端是制造和车队：BotQ 已生产 350 多台 Figure 03，节拍每小时 1 台，每台 80 多项 EOL 验证和数千次循环 burn-in，配套诊断、fallback ladder、现场服务、Fleet Management 和 OTA 升级/召回<sup><a href="#ref-22">[22]</a></sup>。<strong>启示：人形机器人 QA 成熟度不能只看模型 demo，必须同时看量产一致性、早期故障筛选、现场可靠性和版本升级机制。</strong></p>
+
+    <h3>5.4 1X NEO：被动安全设计 + 世界模型筛选</h3>
+    <p>NEO 强调软体晶格、封闭关节、低惯量腱绳驱动、低噪声和自充电<sup><a href="#ref-29">[29]</a></sup>；与 NVIDIA 合作中介绍了数据 API、5Hz 视觉—动作推理 SDK，以及"少量数据先过拟合验证时间同步"的做法<sup><a href="#ref-23">[23]</a></sup>。1X World Model 试图用动作可控的生成式世界模型预测策略结果，服务架构迭代、checkpoint 选择、生产长尾回放和大规模策略优化，但明确承认未见对象的物理交互仍可能建模失败<sup><a href="#ref-24">[24]</a></sup>。<strong>启示：家庭机器人 QA 既不能只靠"软外壳"降伤害，也不能只靠世界模型替代真机验证；需要被动安全、主动安全、真实评测和模型化筛选组合。</strong></p>
+
+    <h3>5.5 NVIDIA：工具链生态不自带质量保证</h3>
+    <p>Newton 提供适合复杂接触和人形机器人的物理引擎，Isaac Lab 提供学习和评估环境，GR00T 提供基础模型，Cosmos 提供世界模型和合成数据，Jetson Thor 提供端侧算力；Agility、Boston Dynamics、Disney Research、Figure AI、Franka、Skild AI、Techman 等采用 Isaac/Omniverse<sup><a href="#ref-19">[19]</a></sup>。<strong>启示：采购仿真平台不自动获得质量保证。工具链必须经过本企业本体、传感器、控制器和场景的校验；产品安全发布仍需企业自己的安全案例。</strong></p>
+
+    <h2>六、企业落地路线图：从 0 到 1（18 个月）</h2>
+
+    <h3>阶段 0：资产盘点与风险分级（0–1 个月）</h3>
+    <ul>
+      <li>明确产品形态、用户、任务、ODD 和商业边界；</li>
+      <li>建立系统架构图：模型、软件、硬件、云、App、遥操作、维修；</li>
+      <li>建立初版 HARA/FMEA、误用清单和危险事件库；</li>
+      <li>按伤害严重度、可控性、暴露概率给功能分级；</li>
+      <li>指定跨部门安全负责人和发布批准机制。</li>
+    </ul>
+
+    <h3>阶段 1：建立数据和需求骨架（1–3 个月）</h3>
+    <ul>
+      <li>数据采集同意、隐私脱敏、数据血缘和版本管理；</li>
+      <li>统一坐标系、动作空间、时间戳、控制频率和日志格式；</li>
+      <li>建立 MLE 需求模板和数据需求模板；</li>
+      <li>建立训练集、验证集、自测集、第三方评测集、真机场景集；</li>
+      <li>把任务成功、失败、安全干预、恢复和超时写入验收口径。</li>
+    </ul>
+
+    <h3>阶段 2：建设仿真与 CI 门禁（3–6 个月）</h3>
+    <ul>
+      <li>SIL、仿真回归、模型 checkpoint 自动评测；</li>
+      <li>关键控制器的单元/集成/边界测试；</li>
+      <li>真机控制接口、安全限制、动作表达与仿真对齐；</li>
+      <li>用真机数据校准摩擦、延迟、噪声、执行器响应；</li>
+      <li>仿真失败、性能回退、安全约束违反进入合并门禁。</li>
+    </ul>
+
+    <h3>阶段 3：HIL、EOL 和安全硬件验证（6–9 个月）</h3>
+    <ul>
+      <li>HIL 台架、传感器/执行器老化、电池和热安全测试；</li>
+      <li>每台机器人 EOL 测试和序列号级档案；</li>
+      <li>来料、过程、抽检、返工和批次追溯；</li>
+      <li>独立安全层：限速、限力、碰撞检测、急停、安全状态；</li>
+      <li>DFMEA/PFMEA 与现场故障编码体系。</li>
+    </ul>
+
+    <h3>阶段 4：受控现场试点与安全案例（9–18 个月）</h3>
+    <ul>
+      <li>选择低风险、高价值、边界清晰的场景；</li>
+      <li>地理围栏、任务白名单、远程监控和人工兜底；</li>
+      <li>近失/事故分级、暂停规则和复盘机制；</li>
+      <li>汇总需求、测试、仿真、HIL、EOL、培训、运维证据形成安全案例；</li>
+      <li>对每次 OTA 做影响分析和回归授权。</li>
+    </ul>
+
+    <h3>阶段 5：规模化运营和持续认证（18 个月以后）</h3>
+    <ul>
+      <li>机器人队列实时健康和风险看板；</li>
+      <li>现场事件自动转化为场景、测试和数据采集任务；</li>
+      <li>模型、硬件和场景批准的组合矩阵；</li>
+      <li>与保险、第三方实验室、监管沙盒和标准组织对接；</li>
+      <li>逐步扩大 ODD，而不是一次性宣称"通用"。</li>
+    </ul>
+
+    <h3>推荐组织角色</h3>
+    <table>
+      <tr><th>角色</th><th>主要职责</th></tr>
+      <tr><td>Embodied AI Safety Lead</td><td>总风险 owner，主持发布门禁</td></tr>
+      <tr><td>ML QA / Data QA Engineer</td><td>数据、标注、checkpoint、分布漂移评测</td></tr>
+      <tr><td>Simulation / Scenario Engineer</td><td>场景库、仿真保真度、回归和危险场景生成</td></tr>
+      <tr><td>Functional Safety Engineer</td><td>HARA、安全目标、安全架构和安全案例</td></tr>
+      <tr><td>Hardware Reliability Engineer</td><td>执行器、电池、传感器、EOL、寿命和批次质量</td></tr>
+      <tr><td>Controls Test Engineer</td><td>HIL、控制频率、力控、稳定性、跌倒和急停</td></tr>
+      <tr><td>Cybersecurity Engineer</td><td>OTA、远程控制、账户、隐私、渗透和供应链安全</td></tr>
+      <tr><td>Field Reliability Engineer</td><td>现场故障、维护、召回、备件和客户环境反馈</td></tr>
+      <tr><td>Human Factors Engineer</td><td>人机交互、接管、警示、儿童/老人/共场行为</td></tr>
+    </table>
+
+    <h2>七、2026 年七个趋势判断</h2>
+    <ol>
+      <li><strong>AI 标准从"原则伦理"走向工程证据和管理体系。</strong>42001、23894、25059、8800 之后，客户和监管更关心数据如何管理、模型如何验证、谁批准发布、事故如何反馈。</li>
+      <li><strong>汽车安全方法向机器人迁移，但不能照搬。</strong>HARA、SOTIF、安全案例、ODD 高度可迁移；但家庭中的儿童、宠物、软物体、楼梯和家具接触，不能简单套用 ASIL 或道路里程。家用通用机器人还需要新的接触伤害、跌倒、夹点和行为安全标准。</li>
+      <li><strong>仿真和世界模型成为 QA 基础设施，但"真机校准权"更重要。</strong>竞争点不是有没有仿真器，而是仿真能否预测真机排序、复现危险接触、随硬件批次更新保持有效。</li>
+      <li><strong>数据飞轮从"演示视频"转向"失败事件和高质量干预数据"。</strong>下一阶段最稀缺的是带标签的失败、近失、恢复、安全接管、罕见材质和真实长尾交互。</li>
+      <li><strong>量产一致性和售后服务成为人形机器人 QA 分水岭。</strong>模型公司可以发 demo，产品公司必须面对每台机器人的制造差异、关节寿命、电池安全、维修更换和 OTA 召回。</li>
+      <li><strong>监管采用"限定场景准入 + 持续监测"而非一次性开放。</strong>人形机器人预计也会先走工厂、仓储、园区等受控场景，再进入家庭；早期重点是安全设计、事件记录、远程接管、召回和数据合规。</li>
+      <li><strong>单一成功率让位于组合安全绩效指标。</strong>行业会减少对"无干预里程""单任务成功率"的营销式依赖，转向伤害/近失率、风险暴露归一化、条件成功率、干预原因分类、硬件可靠性、ODD 覆盖和安全案例成熟度。人形机器人行业目前尚无跨公司、可审计的 MTBF、事故率或家庭安全率统一指标，企业自报不能替代第三方认证。</li>
+    </ol>
+
+    <h2>八、结论：成熟体系必须同时具备六种能力</h2>
+    <p>具身智能质量保障的本质，是在一个无法穷举、持续变化、会产生真实能量作用的世界里，为智能行动建立可审计的风险控制体系。传统软件 QA 的价值仍在——需求、评审、配置、自动化、缺陷管理、可观测性和发布流程都是基础，但不足以单独回答"机器人能否在人群和家庭中安全行动"。</p>
+    <div class="callout green">
+      <strong>六种能力</strong><br>
+      ① <strong>边界能力</strong>：明确 ODD、任务、用户和禁用条件；<br>
+      ② <strong>证据能力</strong>：把需求、数据、模型、仿真、硬件、场地、运营和事故串成安全案例；<br>
+      ③ <strong>学习能力</strong>：把现场失败转为数据、场景、测试和硬件/模型改进；<br>
+      ④ <strong>防护能力</strong>：即使 AI 出错，独立安全层仍能限速、限力、停止和恢复；<br>
+      ⑤ <strong>量产能力</strong>：保证每一台与被验证版本一致，而不只是样机表现好；<br>
+      ⑥ <strong>治理能力</strong>：让发布、暂停、召回和 OTA 再认证有明确责任人。
+    </div>
+    <p>2026 年的产业分水岭不会只是"谁的模型更聪明"，而会是"<strong>谁能证明这个聪明模型在真实世界中足够可靠、安全、可维护，并能在规模扩大后持续保持</strong>"。</p>
+
+    <h2>参考文献（32 条，访问日期 2026-11）</h2>
+    <ol style="font-size: 13.5px; line-height:1.7;">
+      <li id="ref-1">ISO. <a href="https://www.iso.org/standard/42001" target="_blank" rel="noopener">ISO/IEC 42001:2023 — AI Management system</a>，2023-12。</li>
+      <li id="ref-2">ISO. <a href="https://www.iso.org/standard/77304.html" target="_blank" rel="noopener">ISO/IEC 23894:2023 — AI Guidance on risk management</a>，2023-02。</li>
+      <li id="ref-3">ISO. <a href="https://www.iso.org/standard/80655.html" target="_blank" rel="noopener">ISO/IEC 25059:2023 — Quality model for AI systems</a>（2026 年 FDIS 第 2 版审批中）。</li>
+      <li id="ref-4">ISO. <a href="https://www.iso.org/standard/83303.html" target="_blank" rel="noopener">ISO/PAS 8800:2024 — Road vehicles — Safety and artificial intelligence</a>，2024-12。</li>
+      <li id="ref-5">ISO. <a href="https://www.iso.org/standard/81283.html" target="_blank" rel="noopener">ISO/IEC TR 5469:2024 — Functional safety and AI systems</a>，2024-01。</li>
+      <li id="ref-6">NIST. <a href="https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf" target="_blank" rel="noopener">AI Risk Management Framework 1.0</a>，2023-01。</li>
+      <li id="ref-7">VDA QMC. <a href="https://vda-qmc.de/wp-content/uploads/2023/12/Automotive-SPICE-PAM-v40.pdf" target="_blank" rel="noopener">Automotive SPICE PAM v4.0</a>，2023-11-29。</li>
+      <li id="ref-8">ISO. <a href="https://www.iso.org/standard/68383.html" target="_blank" rel="noopener">ISO 26262-1:2018 — Road vehicles — Functional safety</a>（修订中）。</li>
+      <li id="ref-9">ISO. <a href="https://www.iso.org/standard/77490.html" target="_blank" rel="noopener">ISO 21448:2022 — Safety of the intended functionality (SOTIF)</a>（二版在研）。</li>
+      <li id="ref-10">ISO/SAE. <a href="https://www.iso.org/standard/70918.html" target="_blank" rel="noopener">ISO/SAE 21434:2021 — Cybersecurity engineering</a>，2021-08。</li>
+      <li id="ref-11">IEC. <a href="https://www.iec.ch/functionalsafety" target="_blank" rel="noopener">IEC 61508 — Functional safety overview</a>。</li>
+      <li id="ref-12">UL Solutions. <a href="https://www.ul.com/news/ul-4600-edition-3-updates-incorporate-autonomous-trucking" target="_blank" rel="noopener">UL 4600 Edition 3 Updates Incorporate Autonomous Trucking</a>，2023-07-18（Ed.3 于 2023-03-17 发布）。</li>
+      <li id="ref-13">ISO. <a href="https://www.iso.org/standard/73933.html" target="_blank" rel="noopener">ISO 10218-1:2025 — Industrial robots safety requirements</a>，2025-02。</li>
+      <li id="ref-14">中国电子学会. <a href="https://www.cie.org.cn/list_42/15560.html" target="_blank" rel="noopener">工信部人形机器人与具身智能标准化技术委员会成立大会</a>，2025-12-28。</li>
+      <li id="ref-15">工业和信息化部. <a href="https://www.miit.gov.cn/jgsj/zbys/qcgy/art/2024/art_e1bb0d211dbf40a2949b28deb8a96d19.html" target="_blank" rel="noopener">三项智能网联汽车强制性国家标准正式发布</a>，2024-09-02。</li>
+      <li id="ref-16">工业和信息化部. <a href="https://www.miit.gov.cn/jgsj/zbys/gzdt/art/2025/art_2f4447d835e14daeb6717276ec8bbf88.html" target="_blank" rel="noopener">我部许可两款 L3 级自动驾驶车型产品</a>，2025-12-15。</li>
+      <li id="ref-17">Favaro, F. et al. <a href="https://arxiv.org/abs/2505.09880" target="_blank" rel="noopener">Determining Absence of Unreasonable Risk: Approval Guidelines for an ADS Deployment</a>，arXiv:2505.09880，2025-05。</li>
+      <li id="ref-18">California DMV. <a href="https://www.dmv.ca.gov/portal/news-and-media/over-4-million-test-miles-logged-by-autonomous-vehicle-permit-holders-in-california" target="_blank" rel="noopener">Over 4 Million Test Miles Logged by AV Permit Holders in California</a>，2025-01-31。</li>
+      <li id="ref-19">NVIDIA. <a href="https://nvidianews.nvidia.com/news/nvidia-accelerates-robotics-research-and-development-with-new-open-models-and-simulation-libraries" target="_blank" rel="noopener">NVIDIA Accelerates Robotics R&amp;D With New Open Models and Simulation Libraries</a>，2025-09-29。</li>
+      <li id="ref-20">Boston Dynamics &amp; TRI. <a href="https://bostondynamics.com/blog/large-behavior-models-atlas-find-new-footing" target="_blank" rel="noopener">Large Behavior Models and Atlas Find New Footing</a>，2025-08-20。</li>
+      <li id="ref-21">Figure AI. <a href="https://www.figure.ai/news/helix-2-5-zero-shot-30-home-generalization" target="_blank" rel="noopener">Helix 2.5: Zero-Shot 30-Home Generalization</a>，2026-09-17。</li>
+      <li id="ref-22">Figure AI. <a href="https://www.figure.ai/news/ramping-figure-03-production" target="_blank" rel="noopener">Ramping Figure 03 Production</a>，2026-04-29。</li>
+      <li id="ref-23">1X. <a href="https://www.1x.tech/discover/1X-NVIDIA-Research-Collaboration" target="_blank" rel="noopener">1X &amp; NVIDIA Research Collaboration</a>，2025-03-18。</li>
+      <li id="ref-24">1X AI Team. <a href="https://www.1x.tech/discover/redwood-ai-world-model" target="_blank" rel="noopener">1X World Model</a>，2025-06-16。</li>
+      <li id="ref-25">Open X-Embodiment Collaboration. <a href="https://robotic-transformer-x.github.io/" target="_blank" rel="noopener">Open X-Embodiment: Robotic Learning Datasets and RT-X Models</a>，2023/2024。</li>
+      <li id="ref-26">Black, K. et al. <a href="https://proceedings.mlr.press/v305/black25a.html" target="_blank" rel="noopener">π0.5: a VLA Model with Open-World Generalization</a>，CoRL 2025, PMLR 305:17-40。</li>
+      <li id="ref-27">Li, C. et al. <a href="https://proceedings.mlr.press/v205/li23a.html" target="_blank" rel="noopener">BEHAVIOR-1K: A Benchmark for Embodied AI with 1,000 Everyday Activities</a>，CoRL 2022, PMLR 205:80-93。</li>
+      <li id="ref-28">1X. <a href="https://www.1x.tech/discover/scaling-neo-production-1x-builds-in-house-manufacturing-facility" target="_blank" rel="noopener">Scaling NEO Production: 1X builds in-house manufacturing facility</a>，2024-04-02。</li>
+      <li id="ref-29">1X. <a href="https://www.1x.tech/neo" target="_blank" rel="noopener">NEO Home Robot product page</a>。</li>
+      <li id="ref-30">Waymo. <a href="https://waymo.com/blog/2025/05/waymo-making-streets-safer-for-vru" target="_blank" rel="noopener">New Study: Waymo reducing serious crashes for VRUs</a>，2025-05-01。</li>
+      <li id="ref-31">ISO. <a href="https://www.iso.org/standard/62996.html" target="_blank" rel="noopener">ISO/TS 15066:2016 — Collaborative robots</a>（2025 年进入修订）。</li>
+      <li id="ref-32">IEEE SA. <a href="https://standards.ieee.org/ieee/2817/11726" target="_blank" rel="noopener">IEEE P2817 — Draft Guide for Verification of Autonomous Systems</a>，PAR 2024-09 批准，Active。</li>
+    </ol>
+
+    <p><em>本文为质量工程与产业研究，不构成投资建议或任何产品的安全性背书；厂商自披露数据已标注，引用决策前请核对原始来源。</em></p>
+
+    <a href="../index.html" class="back-link">← 返回首页</a>
+  </article>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    © 2024-2026 质量实验室 · 基于 GitHub Pages 构建
+  </div>
+</footer>
+
+</body>
+</html>
